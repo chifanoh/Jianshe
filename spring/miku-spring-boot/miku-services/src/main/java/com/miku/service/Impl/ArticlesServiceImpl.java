@@ -70,7 +70,6 @@ public class ArticlesServiceImpl implements ArticlesService {
             vo.setContent(po.getContent());
             vo.setComments(po.getComments());
             vo.setLikes(po.getLikes());
-            vo.setFavorite(po.getFavorite());
             vo.setCreatedTime(po.getCreatedTime());
 
             //取出用户
