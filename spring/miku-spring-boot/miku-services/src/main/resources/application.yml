@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    # 配置数据库MYSQl
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/miku_spring_boot
+    username: root
+    password: REMOVED
+
+logging:
+  level:
+    #全局日志拦截等级:warn (日志过多,过于丑陋)
+    root: warn
+    com:
+      miku:
+        #只打印业务模块日志
+        controller: info
+        service: info
+
+mybatis:
+  #Mapper XML 文件路径
+  mapper-locations: classpath:mapper/*.xml
+  #实体类别名包路径
+  type-aliases-package: com.miku.entity
+  #开启驼峰命名映射（下划线转驼峰）
+  configuration:
+    map-underscore-to-camel-case: true
+
+miku:
+  jwt:
+    #用户端:
+    # 设置jwt过期时间
+    user-ttl: 604800000
+    # 设置jwt签名加密时使用的秘钥
+    user-secret-key: mikuit
+    # 设置前端传递过来的令牌名称
+    user-token-name: tokename
+    #设置Cookie请求头名称
+    cookie-name: access_token
