@@ -1,7 +1,6 @@
 package com.miku.vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticlesVO implements Serializable {
-    private Integer id;
+    private Long id;
     private UserArticlesVO user;
     private String title;
     private String content;
