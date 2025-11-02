@@ -1,14 +1,15 @@
 <template>
-  <u-comment :config="config" @submit="submit">
+  <u-comment :config="config" @submit="submit" @reply-page="replyPage">
     <u-comment-nav v-model="latest" @sorted="sorted"></u-comment-nav>
   </u-comment>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
-import { UToast, Time, CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
+import { UToast } from 'undraw-ui'
+import type { CommentReplyPageApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
+import { getCommentList, submitComment, getRepliesByParentId } from '@/api/comment'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
-import { getCommentList, submitComment } from '@/api/comment'
 
 const props = defineProps({
   articleId: {
@@ -26,6 +27,7 @@ const config = reactive<ConfigApi>({
     avatar: loginUserStore.loginUser.userAvatar,
   } as any, // 当前用户信息
   comments: [], // 评论数据
+  page: true, // 开启分页
   relativeTime: true, // 开启人性化时间
   show: {
     level: false, // 关闭等级显示
@@ -70,6 +72,17 @@ const submit = async ({ content, parentId, finish }: CommentSubmitApi) => {
   } catch (error) {
     console.error('提交评论失败:', error)
     UToast({ message: '提交评论失败', type: 'error' })
+  }
+}
+
+//回复分页
+const replyPage = async ({ parentId, current, size, finish }: CommentReplyPageApi) => {
+  try {
+    const res = await getRepliesByParentId(parentId, current, size)
+    finish(res)
+  } catch (error) {
+    console.error('获取回复失败:', error)
+    UToast({ message: '获取回复失败', type: 'error' })
   }
 }
 

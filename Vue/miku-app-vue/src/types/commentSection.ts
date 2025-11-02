@@ -30,12 +30,10 @@ export interface UserApi {
 // 评论配置参数
 export interface ConfigApi {
   user: UserApi // 当前用户
-  emoji: EmojiApi // 表情包数据
   comments: CommentApi[] // 评论数据
   replyShowSize?: number // 回复页大小
   show?: ShowApi // 显示对象
   aTarget?: '_blank' | '_parent' | '_self' | '_top' // 个人主页跳转方式
-  mention?: MentionApi // @提及
   upload?: (files: File[], finish: (val: string[]) => void) => void // 图片上传事件
   page?: boolean // 是否分页
   relativeTime?: boolean // 是否开启人性化时间

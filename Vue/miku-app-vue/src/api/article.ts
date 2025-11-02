@@ -7,6 +7,8 @@ export interface ArticleUser {
   id: string | number
   name: string
   avatar: string
+  follow: number
+  fans: number
   sex?: number
 }
 
@@ -25,6 +27,7 @@ export interface Article {
   views: number
   comments: number
   likes: number
+  favorite: number
   createdTime: string
   localDateTime?: string
   updatedTime?: string

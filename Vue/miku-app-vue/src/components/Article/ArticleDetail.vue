@@ -127,25 +127,29 @@
             <div class="inside-box">
               <div class="side-section">
                 <div class="user-info-section flex mb-8">
-                  <!-- 用户头像 -->
-                  <div
-                    class="user-avatar icon mr-16"
-                    style="width: 48px; height: 48px; min-width: 48px"
-                  >
-                    <div class="user-image mr-16">
-                      <img
-                        :src="article.user.avatar"
-                        alt=""
-                        style="object-fit: cover"
-                        class="img-cover"
-                      />
+                  <router-link :to="`/user/${article.user.id}`" class="user-link" target="_blank">
+                    <!-- 用户头像 -->
+                    <div
+                      class="user-avatar icon mr-16"
+                      style="width: 48px; height: 48px; min-width: 48px"
+                    >
+                      <div class="user-image mr-16">
+                        <img
+                          :src="article.user.avatar"
+                          alt=""
+                          style="object-fit: cover"
+                          class="img-cover"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  </router-link>
                   <!-- 用户信息 -->
                   <div class="info-section">
-                    <div class="user-name text-14">
-                      <span class="name">{{ article.user.name }}</span>
-                    </div>
+                    <router-link :to="`/user/${article.user.id}`" class="user-link" target="_blank">
+                      <div class="user-name text-14">
+                        <span class="name">{{ article.user.name }}</span>
+                      </div>
+                    </router-link>
                     <p class="interact-section text-14 mb-10">
                       <span class="mr-16 pointer"
                         >关注 <span class="number ml-4">{{ article.user.follow }}</span>
@@ -587,6 +591,15 @@ onMounted(() => {
 .user-name {
   display: flex;
   align-items: center;
+}
+
+.user-link {
+  color: #292b2f;
+  text-decoration: none;
+}
+
+.user-link:hover {
+  color: #1890ff;
 }
 
 .name {
