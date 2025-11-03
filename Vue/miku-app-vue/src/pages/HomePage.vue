@@ -90,7 +90,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="nav-text">官方</span>
+            <span class="nav-text">{{ loginUserStore.loginUser.userName }}</span>
           </div>
         </div>
       </div>
@@ -144,6 +144,8 @@
 <script setup lang="ts">
 import ArticleList from '@/components/Article/ArticleList.vue'
 import { ref, onMounted } from 'vue'
+import { useLoginUserStore } from '@/store/useLoginUserStore'
+const loginUserStore = useLoginUserStore()
 
 // 导航状态
 const activeSection = ref('recommend')

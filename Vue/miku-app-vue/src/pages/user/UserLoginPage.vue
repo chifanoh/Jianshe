@@ -224,7 +224,7 @@ const handleSubmit = async () => {
 
       // 跳转到首页或重定向页面
       router.push({
-        path: '',
+        path: '/',
         replace: true,
       })
     } else {

@@ -44,11 +44,6 @@ export async function isAuthenticated(): Promise<boolean> {
     return authCheckPromise
   }
   authCheckPromise = cachedRequest('isAuthenticated', async () => {
-    // 优先判断 cookie 是否为空(是否登录),未登录不执行下面代码
-    // if (!document.cookie) {
-    //   return false
-    // }
-    // 调用后端接口验证 Cookie 是否有效
     try {
       const response = await myAxios.get('/api/user/current')
       return response.data?.code === 200 && response.data?.data != null

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, watchEffect } from 'vue'
 import { UToast } from 'undraw-ui'
 import type { CommentReplyPageApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
 import { getCommentList, submitComment, getRepliesByParentId } from '@/api/comment'
@@ -22,9 +22,9 @@ const loginUserStore = useLoginUserStore()
 
 const config = reactive<ConfigApi>({
   user: {
-    id: loginUserStore.loginUser.id,
-    username: loginUserStore.loginUser.userName,
-    avatar: loginUserStore.loginUser.userAvatar,
+    id: undefined,
+    username: '未登录',
+    avatar: '',
   } as any, // 当前用户信息
   comments: [], // 评论数据
   page: true, // 开启分页
@@ -35,6 +35,19 @@ const config = reactive<ConfigApi>({
     address: false, // 关闭地址信息
     likes: false, // 关闭点赞按钮显示
   },
+})
+
+// 监听登录用户状态变化，更新评论配置中的用户信息
+watchEffect(() => {
+  if (loginUserStore.isLogin) {
+    config.user.id = loginUserStore.loginUser.id || ''
+    config.user.username = loginUserStore.loginUser.userName
+    config.user.avatar = loginUserStore.loginUser.userAvatar || ''
+  } else {
+    config.user.id = ''
+    config.user.username = '未登录'
+    config.user.avatar = ''
+  }
 })
 
 // 模拟请求接口获取评论数据
