@@ -89,19 +89,20 @@ public class UserController {
     public Result<UserVO> current(HttpServletRequest request){
         log.info("密钥验签:{}",request);
 
-            Long uid = BaseContext.getCurrentId();
-            if (uid == null){
-                return Result.error("未登录");
-            }
-            //3.查库
-            User user = userService.current(uid);
-            //验签通过返回给前端
-            UserVO userVO = UserVO.builder()
-                    .id(user.getId())
-                    .avatar(user.getAvatar())
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .build();
-            return Result.success(userVO);
+        Long uid = BaseContext.getCurrentId();
+        if (uid == null){
+            return Result.error("未登录");
+        }
+
+        //查库
+        User user = userService.current(uid);
+        //验签通过返回给前端
+        UserVO userVO = UserVO.builder()
+                .id(user.getId())
+                .avatar(user.getAvatar())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+        return Result.success(userVO);
     }
 }
