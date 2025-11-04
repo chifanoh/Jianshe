@@ -40,7 +40,7 @@ public class ArticlesContrller {
      */
     @GetMapping("/{id}")
     public Result<ArticleDetailVO> getArticleDetail(@PathVariable Integer id){
-        log.info("文章分页查询结果:{}",id);
+        log.info("文章详细页查询结果:{}",id);
         ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id);
         return Result.success(articleDetailVO);
     }
@@ -50,7 +50,7 @@ public class ArticlesContrller {
      * @param createArticlesDTO
      */
     @PostMapping("/create")
-    public Result createArtics(@RequestBody CreateArticlesDTO createArticlesDTO, HttpServletRequest request){
+    public Result createArtics(@RequestBody CreateArticlesDTO createArticlesDTO){
         log.info("用户发布的文章:{}", createArticlesDTO);
 
         //判断标题是否为空

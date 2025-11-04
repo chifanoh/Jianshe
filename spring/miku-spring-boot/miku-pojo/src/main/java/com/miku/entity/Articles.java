@@ -21,7 +21,6 @@ public class Articles implements Serializable {
     /**
     * 主键ID
     */
-    @TableId(value = "id", type = IdType.AUTO) //主键id不使用雪花算法
     private Long id;
 
     /**

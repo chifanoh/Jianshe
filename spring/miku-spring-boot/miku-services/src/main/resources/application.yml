@@ -11,31 +11,37 @@ spring:
 
 logging:
   level:
-    #全局日志拦截等级:warn (日志过多,过于丑陋)
+    # 全局日志拦截等级:warn (需要开启)
     root: warn
     com:
       miku:
-        #只打印业务模块日志
+        # 只打印业务模块日志 (根据需求开启)
         controller: info
         service: info
 
 mybatis:
-  #Mapper XML 文件路径
+  # Mapper XML 文件路径
   mapper-locations: classpath:mapper/*.xml
-  #实体类别名包路径
+  # 实体类别名包路径
   type-aliases-package: com.miku.entity
-  #开启驼峰命名映射（下划线转驼峰）
+  # 开启驼峰命名映射 (下划线转驼峰)
   configuration:
     map-underscore-to-camel-case: true
 
+mybatis-plus:
+  global-config:
+    db-config:
+      # 数据库自增id (使用MP默认开启雪花id)
+      id-type: auto
+
 miku:
   jwt:
-    #用户端:
-    # 设置jwt过期时间
+    # 用户端:
+    # 设置jwt过期时间 (7天)
     user-ttl: 604800000
     # 设置jwt签名加密时使用的秘钥
     user-secret-key: mikuit
     # 设置前端传递过来的令牌名称
     user-token-name: tokename
-    #设置Cookie请求头名称
+    # 设置Cookie请求头名称
     cookie-name: access_token

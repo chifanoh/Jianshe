@@ -1,11 +1,13 @@
 package com.miku.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
 * 评论表
@@ -44,12 +46,12 @@ public class Comment implements Serializable {
     /**
     * 评论时间
     */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
     * 更新时间
     */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
     * 点赞数
