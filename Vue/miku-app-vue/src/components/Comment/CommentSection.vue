@@ -3,11 +3,15 @@
     <u-comment
       :config="config"
       @submit="handleSubmit"
-      @like="handleLike"
       @reply-page="handleReplyPage"
+      @reply-click="onReplyClick"
       @focus="handleFocus"
       @cancel="handleCancel"
     >
+      <!-- 把二级回复按钮暴露出来 -->
+      <template #reply-btn="{ comment }">
+        <span @click="onReplyClick(comment)">回复</span>
+      </template>
     </u-comment>
   </u-comment-scroll>
 </template>
@@ -17,7 +21,7 @@ import { reactive, ref, onMounted, watch } from 'vue'
 import { UToast } from 'undraw-ui'
 import type { CommentApi, CommentSubmitApi, ConfigApi, CommentReplyPageApi } from 'undraw-ui'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
-import { getComments, submitComment, likeComment, getCommentReplies } from '@/api/comment'
+import { getComments, submitComment, getCommentReplies } from '@/api/comment'
 
 // Props定义
 interface Props {
@@ -80,6 +84,70 @@ watch(
   { immediate: true },
 )
 
+// 先存被回复人
+const replyTarget = ref<{ username: string; uid: string | number } | null>(null)
+
+function onReplyClick(comment: CommentApi) {
+  replyTarget.value = { username: comment.user.username, uid: comment.uid }
+}
+
+// 提交评论 - 使用官方推荐的finish结构
+const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => {
+  try {
+    // 检查用户是否登录
+    if (!loginUserStore.isLogin) {
+      UToast({
+        message: '请先登录后再评论',
+        type: 'warn',
+      })
+      return
+    }
+
+    /* === 唯一新增：拼高亮前缀 === */
+    const prefix = replyTarget.value
+      ? `<span style="color: var(--u-color-success-dark-2);">@${replyTarget.value.username}</span> `
+      : ''
+    const realContent = prefix + content.trim()
+    /* =========================== */
+
+    // 调用API提交评论
+    const response = await submitComment(realContent, props.articleId, parentId)
+    if (response.data.code === 200) {
+      const newComment = response.data.data
+
+      // 构建符合组件格式的评论数据
+      const comment: CommentApi = {
+        id: newComment.id,
+        parentId: newComment.parentId || null,
+        uid: loginUserStore.loginUser.id || '',
+        content: realContent,
+        likes: newComment.likes || 0,
+        createTime: newComment.createTime,
+        user: {
+          username: loginUserStore.loginUser.userName,
+          avatar: loginUserStore.loginUser.userAvatar || '/UserAvatar.svg',
+        },
+        reply: null,
+      }
+      // 使用finish回调通知组件评论提交成功
+      finish(comment)
+      replyTarget.value = null // 清空状态
+      UToast({ message: '评论成功!', type: 'info' })
+    } else {
+      UToast({
+        message: '评论失败',
+        type: 'error',
+      })
+    }
+  } catch (error) {
+    console.error('提交评论失败:', error)
+    UToast({
+      message: '网络错误，请稍后重试',
+      type: 'error',
+    })
+  }
+}
+
 // 加载评论数据
 const more = async (page: number = 1) => {
   try {
@@ -125,80 +193,6 @@ const more = async (page: number = 1) => {
     }
   } catch (error) {
     console.error('加载评论失败:', error)
-    UToast({
-      message: '网络错误，请稍后重试',
-      type: 'error',
-    })
-  }
-}
-
-// 提交评论 - 使用官方推荐的finish结构
-const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => {
-  try {
-    // 检查用户是否登录
-    if (!loginUserStore.isLogin) {
-      UToast({
-        message: '请先登录后再评论',
-        type: 'warn',
-      })
-      return
-    }
-    // 调用API提交评论
-    const response = await submitComment(content, props.articleId, parentId)
-    if (response.data.code === 200) {
-      const newComment = response.data.data
-
-      // 构建符合组件格式的评论数据
-      const comment: CommentApi = {
-        id: newComment.id,
-        parentId: newComment.parentId || null,
-        uid: loginUserStore.loginUser.id || '',
-        content: newComment.content,
-        likes: newComment.likes || 0,
-        createTime: newComment.createTime,
-        user: {
-          username: loginUserStore.loginUser.userName,
-          avatar: loginUserStore.loginUser.userAvatar || '/UserAvatar.svg',
-        },
-        reply: null,
-      }
-      // 使用finish回调通知组件评论提交成功
-      finish(comment)
-      UToast({ message: '评论成功!', type: 'info' })
-    } else {
-      UToast({
-        message: '评论失败',
-        type: 'error',
-      })
-    }
-  } catch (error) {
-    console.error('提交评论失败:', error)
-    UToast({
-      message: '网络错误，请稍后重试',
-      type: 'error',
-    })
-  }
-}
-
-// 点赞评论
-const handleLike = async (id: string) => {
-  try {
-    const response = await likeComment(id)
-
-    if (response.data.code === 200) {
-      UToast({
-        message: '点赞成功！',
-        type: 'success',
-        duration: 1500,
-      })
-    } else {
-      UToast({
-        message: response.data.msg || '点赞失败',
-        type: 'error',
-      })
-    }
-  } catch (error) {
-    console.error('点赞失败:', error)
     UToast({
       message: '网络错误，请稍后重试',
       type: 'error',

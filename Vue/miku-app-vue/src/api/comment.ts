@@ -59,18 +59,6 @@ export const deleteComment = async (commentId: string) => {
 }
 
 /**
- * 点赞评论
- * @param commentId 评论ID
- * @returns 点赞结果
- */
-export const likeComment = async (commentId: string) => {
-  return myAxios.request({
-    url: `/api/comment/like/${commentId}`,
-    method: 'POST',
-  })
-}
-
-/**
  * 获取评论回复列表
  * @param parentId 父评论ID
  * @param page 页码
