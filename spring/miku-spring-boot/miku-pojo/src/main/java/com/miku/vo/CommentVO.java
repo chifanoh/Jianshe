@@ -39,9 +39,6 @@ public class CommentVO {
     //评论时间
     private LocalDateTime createTime;
 
-    //点赞数
-    private Integer likes;
-
     //子评论列表,用于前端展示多级评论结构
     private List<CommentVO> replies;
 }

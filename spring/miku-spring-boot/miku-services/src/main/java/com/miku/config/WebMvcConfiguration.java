@@ -15,8 +15,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     //final常量拦截字段
     public final class SkipJwtUrls{
         public static final String[] LIST = {
-                "/api/article/create",
                 "/api/user/current",
+                "/api/article/create",
+                "/api/comment/submit",
         };
     }
 

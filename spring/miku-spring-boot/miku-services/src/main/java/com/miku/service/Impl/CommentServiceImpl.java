@@ -1,5 +1,6 @@
 package com.miku.service.Impl;
 
+import com.miku.context.BaseContext;
 import com.miku.dto.CommentDTO;
 import com.miku.entity.Comment;
 import com.miku.mapper.CommentMapper;
@@ -27,10 +28,15 @@ public class CommentServiceImpl implements CommentService {
         //对象拷贝
         BeanUtils.copyProperties(commentDTO, comment);
 
+        Long userId = BaseContext.getCurrentId();
+
         //设置发布和修改时间
         comment.setCreateTime(LocalDateTime.now());
         comment.setUpdateTime(LocalDateTime.now());
+        comment.setUserId(userId);
         commentMapper.insert(comment);
+        commentDTO.setId(comment.getId());
         return commentDTO;
+
     }
 }
