@@ -1,7 +1,8 @@
 <template>
+  <div class="mask"></div>
   <div class="main-section-container">
-    <!-- 骨架屏加载状态 -->
     <div v-if="loading" class="skeleton-container">
+      <!-- 骨架屏加载状态 -->
       <div class="article-content">
         <!-- 左侧统计骨架 -->
         <div class="skeleton-sidebar-left">
@@ -9,7 +10,6 @@
           <n-skeleton height="80px" width="80px" :sharp="false" />
           <n-skeleton height="80px" width="80px" :sharp="false" />
         </div>
-
         <!-- 中间内容骨架 -->
         <div class="skeleton-content-area">
           <div class="skeleton-header">
@@ -30,7 +30,6 @@
             />
           </div>
         </div>
-
         <!-- 右侧用户骨架 -->
         <div class="skeleton-sidebar-right">
           <n-skeleton height="200px" width="280px" :sharp="false" />
@@ -280,6 +279,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.mask {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  z-index: 0;
+  background-color: #f7f8fa;
+}
+
 .main-section-container {
   position: relative;
   margin: 0 auto;

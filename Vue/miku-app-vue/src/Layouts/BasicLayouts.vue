@@ -4,7 +4,6 @@
       <div id="basicLayouts">
         <GloubalHeader />
         <div class="content-wrap">
-          <!-- 路由出口-缓存页面,减少不必要的性能开销 -->
           <router-view v-slot="{ Component }">
             <keep-alive>
               <component :is="Component" />

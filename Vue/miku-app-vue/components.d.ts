@@ -25,6 +25,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     UComment: typeof import('undraw-ui')['UComment']
     UCommentNav: typeof import('undraw-ui')['UCommentNav']
+    UCommentScroll: typeof import('undraw-ui')['UCommentScroll']
   }
 }
 
@@ -43,4 +44,5 @@ declare global {
   const RouterView: typeof import('vue-router')['RouterView']
   const UComment: typeof import('undraw-ui')['UComment']
   const UCommentNav: typeof import('undraw-ui')['UCommentNav']
+  const UCommentScroll: typeof import('undraw-ui')['UCommentScroll']
 }

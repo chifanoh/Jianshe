@@ -4,14 +4,11 @@
       :config="config"
       @submit="handleSubmit"
       @reply-page="handleReplyPage"
-      @reply-click="onReplyClick"
       @focus="handleFocus"
       @cancel="handleCancel"
     >
       <!-- 把二级回复按钮暴露出来 -->
-      <template #reply-btn="{ comment }">
-        <span @click="onReplyClick(comment)">回复</span>
-      </template>
+      <template #reply-btn> </template>
     </u-comment>
   </u-comment-scroll>
 </template>
@@ -83,14 +80,6 @@ watch(
   },
   { immediate: true },
 )
-
-// 先存被回复人
-const replyTarget = ref<{ username: string; uid: string | number } | null>(null)
-
-function onReplyClick(comment: CommentApi) {
-  replyTarget.value = { username: comment.user.username, uid: comment.uid }
-}
-
 // 提交评论 - 使用官方推荐的finish结构
 const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => {
   try {
@@ -103,15 +92,8 @@ const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => 
       return
     }
 
-    /* === 唯一新增：拼高亮前缀 === */
-    const prefix = replyTarget.value
-      ? `<span style="color: var(--u-color-success-dark-2);">@${replyTarget.value.username}</span> `
-      : ''
-    const realContent = prefix + content.trim()
-    /* =========================== */
-
     // 调用API提交评论
-    const response = await submitComment(realContent, props.articleId, parentId)
+    const response = await submitComment(content, props.articleId, parentId)
     if (response.data.code === 200) {
       const newComment = response.data.data
 
@@ -120,7 +102,7 @@ const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => 
         id: newComment.id,
         parentId: newComment.parentId || null,
         uid: loginUserStore.loginUser.id || '',
-        content: realContent,
+        content: content,
         likes: newComment.likes || 0,
         createTime: newComment.createTime,
         user: {
@@ -131,7 +113,6 @@ const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => 
       }
       // 使用finish回调通知组件评论提交成功
       finish(comment)
-      replyTarget.value = null // 清空状态
       UToast({ message: '评论成功!', type: 'info' })
     } else {
       UToast({
