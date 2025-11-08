@@ -96,6 +96,12 @@ public class ArticlesServiceImpl implements ArticlesService {
         //查询数据库
         //1.获取文章详细页
         Articles articles = articlesMapper.selectById(id);
+
+        //文章为空直接返回
+        if (articles == null){
+            return null;
+        }
+
         //2.获取用户信息
         Long uid = articles.getUserId();
         User user = userMapper.selectById(uid);

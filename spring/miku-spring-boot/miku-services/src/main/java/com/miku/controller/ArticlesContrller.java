@@ -42,6 +42,10 @@ public class ArticlesContrller {
     public Result<ArticleDetailVO> getArticleDetail(@PathVariable Integer id){
         log.info("文章详细页查询结果:{}",id);
         ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id);
+        //没有该文章
+        if (articleDetailVO == null){
+            return Result.error("啊哦,没有找到该文章!!!");
+        }
         return Result.success(articleDetailVO);
     }
 
