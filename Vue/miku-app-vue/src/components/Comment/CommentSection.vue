@@ -1,12 +1,6 @@
 <template>
   <u-comment-scroll :disable="disable" @more="more">
-    <u-comment
-      :config="config"
-      @submit="handleSubmit"
-      @reply-page="handleReplyPage"
-      @focus="handleFocus"
-      @cancel="handleCancel"
-    >
+    <u-comment :config="config" @submit="handleSubmit" @focus="handleFocus" @cancel="handleCancel">
       <!-- 把二级回复按钮暴露出来 -->
       <template #reply-btn> </template>
     </u-comment>
@@ -16,9 +10,9 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, watch } from 'vue'
 import { UToast } from 'undraw-ui'
-import type { CommentApi, CommentSubmitApi, ConfigApi, CommentReplyPageApi } from 'undraw-ui'
+import type { CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
-import { getComments, submitComment, getCommentReplies } from '@/api/comment'
+import { getComments, submitComment } from '@/api/comment'
 
 // Props定义
 interface Props {
@@ -80,6 +74,7 @@ watch(
   },
   { immediate: true },
 )
+
 // 提交评论 - 使用官方推荐的finish结构
 const handleSubmit = async ({ content, parentId, finish }: CommentSubmitApi) => {
   try {
@@ -135,91 +130,58 @@ const more = async (page: number = 1) => {
     const response = await getComments(props.articleId, page, pageSize.value)
 
     if (response.data.code === 200) {
-      const { records } = response.data.data
+      const { records, total } = response.data.data
 
-      // 转换后端数据格式为组件需要的格式
-      const formattedComments = records.map((comment: any) => ({
-        id: comment.id,
-        parentId: comment.parentId || null,
-        uid: comment.userId,
-        content: comment.content,
-        likes: comment.likes || 0,
-        createTime: comment.createTime,
-        user: {
-          username: comment.userName,
-          avatar: comment.userAvatar,
-        },
-        reply:
-          comment.replyCount > 0
+      const formattedComments: CommentApi[] = records.map((c: any) => {
+        // 映射后端评论结构到 CommentApi
+        const comment: CommentApi = {
+          id: c.id,
+          parentId: c.parentId || null,
+          uid: c.userId,
+          content: c.content,
+          likes: c.likes || 0,
+          createTime: c.createTime,
+          user: { username: c.userName, avatar: c.userAvatar },
+          // 直接使用后端嵌套的 reply 对象
+          reply: c.reply
             ? {
-                total: comment.replyCount,
-                list: [], // 初始化为空，通过reply-page事件加载
+                total: c.reply.total,
+                list: c.reply.list.map((r: any) => ({
+                  id: r.id,
+                  parentId: r.parentId,
+                  uid: r.userId,
+                  content: r.content,
+                  likes: r.likes || 0,
+                  createTime: r.createTime,
+                  user: { username: r.userName, avatar: r.userAvatar },
+                  reply: null, // 回复的回复暂时不处理
+                })),
               }
-            : null,
-      }))
+            : null, // 如果没有回复，则设置为 null
+        }
+        return comment
+      })
 
-      config.comments = formattedComments
+      if (page === 1) {
+        config.comments = formattedComments
+      } else {
+        config.comments = [...config.comments, ...formattedComments]
+      }
+
       currentPage.value = page
+      const hasMore = config.comments.length < total
+      disable.value = !hasMore
 
       UToast({
-        message: `成功加载 ${formattedComments.length} 条评论`,
         type: 'success',
         duration: 1500,
       })
     } else {
-      UToast({
-        message: response.data.msg || '加载评论失败',
-        type: 'error',
-      })
+      UToast({ message: response.data.msg || '加载评论失败', type: 'error' })
     }
   } catch (error) {
     console.error('加载评论失败:', error)
-    UToast({
-      message: '网络错误，请稍后重试',
-      type: 'error',
-    })
-  }
-}
-
-// 加载评论回复 - 使用官方推荐的finish结构
-const handleReplyPage = async ({ parentId, current, size, finish }: CommentReplyPageApi) => {
-  try {
-    const response = await getCommentReplies(parentId, current, size)
-
-    if (response.data.code === 200) {
-      const { records, total } = response.data.data
-
-      // 转换回复数据格式
-      const replyList = records.map((reply: any) => ({
-        id: reply.id,
-        parentId: reply.parentId,
-        uid: reply.userId,
-        content: reply.content,
-        likes: reply.likes || 0,
-        createTime: reply.createTime,
-        user: {
-          username: reply.userName,
-          avatar: reply.userAvatar || '/UserAvatar.svg',
-        },
-      }))
-
-      // 使用finish回调返回回复数据
-      finish({
-        total,
-        list: replyList,
-      })
-    } else {
-      UToast({
-        message: response.data.msg || '加载回复失败',
-        type: 'error',
-      })
-    }
-  } catch (error) {
-    console.error('加载回复失败:', error)
-    UToast({
-      message: '网络错误，请稍后重试',
-      type: 'error',
-    })
+    UToast({ message: '网络错误，请稍后重试', type: 'error' })
   }
 }
 
@@ -246,8 +208,7 @@ onMounted(async () => {
     await loginUserStore.loadUserFromCache()
   }
 
-  // 加载评论数据
-  await more()
+  await more(1)
 })
 
 // 暴露给父组件的方法

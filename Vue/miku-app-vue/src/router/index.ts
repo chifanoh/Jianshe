@@ -2,7 +2,7 @@ import HomePage from '@/pages/HomePage.vue'
 import UserLoginPage from '@/pages/user/UserLoginPage.vue'
 import UserRegisterPage from '@/pages/user/UserRegisterPage.vue'
 import ArticleDetail from '@/components/Article/ArticleDetail.vue'
-import NotFoundPage from '@/pages/NotFoundPage.vue'
+import NotFoundPage from '@/Result/NotFoundPage.vue'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [

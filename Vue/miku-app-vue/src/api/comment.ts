@@ -11,14 +11,13 @@ import { myAxios } from '@/request'
  * @param size 每页大小
  * @returns 评论列表数据
  */
-export const getComments = async (articleId: string, page: number = 1, size: number = 10) => {
+export const getComments = async (articleId: string, page: number = 1, pageSize: number = 10) => {
   return myAxios.request({
-    url: '/api/comment/list',
+    url: `/api/comment/list/${articleId}`,
     method: 'GET',
     params: {
-      articleId,
       page,
-      size,
+      pageSize,
     },
   })
 }

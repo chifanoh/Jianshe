@@ -175,19 +175,14 @@
       </div>
     </div>
 
-    <!-- 错误状态 -->
-    <div v-else-if="error" class="error-state">
-      <div class="error-icon">😢</div>
-      <h3>文章加载失败</h3>
-      <p>{{ error }}</p>
-      <button @click="loadArticle" class="retry-btn">重新加载</button>
+    <!-- 网络错误状态 -->
+    <div v-else-if="error === 'network_error'">
+      <ServerError />
     </div>
 
-    <!-- 空状态 -->
-    <div v-else class="empty-state">
-      <div class="empty-icon">📄</div>
-      <h3>文章不存在</h3>
-      <p>该文章可能已被删除或不存在</p>
+    <!-- 文章不存在状态 -->
+    <div v-else-if="error === 'article_not_found'">
+      <LostError />
     </div>
   </div>
 </template>
@@ -196,6 +191,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleDetail } from '@/api/article'
+import ServerError from '@/Result/ServerError.vue'
+import LostError from '@/Result/LostError.vue'
 import type { Article } from '@/types/article'
 
 // 路由和状态
@@ -220,11 +217,12 @@ const loadArticle = async () => {
     const response = await getArticleDetail(String(articleId))
     if (response.data.code === 200) {
       article.value = response.data.data
-    } else {
-      error.value = response.data.msg || '获取文章失败'
+    } else if (response.data.code === 500) {
+      error.value = 'article_not_found'
     }
   } catch (err) {
-    error.value = '网络错误，请稍后重试'
+    // 网络请求错误，显示网络错误
+    error.value = 'network_error'
     console.error('加载文章失败:', err)
   } finally {
     loading.value = false
@@ -295,7 +293,7 @@ onMounted(() => {
   position: relative;
   margin: 0 auto;
   height: 100%;
-  padding: 82px 0 24px;
+  padding: 80px 0 0px;
   box-sizing: content-box;
 }
 
@@ -697,50 +695,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-/* 错误和空状态 */
-.error-state,
-.empty-state {
-  text-align: center;
-  padding: 80px 20px;
-  color: #666;
-}
-
-.error-icon,
-.empty-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-}
-
-.error-state h3,
-.empty-state h3 {
-  font-size: 20px;
-  margin: 0 0 8px 0;
-  color: #333;
-}
-
-.error-state p,
-.empty-state p {
-  font-size: 16px;
-  margin: 0 0 24px 0;
-  color: #666;
-}
-
-.retry-btn {
-  padding: 12px 24px;
-  background: #1890ff;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-
-.retry-btn:hover {
-  background: #40a9ff;
-  transform: translateY(-1px);
 }
 
 .icon-white {

@@ -135,7 +135,6 @@
       <!-- 右导航栏 -->
       <div class="home-sub">
         <n-date-picker panel type="date" />
-        <n-marquee speed="30"> 三十年河东，三十年河西，莫欺少年穷 </n-marquee>
       </div>
     </div>
   </div>

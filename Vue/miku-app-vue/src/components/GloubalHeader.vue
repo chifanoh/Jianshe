@@ -128,13 +128,14 @@
         </n-dropdown>
         <!-- 未登录时显示登录链接 -->
         <router-link v-else to="/user/login" class="login-avatar">
-          <div class="avatar" style="width: 40px; height: 40px; min-width: 40px">
-            <img
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmMGYwZjAiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNiIgcj0iNiIgZmlsbD0iI2NjYyIvPgo8cGF0aCBkPSJNMTIgMzJDOCAzMiA4IDI4IDggMjRIMzJDMzIgMjggMzIgMzIgMjggMzJIMTJ6IiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo="
-              alt="登录"
-              style="object-fit: cover; width: 100%; height: 100%; border-radius: 50%"
-            />
-          </div>
+          <n-dropdown
+            ><div class="avatar" style="width: 40px; height: 40px; min-width: 40px">
+              <img
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmMGYwZjAiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNiIgcj0iNiIgZmlsbD0iI2NjYyIvPgo8cGF0aCBkPSJNMTIgMzJDOCAzMiA4IDI4IDggMjRIMzJDMzIgMjggMzIgMzIgMjggMzJIMTJ6IiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo="
+                alt="登录"
+                style="object-fit: cover; width: 100%; height: 100%; border-radius: 50%"
+              /></div
+          ></n-dropdown>
         </router-link>
       </div>
     </div>
@@ -269,8 +270,9 @@ async function submitCallback() {
 .header {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
+  width: 100vw;
+  margin: 0 auto;
+  min-width: 1268px;
   background-color: rgb(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
   z-index: 1000;
@@ -404,7 +406,7 @@ async function submitCallback() {
 }
 
 .login-avatar:hover {
-  opacity: 0.7;
+  filter: brightness(0.95);
 }
 
 /* 发布模态框样式 */
