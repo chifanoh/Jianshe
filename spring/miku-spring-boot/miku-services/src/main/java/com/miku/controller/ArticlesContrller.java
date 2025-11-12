@@ -1,13 +1,12 @@
 package com.miku.controller;
 
 import com.miku.context.BaseContext;
-import com.miku.dto.ArticlesPageQueryDTO;
+import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.result.PageResult;
 import com.miku.result.Result;
 import com.miku.service.ArticlesService;
 import com.miku.vo.ArticleDetailVO;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +22,13 @@ public class ArticlesContrller {
 
     /**
      * 文章查询
-     * @param articlesPageQueryDTO
+     * @param pageQueryDTO
      * @return
      */
     @GetMapping("/list")
-    public Result<PageResult> getArticlesList(ArticlesPageQueryDTO articlesPageQueryDTO){
-        log.info("文章分页查询结果:{}",articlesPageQueryDTO);
-        PageResult pageResult = articlesService.pageQuery(articlesPageQueryDTO);
+    public Result<PageResult> getArticlesList(PageQueryDTO pageQueryDTO){
+        log.info("文章分页查询结果:{}", pageQueryDTO);
+        PageResult pageResult = articlesService.pageQuery(pageQueryDTO);
         return Result.success(pageResult);
     }
 

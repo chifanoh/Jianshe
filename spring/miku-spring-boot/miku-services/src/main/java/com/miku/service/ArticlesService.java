@@ -1,6 +1,6 @@
 package com.miku.service;
 
-import com.miku.dto.ArticlesPageQueryDTO;
+import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.result.PageResult;
 import com.miku.vo.ArticleDetailVO;
@@ -8,10 +8,10 @@ import com.miku.vo.ArticleDetailVO;
 public interface ArticlesService {
     /**
      * 文章查询
-     * @param articlesPageQueryDTO
+     * @param pageQueryDTO
      * @return
      */
-    PageResult pageQuery(ArticlesPageQueryDTO articlesPageQueryDTO);
+    PageResult pageQuery(PageQueryDTO pageQueryDTO);
 
     /**
      * 获取文章详细页

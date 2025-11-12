@@ -1,10 +1,10 @@
 package com.miku.controller;
 
 import com.miku.dto.CommentDTO;
-import com.miku.entity.Comment;
+import com.miku.dto.PageQueryDTO;
+import com.miku.result.PageResult;
 import com.miku.result.Result;
 import com.miku.service.CommentService;
-import com.miku.vo.CommentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,9 @@ public class CommentController {
     @PostMapping("/submit")
     public Result<CommentDTO> putComment(@RequestBody CommentDTO commentDTO){
         log.info("提交评论:{}",commentDTO);
+        if(commentDTO.getContent() == null){
+            return Result.error("error");
+        }
         CommentDTO comment = commentService.putComment(commentDTO);
         return Result.success(comment);
     }
@@ -36,8 +39,9 @@ public class CommentController {
      * @return
      */
     @GetMapping("/list/{articleId}")
-    public Result<CommentVO> getCommentList(@PathVariable Long articleId){
+    public Result<PageResult> getCommentList(@PathVariable Long articleId, PageQueryDTO pageQueryDTO){
         log.info("获取评论列表:{}",articleId);
-        return Result.success();
+        PageResult pageResult = commentService.getCommentList(articleId,pageQueryDTO);
+        return Result.success(pageResult);
     }
 }

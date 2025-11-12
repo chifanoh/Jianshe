@@ -1,6 +1,7 @@
 package com.miku.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,19 +20,13 @@ public class CommentVO {
     private Long userId;
 
     //用户名
-    private String username;
+    private String userName;
 
     //用户头像
     private String userAvatar;
 
-    //所属文章ID
-    private Long articleId;
-
     //父评论ID.用于前端判断评论层级关系
     private Long parentId;
-
-    //如果是回复评论,显示父评论用户的昵称
-    private String parentUsername;
 
     //评论内容
     private String content;
@@ -39,6 +34,13 @@ public class CommentVO {
     //评论时间
     private LocalDateTime createTime;
 
-    //子评论列表,用于前端展示多级评论结构
-    private List<CommentVO> replies;
+    //二级评论
+    private Reply reply;
+
+    @Data
+    @AllArgsConstructor
+    public static class Reply {
+        private Integer total;
+        private List<CommentVO> list;
+    }
 }

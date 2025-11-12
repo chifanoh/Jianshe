@@ -2,7 +2,7 @@ package com.miku.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.miku.dto.ArticlesPageQueryDTO;
+import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.entity.Articles;
 import com.miku.entity.User;
@@ -34,34 +34,34 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     /**
      * 文章查询
-     * @param articlesPageQueryDTO
+     * @param pageQueryDTO
      * @return
      */
     @Override
-    public PageResult pageQuery(ArticlesPageQueryDTO articlesPageQueryDTO) {
-        //设置分页参数
-        Page<Articles> page = new Page<>(articlesPageQueryDTO.getPage(),articlesPageQueryDTO.getPageSize());
+    public PageResult pageQuery(PageQueryDTO pageQueryDTO) {
+        // 设置分页参数
+        Page<Articles> page = new Page<>(pageQueryDTO.getPage(), pageQueryDTO.getPageSize());
 
-        //构建查询条件
+        // 构建查询条件
         LambdaQueryWrapper<Articles> queryWrapper = new LambdaQueryWrapper<>();
 
         //执行分页查询，查询Articles表
         Page<Articles> pageResult = articlesMapper.selectPage(page,queryWrapper);
 
-        //收集userid，分开查询后组装
+        // 收集userid，分开查询后组装
         ArrayList<Long> userId = new ArrayList<>();
         for (Articles id : pageResult.getRecords()) {
             userId.add(id.getUserId());
         }
-        //查询user表
+        // 查询user表
         List<User> userList = userMapper.selectBatchIds(userId);
-        //把用户转成 Map<Integer, User> 方便后面取
+        // 把用户转成 Map<Integer, User> 方便后面取
         Map<Long,User> userMap = new HashMap<>();
         for (User u : userList) {
             userMap.put(u.getId(), u);
         }
 
-        //遍历文章，组装VO
+        // 遍历文章，组装VO
         ArrayList<ArticlesVO> articlesVO = new ArrayList<>();
         for (Articles po : pageResult.getRecords()) {
             ArticlesVO vo = new ArticlesVO();
@@ -93,20 +93,20 @@ public class ArticlesServiceImpl implements ArticlesService {
      */
     @Override
     public ArticleDetailVO getArticleDetail(Integer id) {
-        //查询数据库
-        //1.获取文章详细页
+        // 查询数据库
+        // 1.获取文章详细页
         Articles articles = articlesMapper.selectById(id);
 
-        //文章为空直接返回
+        // 文章为空直接返回
         if (articles == null){
             return null;
         }
 
-        //2.获取用户信息
+        // 2.获取用户信息
         Long uid = articles.getUserId();
         User user = userMapper.selectById(uid);
 
-        //数据拷贝
+        // 数据拷贝
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
         UserArticleDetailVO userArticleDetailVO = new UserArticleDetailVO();
         BeanUtils.copyProperties(articles,articleDetailVO);
