@@ -273,10 +273,10 @@ async function submitCallback() {
   width: 100vw;
   margin: 0 auto;
   min-width: 1268px;
-  background-color: rgb(255, 255, 255, 0.5);
+  background-color: rgb(255, 255, 255, 0.8);
   backdrop-filter: blur(5px);
   z-index: 1000;
-  box-shadow: 0 0 3px rgb(200, 200, 200);
+  border-bottom: solid 1px #e0e0e0;
 }
 
 .header-inner {
