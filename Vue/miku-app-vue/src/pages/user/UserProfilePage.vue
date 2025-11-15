@@ -1,22 +1,34 @@
 <template>
+  <div class="mask"></div>
   <div id="userProfilePage">
     <div class="main-content-section">
       <div class="main-box flex">
         <div class="flex">
           <div class="container">
             <div class="info-section mb-12">
-              <div class="top-row">
-                <img :src="avatarSrc" class="top-avatar" alt="avatar" />
+              <div class="main-info-section">
+                <div class="flex mb-15">
+                  <div class="icon-section">
+                    <div class="mr-24">
+                      <img :src="avatarSrc" class="top-avatar" alt="avatar" />
+                    </div>
+                  </div>
+                  <div class="user-base-info">
+                    <div class="flex-vertical-center">
+                      <span class="top-name">{{ userName }}</span>
+                    </div>
+                    <div class="">
+                      <span class="top-id">ID: {{ loginUserStore.loginUser.id || '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class=""></div>
+
                 <div class="top-info">
-                  <div class="top-name">{{ userName }}</div>
-                  <div class="top-id">ID: {{ loginUserStore.loginUser.id || '-' }}</div>
                   <div class="top-meta">
                     <span>关注：0</span>
                     <span>粉丝：0</span>
                     <span>获赞：0</span>
-                  </div>
-                  <div class="top-sign">
-                    {{ loginUserStore.loginUser.userProfile || '这个人很懒，还没有签名。' }}
                   </div>
                   <button class="btn btn-primary top-edit" @click="menuValue = 'edit'">
                     编辑资料
@@ -57,15 +69,9 @@
                   </div>
                   <div v-else>
                     <h2 class="title">编辑资料</h2>
-                    <div class="edit-profile">
-                      <img :src="avatarSrc" class="edit-avatar" alt="avatar" />
-                      <div class="btn-group">
-                        <button class="btn btn-primary" style="margin-right: 8px">修改头像</button>
-                        <button class="btn">选择挂件</button>
-                      </div>
-                    </div>
                   </div>
                 </div>
+
                 <div class="content-section">
                   <div v-if="menuValue === 'posts'">
                     <div class="panel-placeholder">暂无数据</div>
@@ -78,6 +84,14 @@
                   </div>
                   <div v-else-if="menuValue === 'follows'">
                     <div class="panel-placeholder">暂无数据</div>
+                  </div>
+                  <div v-else>
+                    <div class="edit-profile">
+                      <img :src="avatarSrc" class="edit-avatar" alt="avatar" />
+                      <div class="btn-group">
+                        <button class="btn btn-primary" style="margin-right: 8px">修改头像</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -127,6 +141,18 @@ const defaultAvatar =
   padding: 80px 0 24px;
 }
 
+.mask {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  z-index: 0;
+  background-color: #f7f8fa;
+}
+
 .flex {
   display: flex;
 }
@@ -137,6 +163,14 @@ const defaultAvatar =
 
 .mb-8 {
   margin-bottom: 8px;
+}
+
+.mb-15 {
+  margin-bottom: 15px;
+}
+
+.mr-24 {
+  margin-right: 24px;
 }
 
 .text-18 {
@@ -194,6 +228,10 @@ const defaultAvatar =
   height: auto;
 }
 
+.flex-vertical-center {
+  display: flex;
+}
+
 .btn {
   height: 28px;
   line-height: 28px;
@@ -203,46 +241,52 @@ const defaultAvatar =
   background: #fff;
   cursor: pointer;
 }
+
 .btn-primary {
   border-color: #1890ff;
   background: #1890ff;
   color: #fff;
 }
-.top-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+
 .top-avatar {
   width: 72px;
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
 }
+
 .top-info {
   flex: 1;
 }
+
 .top-name {
-  font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
+  max-width: 292px;
+  font-size: 24px;
+  line-height: 32px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--kr-basic-black);
 }
+
 .top-id {
   margin-top: 4px;
   color: #999;
   font-size: 13px;
 }
+
 .top-meta {
   display: flex;
   gap: 16px;
   margin-top: 8px;
 }
-.top-sign {
-  margin-top: 8px;
-  color: #666;
-}
+
 .top-edit {
   margin-top: 12px;
 }
+
 .main-content-section {
   height: 100%;
   width: 1208px;
@@ -251,17 +295,24 @@ const defaultAvatar =
   justify-content: center;
   z-index: 1;
 }
+
+.main-info-section {
+  position: relative;
+}
+
 .main-box {
   display: flex;
   position: relative;
   justify-content: center;
 }
+
 .content {
   box-sizing: border-box;
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
 .menu-item {
   display: flex;
   align-items: center;
@@ -270,9 +321,11 @@ const defaultAvatar =
   border-radius: 6px;
   cursor: pointer;
 }
+
 .menu-item:hover {
   background: #f5f5f5;
 }
+
 .menu-item.active {
   background: #e6f7ff;
   color: #1890ff;
@@ -298,15 +351,18 @@ const defaultAvatar =
 .panel-placeholder {
   color: #999;
 }
+
 .edit-profile {
   display: flex;
   align-items: center;
   gap: 16px;
 }
+
 .edit-avatar {
   width: 72px;
   height: 72px;
 }
+
 .content-section {
   position: relative;
 }
