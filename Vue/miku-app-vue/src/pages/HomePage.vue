@@ -97,37 +97,39 @@
 
       <!-- 内容区域 -->
       <div class="home-center">
-        <!-- 轮播图 -->
-        <div class="home-header">
-          <n-carousel
-            class="n-carousel-item"
-            autoplay
-            :interval="2500"
-            effect="card"
-            prev-slide-style="transform: translateX(-120%) translateZ(-800px);"
-            next-slide-style="transform: translateX(20%) translateZ(-800px);"
-            style="height: 240px"
-            :show-dots="false"
-          >
-            <n-carousel-item :style="{ width: '70%' }">
-              <img class="carousel-img" src="@/assets/image/lxq01.png" />
-            </n-carousel-item>
-            <n-carousel-item :style="{ width: '70%' }">
-              <img class="carousel-img" src="@/assets/image/lxq02.png" />
-            </n-carousel-item>
-            <n-carousel-item :style="{ width: '70%' }">
-              <img class="carousel-img" src="@/assets/image/lxq03.png" />
-            </n-carousel-item>
-            <n-carousel-item :style="{ width: '70%' }">
-              <img class="carousel-img" src="@/assets/image/lxq02.png" />
-            </n-carousel-item>
-          </n-carousel>
-        </div>
+        <div class="mr-12 main-section">
+          <!-- 轮播图 -->
+          <div class="home-header">
+            <n-carousel
+              class="n-carousel-item"
+              autoplay
+              :interval="2500"
+              effect="card"
+              prev-slide-style="transform: translateX(-120%) translateZ(-800px);"
+              next-slide-style="transform: translateX(20%) translateZ(-800px);"
+              style="height: 240px"
+              :show-dots="false"
+            >
+              <n-carousel-item :style="{ width: '70%' }">
+                <img class="carousel-img" src="@/assets/image/lxq01.png" />
+              </n-carousel-item>
+              <n-carousel-item :style="{ width: '70%' }">
+                <img class="carousel-img" src="@/assets/image/lxq02.png" />
+              </n-carousel-item>
+              <n-carousel-item :style="{ width: '70%' }">
+                <img class="carousel-img" src="@/assets/image/lxq03.png" />
+              </n-carousel-item>
+              <n-carousel-item :style="{ width: '70%' }">
+                <img class="carousel-img" src="@/assets/image/lxq02.png" />
+              </n-carousel-item>
+            </n-carousel>
+          </div>
 
-        <!-- 论坛区域 -->
-        <div class="home-list mr-12">
-          <div class="home-list-body">
-            <ArticleList />
+          <!-- 论坛区域 -->
+          <div class="home-list">
+            <div class="home-list-body">
+              <ArticleList />
+            </div>
           </div>
         </div>
       </div>
@@ -283,6 +285,11 @@ onMounted(() => {
 
 .mr-8 {
   margin-right: 8px;
+}
+
+.main-section {
+  z-index: 0;
+  height: 100%;
 }
 
 .nav-item {
