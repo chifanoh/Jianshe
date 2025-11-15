@@ -22,17 +22,17 @@
                     </div>
                   </div>
                 </div>
-                <div class=""></div>
-
-                <div class="top-info">
-                  <div class="top-meta">
-                    <span>关注：0</span>
-                    <span>粉丝：0</span>
-                    <span>获赞：0</span>
+                <div class="">
+                  <div class="relation-section">
+                    <span class="item pointer">关注：<span class="number">0</span></span>
+                    <span class="item pointer">粉丝：<span class="number">0</span></span>
+                    <span class="item pointer">获赞：<span class="number">0</span></span>
                   </div>
-                  <button class="btn btn-primary top-edit" @click="menuValue = 'edit'">
-                    编辑资料
-                  </button>
+                  <div class="info-footer mt-20">
+                    <n-button color="#586370" strong secondary @click="menuValue = 'edit'"
+                      >编辑资料
+                    </n-button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -153,6 +153,11 @@ const defaultAvatar =
   background-color: #f7f8fa;
 }
 
+.btn {
+  border: none;
+  cursor: pointer;
+}
+
 .flex {
   display: flex;
 }
@@ -171,6 +176,10 @@ const defaultAvatar =
 
 .mr-24 {
   margin-right: 24px;
+}
+
+.mt-20 {
+  margin-top: 20px;
 }
 
 .text-18 {
@@ -228,24 +237,33 @@ const defaultAvatar =
   height: auto;
 }
 
+.info-footer {
+  width: 96px;
+  height: 40px;
+  font-weight: 500;
+  color: #586370;
+  background: #f3f6f8;
+  border-radius: 4px;
+}
+
+.relation-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #8c95a3;
+  word-break: none;
+}
+
+.number {
+  font-weight: 700;
+  color: #333;
+}
+
 .flex-vertical-center {
   display: flex;
-}
-
-.btn {
-  height: 28px;
-  line-height: 28px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 0 10px;
-  background: #fff;
-  cursor: pointer;
-}
-
-.btn-primary {
-  border-color: #1890ff;
-  background: #1890ff;
-  color: #fff;
 }
 
 .top-avatar {
@@ -253,10 +271,6 @@ const defaultAvatar =
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
-}
-
-.top-info {
-  flex: 1;
 }
 
 .top-name {
@@ -275,16 +289,6 @@ const defaultAvatar =
   margin-top: 4px;
   color: #999;
   font-size: 13px;
-}
-
-.top-meta {
-  display: flex;
-  gap: 16px;
-  margin-top: 8px;
-}
-
-.top-edit {
-  margin-top: 12px;
 }
 
 .main-content-section {
