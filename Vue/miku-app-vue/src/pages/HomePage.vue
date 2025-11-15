@@ -180,7 +180,7 @@ onMounted(() => {
 
 <style scoped>
 #homePage {
-  padding: 82px 0 24px;
+  padding: 80px 0 24px;
   position: relative;
 }
 
