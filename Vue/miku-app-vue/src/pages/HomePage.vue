@@ -8,7 +8,7 @@
           <div class="logo-section mb-24">
             <img class="js" src="" alt="" />
           </div>
-          <div class="nav-item" data-section="follow" href="/follow">
+          <div class="nav-item" data-section="follow">
             <svg
               width="24"
               height="24"
@@ -29,9 +29,9 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="nav-text">关注</span>
+            <a class="nav-link" href="/follow"><span class="nav-text">关注</span></a>
           </div>
-          <div class="nav-item active" data-section="recommend" href="/">
+          <div class="nav-item active" data-section="recommend">
             <svg
               width="24"
               height="24"
@@ -52,9 +52,9 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="nav-text">推荐</span>
+            <a class="nav-link" href="/"><span class="nav-text">推荐</span></a>
           </div>
-          <div class="nav-item" data-section="teahouse" href="/teahouse">
+          <div class="nav-item" data-section="teahouse">
             <svg
               width="24"
               height="24"
@@ -71,9 +71,9 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="nav-text">茶馆</span>
+            <a class="nav-link" href="/teahouse"><span class="nav-text">茶馆</span></a>
           </div>
-          <div class="nav-item" data-section="official" href="/official">
+          <div class="nav-item" data-section="official">
             <svg
               width="24"
               height="24"
@@ -90,7 +90,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <span class="nav-text">{{ loginUserStore.loginUser.userName }}</span>
+            <a class="nav-link" href="/official"><span class="nav-text">官方</span></a>
           </div>
         </div>
       </div>
@@ -125,7 +125,7 @@
         </div>
 
         <!-- 论坛区域 -->
-        <div class="home-list">
+        <div class="home-list mr-12">
           <div class="home-list-body">
             <ArticleList />
           </div>
@@ -143,8 +143,6 @@
 <script setup lang="ts">
 import ArticleList from '@/components/Article/ArticleList.vue'
 import { ref, onMounted } from 'vue'
-import { useLoginUserStore } from '@/store/useLoginUserStore'
-const loginUserStore = useLoginUserStore()
 
 // 导航状态
 const activeSection = ref('recommend')
@@ -299,8 +297,7 @@ onMounted(() => {
 }
 
 .nav-item:hover {
-  background-color: #f5f7fa;
-  transform: translateX(2px);
+  color: #a4a4a4;
 }
 
 .nav-item.active {
@@ -323,6 +320,10 @@ onMounted(() => {
 .nav-text {
   font-size: 15px;
   letter-spacing: 0.5px;
+}
+.nav-link {
+  text-decoration: none;
+  color: inherit;
 }
 /* * * * */
 </style>

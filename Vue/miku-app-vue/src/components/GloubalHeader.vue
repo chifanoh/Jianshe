@@ -10,16 +10,9 @@
         </div>
         <ul class="nav-list">
           <li class="nav-item">
-            <router-link to="/" class="nav-link">首页</router-link>
-          </li>
-          <li class="nav-item">
-            <div class="nav-link">文章</div>
-          </li>
-          <li class="nav-item">
-            <div class="nav-link">问答</div>
-          </li>
-          <li class="nav-item">
-            <div class="nav-link">分类</div>
+            <router-link to="/" class="nav-link">
+              <div>首页</div>
+            </router-link>
           </li>
         </ul>
       </div>
