@@ -389,10 +389,10 @@ onMounted(() => {
 /* 左侧统计栏 */
 .sub-section {
   position: sticky;
-  height: 100%;
   left: 0;
-  top: 76px;
+  top: 80px;
   bottom: 0;
+  height: calc(100vh - 100px);
 }
 
 .post-state-section {

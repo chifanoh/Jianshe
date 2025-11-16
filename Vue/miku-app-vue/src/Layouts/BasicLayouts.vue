@@ -10,7 +10,7 @@
             </keep-alive>
           </router-view>
         </div>
-        <GloubalFooter />
+        <!-- <GloubalFooter /> -->
       </div>
     </n-dialog-provider>
   </n-message-provider>
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { NMessageProvider, NDialogProvider } from 'naive-ui'
 import GloubalHeader from '@/components/GloubalHeader.vue'
-import GloubalFooter from '@/components/GloubalFooter.vue'
+// import GloubalFooter from '@/components/GloubalFooter.vue'
 </script>
 
 <style scoped>

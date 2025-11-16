@@ -1,5 +1,6 @@
 <template>
   <!-- 首页 -->
+  <div class="mask bg"></div>
   <div id="homePage">
     <div class="main-layout">
       <!-- 左导航栏 -->
@@ -184,6 +185,24 @@ onMounted(() => {
   position: relative;
 }
 
+.mask {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  z-index: 0;
+  background-color: #f7f8fa;
+}
+
+.bg {
+  background: url('mask-bg.png') no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .main-home {
   width: 100%;
   height: 100%;
@@ -261,9 +280,9 @@ onMounted(() => {
 
 .sub-section {
   position: sticky;
-  height: 100%;
+  height: calc(100vh - 110px);
   left: 0;
-  top: 76px;
+  top: 80px;
   bottom: 0;
 }
 
@@ -272,6 +291,7 @@ onMounted(() => {
   background-color: #fff;
   text-align: center;
   border-radius: 8px;
+  min-height: calc(100vh - 100px);
 }
 
 .py-30 {
