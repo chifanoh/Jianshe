@@ -198,7 +198,7 @@ onMounted(() => {
 }
 
 .bg {
-  background: url('mask-bg.png') no-repeat;
+  background: url('/mask-bg.png') no-repeat;
   background-size: cover;
   background-position: center;
 }
