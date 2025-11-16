@@ -37,7 +37,7 @@
               </div>
             </div>
 
-            <div class="content-section flex">
+            <div class="content-sections flex">
               <div class="sub-section mr-12">
                 <div class="sub-item-section mb-8">
                   <div class="title text-18 mx-12 px-32 pb-20">个人中心</div>
@@ -188,20 +188,22 @@ const defaultAvatar =
 }
 
 .mx-12 {
-  margin: 0 12px;
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
 .px-32 {
-  padding: 0 32px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
 
 .pb-20 {
-  padding-top: 20px;
   padding-bottom: 20px;
 }
 
 .py-20 {
-  padding: 20px 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .px-24 {
@@ -213,7 +215,7 @@ const defaultAvatar =
   margin-bottom: 12px;
 }
 
-.title {
+.person-center-content-header .title {
   display: inline;
   width: 100%;
   font-size: 18px;
@@ -318,21 +320,28 @@ const defaultAvatar =
 }
 
 .menu-item {
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 12px 44px;
   display: flex;
   align-items: center;
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 6px;
-  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  border-left: 5px solid transparent;
 }
 
 .menu-item:hover {
-  background: #f5f5f5;
+  color: #a4a4a4;
 }
 
 .menu-item.active {
-  background: #e6f7ff;
+  background-color: #e6f7ff;
+  border-left-color: #1890ff;
   color: #1890ff;
+  font-weight: 500;
 }
 
 .main-section {
@@ -367,13 +376,22 @@ const defaultAvatar =
   height: 72px;
 }
 
+.content-sections {
+  position: relative;
+  height: 100%;
+  min-height: calc(100vh - 340px);
+}
+
 .content-section {
   position: relative;
+  height: calc(100% - 67px);
+  min-height: calc(100% - 67px);
 }
 
 .sub-section {
+  position: sticky;
   top: 76px;
-  min-width: 240px;
+  min-width: 250px;
   height: 881px;
   width: 240px;
   flex: 1;
