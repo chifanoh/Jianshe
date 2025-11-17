@@ -388,6 +388,8 @@ async function submitCallback() {
 }
 
 .avatar {
+  background-color: #fff;
+  border-radius: 100%;
   text-decoration: none;
   display: flex;
   align-items: center;
