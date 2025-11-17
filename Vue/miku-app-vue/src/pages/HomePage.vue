@@ -7,7 +7,7 @@
       <div class="sub-section">
         <div class="nav-sidebar py-30 mr-12">
           <div class="logo-section mb-24">
-            <img class="js" src="" alt="" />
+            <img class="js" src="/Janshe-logo.png" alt="" />
           </div>
           <div class="nav-item" data-section="follow">
             <svg
