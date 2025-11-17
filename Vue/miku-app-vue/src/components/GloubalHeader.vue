@@ -5,7 +5,7 @@
       <div class="header-left">
         <div class="header-logo-container">
           <router-link to="/">
-            <img src="/logo.png" alt="Miku Logo" class="logo" />
+            <img src="/logo.svg" alt="Miku Logo" class="logo" />
           </router-link>
         </div>
         <ul class="nav-list">
@@ -266,10 +266,11 @@ async function submitCallback() {
   width: 100vw;
   margin: 0 auto;
   min-width: 1268px;
-  background-color: rgb(255, 255, 255, 0.8);
+  /* background-color: rgba(0, 0, 0, 0.9); */
+  background-color: #191918;
   backdrop-filter: blur(5px);
   z-index: 1000;
-  border-bottom: solid 1px #e0e0e0;
+  border-bottom: solid 0.2px #e0e0e0;
 }
 
 .header-inner {
@@ -311,7 +312,7 @@ async function submitCallback() {
 }
 
 .nav-link {
-  color: #000000;
+  color: #ffffff;
   text-decoration: none;
   font-size: 1em;
   cursor: pointer;
@@ -336,12 +337,6 @@ async function submitCallback() {
   width: 110px;
   height: 65px;
   margin-right: 50px;
-}
-
-.login-link {
-  padding: 8px 15px;
-  color: #000000;
-  text-decoration: none;
 }
 
 .register-link {
