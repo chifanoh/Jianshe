@@ -24,7 +24,7 @@
 
     <!-- 内容区域 -->
     <router-link
-      :to="`/article/${articleData.id || 'default'}`"
+      :to="`/post/${articleData.id || 'default'}`"
       class="content-link"
       target="_blank"
     >
