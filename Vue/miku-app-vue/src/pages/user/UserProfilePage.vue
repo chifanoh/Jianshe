@@ -72,25 +72,22 @@
                   </div>
                 </div>
 
-                <div class="content-section">
-                  <div v-if="menuValue === 'posts'">
-                    <div class="panel-placeholder">暂无数据</div>
-                  </div>
-                  <div v-else-if="menuValue === 'comments'">
-                    <div class="panel-placeholder">暂无数据</div>
-                  </div>
-                  <div v-else-if="menuValue === 'stars'">
-                    <div class="panel-placeholder">暂无数据</div>
-                  </div>
-                  <div v-else-if="menuValue === 'follows'">
-                    <div class="panel-placeholder">暂无数据</div>
-                  </div>
-                  <div v-else>
-                    <div class="edit-profile">
-                      <img :src="avatarSrc" class="edit-avatar" alt="avatar" />
-                      <div class="btn-group">
-                        <button class="btn btn-primary" style="margin-right: 8px">修改头像</button>
-                      </div>
+                <div class="content-section" style="min-height: 500px">
+                  <div class="flex-center">
+                    <div v-if="menuValue === 'posts'">
+                      <span class="panel-placeholder">暂无数据</span>
+                    </div>
+                    <div v-else-if="menuValue === 'comments'">
+                      <span class="panel-placeholder">暂无数据</span>
+                    </div>
+                    <div v-else-if="menuValue === 'stars'">
+                      <span class="panel-placeholder">暂无数据</span>
+                    </div>
+                    <div v-else-if="menuValue === 'follows'">
+                      <span class="panel-placeholder">暂无数据</span>
+                    </div>
+                    <div v-else>
+                      <span class="panel-placeholder">暂不支持该功能</span>
                     </div>
                   </div>
                 </div>
@@ -153,11 +150,6 @@ const defaultAvatar =
   background-color: #f7f8fa;
 }
 
-.btn {
-  border: none;
-  cursor: pointer;
-}
-
 .flex {
   display: flex;
 }
@@ -194,6 +186,20 @@ const defaultAvatar =
 
 .px-32 {
   padding-left: 32px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-sections {
+  flex-grow: 1;
+}
+
+.main-section {
+  flex-grow: 1;
+  overflow-y: auto;
   padding-right: 32px;
 }
 
@@ -266,6 +272,13 @@ const defaultAvatar =
 
 .flex-vertical-center {
   display: flex;
+}
+
+.flex-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .top-avatar {
@@ -356,24 +369,8 @@ const defaultAvatar =
   padding-bottom: 20px;
 }
 
-.btn-group {
-  display: flex;
-  align-items: center;
-}
-
 .panel-placeholder {
   color: #999;
-}
-
-.edit-profile {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.edit-avatar {
-  width: 72px;
-  height: 72px;
 }
 
 .content-sections {
