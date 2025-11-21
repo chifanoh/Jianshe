@@ -56,16 +56,16 @@
               <div class="main-section px-24 py-20">
                 <div class="person-center-content-header">
                   <div v-if="menuValue === 'posts'">
-                    <h2 class="title">帖子</h2>
+                    <h2 class="title">我的帖子</h2>
                   </div>
                   <div v-else-if="menuValue === 'comments'">
-                    <h2 class="title">评论</h2>
+                    <h2 class="title">我的评论</h2>
                   </div>
                   <div v-else-if="menuValue === 'stars'">
-                    <h2 class="title">收藏</h2>
+                    <h2 class="title">我的收藏</h2>
                   </div>
                   <div v-else-if="menuValue === 'follows'">
-                    <h2 class="title">关注</h2>
+                    <h2 class="title">我的关注</h2>
                   </div>
                   <div v-else>
                     <h2 class="title">编辑资料</h2>
@@ -123,10 +123,10 @@ const avatarSrc = computed(() => {
 const menuValue = ref('edit')
 
 const menuOptions = [
-  { label: '帖子', key: 'posts' },
-  { label: '评论', key: 'comments' },
-  { label: '收藏', key: 'stars' },
-  { label: '关注', key: 'follows' },
+  { label: '我的帖子', key: 'posts' },
+  { label: '我的评论', key: 'comments' },
+  { label: '我的收藏', key: 'stars' },
+  { label: '我的关注', key: 'follows' },
 ]
 
 const defaultAvatar =
