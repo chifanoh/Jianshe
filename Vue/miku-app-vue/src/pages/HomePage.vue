@@ -137,7 +137,38 @@
 
       <!-- 右导航栏 -->
       <div class="home-sub">
-        <n-date-picker panel type="date" />
+        <div class="inside-box">
+          <n-date-picker panel type="date" />
+          <div class="side-section text-14">
+            <div class="flex mb-16">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                class="mr-8"
+              >
+                <path
+                  d="M16 2a14 14 0 0 0-4.43 27.28c.7.13 1-.3 1-.67v-2.38c-3.89.84-4.71-1.88-4.71-1.88a3.71 3.71 0 0 0-1.62-2.05c-1.27-.86.1-.85.1-.85a2.94 2.94 0 0 1 2.14 1.45a3 3 0 0 0 4.08 1.16a2.93 2.93 0 0 1 .88-1.87c-3.1-.36-6.37-1.56-6.37-6.92a5.4 5.4 0 0 1 1.44-3.76a5 5 0 0 1 .14-3.7s1.17-.38 3.85 1.43a13.3 13.3 0 0 1 7 0c2.67-1.81 3.84-1.43 3.84-1.43a5 5 0 0 1 .14 3.7a5.4 5.4 0 0 1 1.44 3.76c0 5.38-3.27 6.56-6.39 6.91a3.33 3.33 0 0 1 .95 2.59v3.84c0 .46.25.81 1 .67A14 14 0 0 0 16 2z"
+                  fill-rule="evenodd"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <div class="flex-reverse">
+                <span class="text-14 flex mb-8">了解我们</span>
+                <ul class="flex">
+                  <li class="mr-24">
+                    <a href="https://github.com/Git-xiaix"><span>联系我们</span></a>
+                  </li>
+                  <li class="mr-24">
+                    <a href="https://github.com/Git-xiaix/Jianshe"><span>GitHub</span></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -183,6 +214,43 @@ onMounted(() => {
 #homePage {
   padding: 80px 0 24px;
   position: relative;
+}
+
+a {
+  color: #8c95a3;
+  text-decoration: none;
+}
+
+ul {
+  box-sizing: border-box;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mr-24 {
+  margin-right: 24px;
+}
+
+.text-14 {
+  font-size: 14px;
+  line-height: 22px;
 }
 
 .mask {
@@ -261,6 +329,15 @@ onMounted(() => {
   top: 76px;
   height: fit-content;
   align-self: flex-start;
+}
+
+.side-section {
+  border-radius: 8px;
+}
+
+.flex-reverse {
+  display: flex;
+  flex-direction: column;
 }
 /* * * * */
 
