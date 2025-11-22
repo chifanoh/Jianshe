@@ -9,9 +9,14 @@ spring:
     username: root
     password: REMOVED
 
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
 logging:
   level:
-    # 全局日志拦截等级:warn (需要开启)
+    # 全局日志拦截等级:warn (根据需求开启)
     root: warn
     com:
       miku:
@@ -31,7 +36,7 @@ mybatis:
 mybatis-plus:
   global-config:
     db-config:
-      # 数据库自增id (使用MP默认开启雪花id)
+      # 使用数据库自增id (使用MP会默认开启雪花id)
       id-type: auto
 
 miku:

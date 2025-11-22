@@ -42,9 +42,6 @@
 				<artifactId>mybatis-plus-spring-boot3-starter</artifactId>
 				<version>${mybatis-plus}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
-
-
 </project>
