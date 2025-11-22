@@ -26,7 +26,7 @@
 
 	<properties>
 		<lombok>1.18.20</lombok>
-		<mybatis-plus>3.5.3.1</mybatis-plus>
+		<mybatis-plus>3.5.14</mybatis-plus>
 	</properties>
 
 	<dependencyManagement>
@@ -35,6 +35,12 @@
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+				<version>${mybatis-plus}</version>
 			</dependency>
 
 		</dependencies>

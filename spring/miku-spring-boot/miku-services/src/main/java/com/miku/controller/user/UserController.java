@@ -37,6 +37,32 @@ public class UserController {
     private JwtProperties jwtProperties;
 
     /**
+     * Cookie:密钥验签 + 返回用户数据 ——> IndexDB
+     * @param request
+     * @return
+     */
+    @GetMapping("/current")
+    public Result<UserVO> current(HttpServletRequest request){
+        log.info("密钥验签:{}",request);
+
+        Long uid = BaseContext.getCurrentId();
+        if (uid == null){
+            return Result.error("未登录");
+        }
+
+        //查库
+        User user = userService.current(uid);
+        //验签通过返回给前端
+        UserVO userVO = UserVO.builder()
+                .id(user.getId())
+                .avatar(user.getAvatar())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+        return Result.success(userVO);
+    }
+
+    /**
      * 用户登录
      * @param userLoginDTO
      * @return
@@ -80,29 +106,5 @@ public class UserController {
         return Result.success(userLoginVO);
     }
 
-    /**
-     * Cookie:密钥验签 + 返回用户数据 ——> IndexDB
-     * @param request
-     * @return
-     */
-    @GetMapping("/current")
-    public Result<UserVO> current(HttpServletRequest request){
-        log.info("密钥验签:{}",request);
 
-        Long uid = BaseContext.getCurrentId();
-        if (uid == null){
-            return Result.error("未登录");
-        }
-
-        //查库
-        User user = userService.current(uid);
-        //验签通过返回给前端
-        UserVO userVO = UserVO.builder()
-                .id(user.getId())
-                .avatar(user.getAvatar())
-                .name(user.getName())
-                .email(user.getEmail())
-                .build();
-        return Result.success(userVO);
-    }
 }

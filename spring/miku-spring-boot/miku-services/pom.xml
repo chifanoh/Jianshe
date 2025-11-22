@@ -58,9 +58,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>3.5.14</version>
         </dependency>
-
         <!-- 配合mybatis plus分页插件使用(v3.5.9+ 开始,PaginationInnerInterceptor 被拆到独立的jsqlparser) -->
         <dependency>
             <groupId>com.baomidou</groupId>
