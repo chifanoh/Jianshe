@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { getCurrentUser, userLogin, userLogout, userRegister } from '@/api/user'
 import { saveUserDataWithTimestamp, getLatestUserData, clearAllUserData } from '@/utils/indexedDB'
-import { isAuthenticated, clearAuthCredentials } from '@/utils/auth'
 
 // 用户类型定义 - 规范:使用接口继承和可选字段
 export interface BaseUser {
@@ -69,29 +68,31 @@ export const useLoginUserStore = defineStore('loginUser', () => {
         // 使用统一的映射函数处理缓存数据
         loginUser.value = normalizeUserData(cachedUser)
         // 异步验证Cookie认证状态，如果无效清空；有效则后台刷新最新数据
-        setTimeout(async () => {
-          const isAuth = await isAuthenticated()
-          if (!isAuth) {
-            loginUser.value = { userName: '未登录' }
-            await clearAllUserData()
-          } else if (!loginUser.value.userAvatar || loginUser.value.userName === '未登录') {
+        // 优化：如果缓存数据已存在且用户已登录，则不再立即调用 getCurrentUser
+        if (isLogin.value) {
+          setTimeout(async () => {
             // 只有在缓存数据不完整时才刷新
-            await fetchLoginUser()
-          }
-        }, 100)
+            if (!loginUser.value.userAvatar || loginUser.value.userName === '未登录') {
+              await fetchLoginUser()
+            }
+          }, 100)
+        } else {
+          // 如果缓存存在但用户未登录，则需要验证Cookie
+          setTimeout(async () => {
+            const isAuth = await getCurrentUser()
+            if (!isAuth) {
+              loginUser.value = { userName: '未登录' }
+              await clearAllUserData()
+            } else {
+              await fetchLoginUser()
+            }
+          }, 100)
+        }
 
         return true
       }
 
-      // 如果IndexedDB中没有数据，检查Cookie认证状态
-      const isAuth = await isAuthenticated()
-      if (!isAuth) {
-        // 如果Cookie中无有效认证，清空用户数据
-        loginUser.value = { userName: '未登录' }
-        return false
-      }
-
-      // Cookie认证有效但IndexedDB无数据，从服务器获取用户信息
+      // 如果IndexedDB中没有数据，直接从服务器获取用户信息
       const userRes = await fetchLoginUser()
       return userRes.success
     } catch {
@@ -110,6 +111,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     // 创建新的请求Promise
     fetchUserPromise = (async () => {
       try {
+        //TODO: 优化：如果缓存数据已存在且用户已登录，则不再立即调用 getCurrentUser
         const res = await getCurrentUser()
         if (res.data.code === 200 && res.data.data) {
           const payload = res.data.data
@@ -231,10 +233,6 @@ export const useLoginUserStore = defineStore('loginUser', () => {
   // 清除用户信息（用于登出或会话过期）
   function clearUser() {
     loginUser.value = { userName: '未登录' }
-
-    // 同时清除HttpOnly Cookie和IndexedDB缓存
-    clearAuthCredentials().catch((error) => console.error('清除Cookie失败:', error))
-    clearAllUserData().catch((error) => console.error('清除缓存失败:', error))
   }
 
   return {

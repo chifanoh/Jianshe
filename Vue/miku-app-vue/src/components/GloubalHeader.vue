@@ -202,7 +202,9 @@ const handleDropdownSelect = (key: string) => {
   if (key === 'profile') {
     // 跳转到个人中心
     router.push('/user/profile')
-  } else if (key === 'logout') {
+  }
+
+  if (key === 'logout') {
     // 处理退出登录
     loginUser.logout()
     router.push('/')
