@@ -38,7 +38,7 @@ public class UserController {
     private JwtProperties jwtProperties;
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     /**
      * Cookie:密钥验签 + 返回用户数据 ——> IndexDB
@@ -108,5 +108,14 @@ public class UserController {
                 .build();
 
         return Result.success(userLoginVO);
+    }
+
+    /**
+     * 退出登录
+     * @param request
+     */
+    @PostMapping("/logout")
+    public Result logout(HttpServletRequest request){
+        return Result.success();
     }
 }
