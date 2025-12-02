@@ -11,7 +11,7 @@ import com.miku.utils.JwtUtil;
 import com.miku.vo.UserLoginVO;
 import com.miku.vo.UserVO;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,11 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.WebUtils;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/user")
@@ -115,7 +115,27 @@ public class UserController {
      * @param request
      */
     @PostMapping("/logout")
-    public Result logout(HttpServletRequest request){
+    public Result logout(HttpServletRequest request, HttpServletResponse response){
+        Cookie cookie = WebUtils.getCookie(request, jwtProperties.getCookieName());
+
+        // cookie为空
+        if (cookie == null) {
+            return Result.error("未登录");
+        }
+
+        String jwt = cookie.getValue();
+        log.info("待登出token:{}", jwt);
+
+        long exp = Jwts.parser()
+                .setSigningKey(jwtProperties.getUserSecretKey())
+                .parseClaimsJws(jwt)
+                .getBody()
+                .getExpiration()
+                .getTime();
+
+        // 计算ttl存redis
+        long ttl = (exp - System.currentTimeMillis()) / 1000;
+        redisTemplate.opsForValue().set("delay:" + BaseContext.getCurrentId(), jwt , ttl, TimeUnit.SECONDS);
         return Result.success();
     }
 }

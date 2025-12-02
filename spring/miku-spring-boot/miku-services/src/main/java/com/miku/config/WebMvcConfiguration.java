@@ -16,6 +16,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public final class SkipJwtUrls{
         public static final String[] LIST = {
                 "/api/user/current",
+                "/api/user/logout",
                 "/api/article/create",
                 "/api/comment/submit",
         };
