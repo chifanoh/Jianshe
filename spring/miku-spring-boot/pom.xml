@@ -26,6 +26,9 @@
 
 	<properties>
 		<lombok>1.18.20</lombok>
+		<jwt-api>0.11.5</jwt-api>
+		<jwt-impl>0.11.5</jwt-impl>
+		<jwt-jackson>0.11.5</jwt-jackson>
 		<mybatis-plus>3.5.14</mybatis-plus>
 	</properties>
 
@@ -41,6 +44,24 @@
 				<groupId>com.baomidou</groupId>
 				<artifactId>mybatis-plus-spring-boot3-starter</artifactId>
 				<version>${mybatis-plus}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-api</artifactId>
+				<version>${jwt-api}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-impl</artifactId>
+				<version>${jwt-impl}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-jackson</artifactId>
+				<version>${jwt-jackson}</version>
+				<scope>runtime</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -11,7 +11,6 @@ import com.miku.utils.JwtUtil;
 import com.miku.vo.UserLoginVO;
 import com.miku.vo.UserVO;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -126,15 +125,10 @@ public class UserController {
         String jwt = cookie.getValue();
         log.info("待登出token:{}", jwt);
 
-        long exp = Jwts.parser()
-                .setSigningKey(jwtProperties.getUserSecretKey())
-                .parseClaimsJws(jwt)
-                .getBody()
-                .getExpiration()
-                .getTime();
-
+        // jwt过期时间
+        Claims exp = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
         // 计算ttl存redis
-        long ttl = (exp - System.currentTimeMillis()) / 1000;
+        long ttl = exp.getExpiration().getTime();
         redisTemplate.opsForValue().set("delay:" + BaseContext.getCurrentId(), jwt , ttl, TimeUnit.SECONDS);
         return Result.success();
     }
