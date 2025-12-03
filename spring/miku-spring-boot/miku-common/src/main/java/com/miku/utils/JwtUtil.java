@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 public class JwtUtil {
     /**
@@ -22,7 +23,6 @@ public class JwtUtil {
     public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
         // 指定签名的时候使用的签名算法，也就是header那部分
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
-
         // 生成JWT的时间
         long expMillis = System.currentTimeMillis() + ttlMillis;
         Date exp = new Date(expMillis);
@@ -30,6 +30,7 @@ public class JwtUtil {
         // 设置jwt的body
         return Jwts.builder()
                 .setClaims(claims)
+                .setId(UUID.randomUUID().toString())
                 .setExpiration(exp)
                 .signWith(key)
                 .compact();
@@ -44,7 +45,6 @@ public class JwtUtil {
      */
     public static Claims parseJWT(String secretKey, String token) {
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
-
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
