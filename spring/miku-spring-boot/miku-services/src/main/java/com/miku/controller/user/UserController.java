@@ -121,15 +121,25 @@ public class UserController {
         if (cookie == null) {
             return Result.error("未登录");
         }
-
         String jwt = cookie.getValue();
         log.info("待登出token:{}", jwt);
 
         // jwt过期时间
-        Claims exp = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
-        // 计算ttl存redis
-        long ttl = exp.getExpiration().getTime();
-        redisTemplate.opsForValue().set("delay:" + BaseContext.getCurrentId(), jwt , ttl, TimeUnit.SECONDS);
+        Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
+        long ttl = claims.getExpiration().getTime();
+
+        // 存redis
+        String jti = claims.getId();// 使用签发时给的JWT ID为key
+        redisTemplate.opsForValue().set("delay:" + jti, "jwt" , ttl, TimeUnit.SECONDS);
+
+        // 返回无效cookie清除浏览器cookie
+        Cookie del = new Cookie(jwtProperties.getCookieName(), null);
+        del.setPath("/");
+        del.setHttpOnly(true);
+        del.setSecure(true);      // 生产环境开 HTTPS
+        del.setMaxAge(0);         // 立即过期
+        response.addCookie(del);
+
         return Result.success();
     }
 }
