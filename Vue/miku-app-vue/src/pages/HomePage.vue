@@ -9,7 +9,11 @@
           <div class="logo-section mb-24">
             <img class="js" src="/Janshe-logo.png" alt="" />
           </div>
-          <div class="nav-item" data-section="follow">
+          <div
+            class="nav-item"
+            :class="{ active: activeSection === 'follow' }"
+            @click="handleNavClick('follow', '/follow')"
+          >
             <svg
               width="24"
               height="24"
@@ -30,9 +34,13 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <a class="nav-link" href="/follow"><span class="nav-text">关注</span></a>
+            <span class="nav-text">关注</span>
           </div>
-          <div class="nav-item active" data-section="recommend">
+          <div
+            class="nav-item"
+            :class="{ active: activeSection === 'recommend' }"
+            @click="handleNavClick('recommend', '/')"
+          >
             <svg
               width="24"
               height="24"
@@ -53,9 +61,13 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <a class="nav-link" href="/"><span class="nav-text">推荐</span></a>
+            <span class="nav-text">推荐</span>
           </div>
-          <div class="nav-item" data-section="teahouse">
+          <div
+            class="nav-item"
+            :class="{ active: activeSection === 'teahouse' }"
+            @click="handleNavClick('teahouse', '/teahouse')"
+          >
             <svg
               width="24"
               height="24"
@@ -72,9 +84,13 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <a class="nav-link" href="/teahouse"><span class="nav-text">茶馆</span></a>
+            <span class="nav-text">茶馆</span>
           </div>
-          <div class="nav-item" data-section="official">
+          <div
+            class="nav-item"
+            :class="{ active: activeSection === 'official' }"
+            @click="handleNavClick('official', '/official')"
+          >
             <svg
               width="24"
               height="24"
@@ -91,7 +107,7 @@
                 fill="currentColor"
               ></path>
             </svg>
-            <a class="nav-link" href="/official"><span class="nav-text">官方</span></a>
+            <span class="nav-text">官方</span>
           </div>
         </div>
       </div>
@@ -176,38 +192,19 @@
 
 <script setup lang="ts">
 import ArticleList from '@/components/Article/ArticleList.vue'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 导航状态
 const activeSection = ref('recommend')
 
-// 切换导航
-const switchSection = (section: string) => {
+// 处理导航点击
+const handleNavClick = (section: string, path: string) => {
   activeSection.value = section
-
-  // 更新导航项激活状态
-  const navItems = document.querySelectorAll('.nav-item')
-  navItems.forEach((item) => {
-    if (item.getAttribute('data-section') === section) {
-      item.classList.add('active')
-    } else {
-      item.classList.remove('active')
-    }
-  })
+  router.push(path)
 }
-
-onMounted(() => {
-  // 绑定点击事件
-  const navItems = document.querySelectorAll('.nav-item')
-  navItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      const section = item.getAttribute('data-section')
-      if (section) {
-        switchSection(section)
-      }
-    })
-  })
-})
 </script>
 
 <style scoped>
