@@ -11,6 +11,7 @@
           </router-view>
         </div>
         <!-- <GloubalFooter /> -->
+        <BackTop />
       </div>
     </n-dialog-provider>
   </n-message-provider>
@@ -19,7 +20,7 @@
 <script setup lang="ts">
 import { NMessageProvider, NDialogProvider } from 'naive-ui'
 import GloubalHeader from '@/components/GloubalHeader.vue'
-// import GloubalFooter from '@/components/GloubalFooter.vue'
+import BackTop from '@/components/BackTop.vue'
 </script>
 
 <style scoped>

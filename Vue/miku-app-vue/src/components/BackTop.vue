@@ -1,9 +1,20 @@
 <template>
-  <n-back-top :right="100" />
+  <n-back-top :right="100">
+    <div class="back-top" style="">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 32 32"
+        xmlns="http://www.w3.org/2000/svg"
+        class="mr-8"
+      >
+        <path
+          d="M21 28H11a2.002 2.002 0 0 1-2-2V16H4a1 1 0 0 1-.707-1.707l12-12a1 1 0 0 1 1.414 0l12 12A1 1 0 0 1 28 16h-5v10a2.003 2.003 0 0 1-2 2zM6.414 14H11v12h10V14h4.586L16 4.414z"
+          fill="currentColor"
+        ></path>
+      </svg>
+    </div>
+  </n-back-top>
 </template>
 
-<script setup lang="ts">
-import { NBackTop } from 'naive-ui'
-</script>
-
-<style scoped></style>
+<script setup lang="ts"></script>
