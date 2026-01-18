@@ -159,13 +159,23 @@
                     </p>
                   </div>
                 </div>
-                <button class="follow-btn btn mt-12">
-                  <img
-                    src="@sicons/antd/PlusOutlined.svg"
-                    alt=""
+                <button class="follow-btn mt-12">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 1024 1024"
                     style="width: 12px; height: 12px"
-                    class="mr-4 icon-white"
-                  />
+                    class="mr-4"
+                  >
+                    <path
+                      d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"
+                      fill="currentColor"
+                    />
+                  </svg>
                   关注
                 </button>
               </div>
@@ -577,24 +587,18 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #1890ff;
-  color: #fff;
-  transition: all 0.3s ease;
+  border: 1px solid #fe2c55;
+  background: white;
+  color: #fe2c55;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .follow-btn:hover {
-  background-color: #3aa0ff;
-  box-shadow: 0 4px 12px rgba(20, 150, 255, 0.4);
-}
-
-.btn {
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  user-select: none;
-  outline: none;
+  background: #fe2c55;
+  color: white;
 }
 
 .user-name {
@@ -608,7 +612,7 @@ onMounted(() => {
 }
 
 .user-link:hover {
-  color: #1890ff;
+  color: #a4a4a4;
 }
 
 .name {

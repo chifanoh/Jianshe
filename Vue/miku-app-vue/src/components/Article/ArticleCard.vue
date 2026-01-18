@@ -275,19 +275,20 @@ const firstParagraphContent = computed(() => {
 
 .follow-btn {
   padding: 4px 12px;
-  border: 1px solid #7991b9;
+  border: 1px solid #fe2c55;
   background: white;
-  color: #7991b9;
+  color: #fe2c55;
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
   position: absolute;
   right: 0;
   top: 0;
+  transition: all 0.2s ease;
 }
 
 .follow-btn:hover {
-  background: #7991b9;
+  background: #fe2c55;
   color: white;
 }
 
