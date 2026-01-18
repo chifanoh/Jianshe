@@ -53,6 +53,7 @@
           v-model:show="showModal"
           preset="dialog"
           title="试着发布一篇文章吧"
+          :show-icon="false"
           positive-text="确认"
           negative-text="算了"
           :positive-button-props="{
@@ -82,7 +83,7 @@
                 <label class="form-label">文章内容</label>
                 <RichEditor v-model="articleContent" />
               </div>
-              <div class="form-item">
+              <!-- <div class="form-item">
                 <label class="form-label">话题标签</label>
                 <n-space vertical>
                   <n-select
@@ -93,7 +94,7 @@
                     clearable
                   />
                 </n-space>
-              </div>
+              </div> -->
             </div>
           </div>
         </n-modal>
@@ -170,20 +171,7 @@ const articleContent = ref('')
 const articleTags = ref<string[]>([])
 
 // 话题标签选项
-const tagOptions = [
-  {
-    label: '前端',
-    value: '1',
-  },
-  {
-    label: '后端',
-    value: '2',
-  },
-  {
-    label: '数据库',
-    value: '3',
-  },
-]
+// const tagOptions = [{}]
 
 // 头像下拉菜单选项
 const options = [
@@ -363,7 +351,7 @@ async function submitCallback() {
   display: flex;
   align-items: center;
   color: #fff;
-  background-color: #1890ff;
+  background-color: transparent;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -378,7 +366,7 @@ async function submitCallback() {
 }
 
 .submit-btn:hover {
-  background-color: #1376d2;
+  background-color: #454545;
 }
 
 .submit-btn-text {
