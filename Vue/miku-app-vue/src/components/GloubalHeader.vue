@@ -366,7 +366,7 @@ async function submitCallback() {
 }
 
 .submit-btn:hover {
-  background-color: #454545;
+  background-color: #444444;
 }
 
 .submit-btn-text {
