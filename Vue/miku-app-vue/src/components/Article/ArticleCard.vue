@@ -23,11 +23,7 @@
     </div>
 
     <!-- 内容区域 -->
-    <router-link
-      :to="`/post/${articleData.id || 'default'}`"
-      class="content-link"
-      target="_blank"
-    >
+    <router-link :to="`/post/${articleData.id || 'default'}`" class="content-link" target="_blank">
       <div class="article-content">
         <div class="mb-8">
           <div class="title">
@@ -256,7 +252,7 @@ const firstParagraphContent = computed(() => {
 }
 
 .username-link:hover .username {
-  color: #1890ff;
+  color: #a4a4a4;
 }
 
 .content-link {
@@ -266,7 +262,7 @@ const firstParagraphContent = computed(() => {
 }
 
 .content-link:hover .title-text {
-  color: #1890ff;
+  color: #a4a4a4;
 }
 
 .post-time {
@@ -279,9 +275,9 @@ const firstParagraphContent = computed(() => {
 
 .follow-btn {
   padding: 4px 12px;
-  border: 1px solid #1890ff;
+  border: 1px solid #7991b9;
   background: white;
-  color: #1890ff;
+  color: #7991b9;
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
@@ -291,7 +287,7 @@ const firstParagraphContent = computed(() => {
 }
 
 .follow-btn:hover {
-  background: #1890ff;
+  background: #7991b9;
   color: white;
 }
 

@@ -403,8 +403,8 @@ li {
 
 .nav-item.active {
   background-color: #e6f7ff;
-  border-left-color: #5a6d8c;
-  color: #5a6d8c;
+  border-left-color: #7991b9;
+  color: #7991b9;
   font-weight: 500;
 }
 
