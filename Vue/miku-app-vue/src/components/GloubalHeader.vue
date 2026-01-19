@@ -358,7 +358,7 @@ async function submitCallback() {
   user-select: none;
   position: relative;
   overflow: hidden;
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
 }
 
 .z-1 {

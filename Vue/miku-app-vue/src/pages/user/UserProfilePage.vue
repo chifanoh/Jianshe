@@ -352,8 +352,8 @@ const defaultAvatar =
 
 .menu-item.active {
   background-color: #e6f7ff;
-  border-left-color: #1890ff;
-  color: #1890ff;
+  border-left-color: #7991b9;
+  color: #7991b9;
   font-weight: 500;
 }
 
