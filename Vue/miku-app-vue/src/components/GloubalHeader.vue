@@ -21,11 +21,7 @@
         <!-- 搜索框 -->
         <div class="search-container">
           <n-space vertical>
-            <n-input placeholder="搜索">
-              <template>
-                <n-icon :component="FlashOutline" />
-              </template>
-            </n-input>
+            <n-input v-model:value="value" type="text" placeholder="搜索"></n-input>
           </n-space>
         </div>
 
@@ -137,7 +133,6 @@
 </template>
 
 <script setup lang="ts">
-import { FlashOutline } from '@vicons/ionicons5'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { NModal, NInput, NSpace, useMessage } from 'naive-ui'
@@ -198,6 +193,9 @@ const handleDropdownSelect = (key: string) => {
     router.push('/')
   }
 }
+
+//搜索
+const value = ref(null)
 
 // 发布文章
 function cancelCallback() {

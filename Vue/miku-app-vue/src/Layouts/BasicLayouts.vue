@@ -10,7 +10,6 @@
             </keep-alive>
           </router-view>
         </div>
-        <!-- <GloubalFooter /> -->
         <BackTop />
       </div>
     </n-dialog-provider>
