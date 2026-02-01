@@ -21,7 +21,18 @@
         <!-- 搜索框 -->
         <div class="search-container">
           <n-space vertical>
-            <n-input v-model:value="value" type="text" placeholder="搜索"></n-input>
+            <n-input
+              v-model:value="searchQuery"
+              type="text"
+              placeholder="搜索"
+              clearable
+              @keyup.enter="goToSearch"
+              @input="handleSearchInput"
+            >
+              <template #prefix>
+                <n-icon><search-icon /></n-icon>
+              </template>
+            </n-input>
           </n-space>
         </div>
 
@@ -135,7 +146,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { NModal, NInput, NSpace, useMessage } from 'naive-ui'
+import { NModal, NInput, NSpace, useMessage, NIcon } from 'naive-ui'
+import { Search as SearchIcon } from '@vicons/ionicons5'
 import RichEditor from './Article/RichEditor.vue'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
 import { createArticle } from '@/api/article'
@@ -194,8 +206,39 @@ const handleDropdownSelect = (key: string) => {
   }
 }
 
-//搜索
-const value = ref(null)
+// 搜索功能
+const searchQuery = ref('')
+
+// 搜索输入验证
+const validateSearchInput = (value: string): boolean => {
+  if (!value || value.trim().length === 0) {
+    return false
+  }
+  return value.trim().length <= 20
+}
+
+// 处理搜索输入
+const handleSearchInput = (value: string) => {
+  if (value && value.length === 20) {
+    message.warning('搜索最多不能超过20个字符')
+    return
+  }
+  if (value && value.length > 20) {
+    searchQuery.value = value.slice(0, 20)
+    return
+  }
+  if (!validateSearchInput(value)) {
+    searchQuery.value = ''
+  }
+}
+
+// 跳转到搜索页面
+const goToSearch = () => {
+  const query = searchQuery.value.trim()
+  if (validateSearchInput(query)) {
+    router.push({ path: '/search', query: { q: query } })
+  }
+}
 
 // 发布文章
 function cancelCallback() {
