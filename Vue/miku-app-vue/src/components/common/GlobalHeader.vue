@@ -144,150 +144,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { NModal, NInput, NSpace, useMessage, NIcon } from 'naive-ui'
+import { NModal, NInput, NSpace, NIcon } from 'naive-ui'
 import { Search as SearchIcon } from '@vicons/ionicons5'
-import RichEditor from './Article/RichEditor.vue'
-import { useLoginUserStore } from '@/store/useLoginUserStore'
-import { createArticle } from '@/api/article'
+import RichEditor from '@/components/Article/RichEditor.vue'
+import { useAuth } from '@/composables/useAuth'
+import { useSearch } from '@/composables/useSearch'
+import { useArticlePublish } from '@/composables/useArticlePublish'
 
-// 模态框状态
-const showModal = ref(false)
-const publishing = ref(false)
-const message = useMessage()
-const loginUser = useLoginUserStore()
-const router = useRouter()
-
-// 只在需要时获取用户信息
-onMounted(async () => {
-  // 如果已经登录且有用户信息，不需要重复获取
-  if (loginUser.isLogin && loginUser.loginUser.id) {
-    return
-  }
-
-  // 如果头像为空或者用户名为'未登录'，才尝试获取用户信息
-  if (!loginUser.loginUser.userAvatar || loginUser.loginUser.userName === '未登录') {
-    await loginUser.loadUserFromCache()
-  }
-})
-
-// 表单数据
-const articleTitle = ref('')
-const articleContent = ref('')
-const articleTags = ref<string[]>([])
-
-// 话题标签选项
-// const tagOptions = [{}]
-
-// 头像下拉菜单选项
-const options = [
-  {
-    label: '个人中心',
-    key: 'profile',
-  },
-  {
-    label: '退出登录',
-    key: 'logout',
-  },
-]
-
-// 处理下拉菜单选择
-const handleDropdownSelect = (key: string) => {
-  if (key === 'profile') {
-    // 跳转到个人中心
-    router.push('/user/profile')
-  }
-
-  if (key === 'logout') {
-    // 处理退出登录
-    loginUser.logout()
-    router.push('/')
-  }
-}
-
-// 搜索功能
-const searchQuery = ref('')
-
-// 搜索输入验证
-const validateSearchInput = (value: string): boolean => {
-  if (!value || value.trim().length === 0) {
-    return false
-  }
-  return value.trim().length <= 20
-}
-
-// 处理搜索输入
-const handleSearchInput = (value: string) => {
-  if (value && value.length === 20) {
-    message.warning('搜索最多不能超过20个字符')
-    return
-  }
-  if (value && value.length > 20) {
-    searchQuery.value = value.slice(0, 20)
-    return
-  }
-  if (!validateSearchInput(value)) {
-    searchQuery.value = ''
-  }
-}
-
-// 跳转到搜索页面
-const goToSearch = () => {
-  const query = searchQuery.value.trim()
-  if (validateSearchInput(query)) {
-    router.push({ path: '/search', query: { q: query } })
-  }
-}
-
-// 发布文章
-function cancelCallback() {
-  return
-}
-
-async function submitCallback() {
-  if (!articleTitle.value.trim()) {
-    message.warning('请输入文章标题')
-    return false
-  }
-  if (!articleContent.value.trim()) {
-    message.warning('请输入文章内容')
-    return false
-  }
-
-  publishing.value = true
-
-  try {
-    // 调用创建文章API
-    const response = await createArticle({
-      title: articleTitle.value.trim(),
-      content: articleContent.value.trim(),
-      topicIds: articleTags.value.length > 0 ? articleTags.value : undefined,
-    })
-
-    if (response.data.code === 200) {
-      message.success('文章发布成功！')
-      showModal.value = false
-
-      // 重置表单
-      articleTitle.value = ''
-      articleContent.value = ''
-      articleTags.value = []
-
-      // 可以在这里添加跳转到文章详情页的逻辑
-      if (response.data.data && response.data.data.id) {
-        router.push(`/article/${response.data.data.id}`)
-      }
-    } else {
-      message.error(response.data.msg || '发布失败，请稍后重试')
-    }
-  } catch (error) {
-    console.error('发布文章失败:', error)
-    message.error('发布失败，请稍后重试')
-  } finally {
-    publishing.value = false
-  }
-}
+const { loginUser, options, handleDropdownSelect } = useAuth()
+const { searchQuery, handleSearchInput, goToSearch } = useSearch()
+const { showModal, articleTitle, articleContent, cancelCallback, submitCallback } =
+  useArticlePublish()
 </script>
 
 <style scoped>

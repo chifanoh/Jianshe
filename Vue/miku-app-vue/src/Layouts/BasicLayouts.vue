@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import { NMessageProvider, NDialogProvider } from 'naive-ui'
-import GloubalHeader from '@/components/GloubalHeader.vue'
-import BackTop from '@/components/BackTop.vue'
+import GloubalHeader from '@/components/common/GlobalHeader.vue'
+import BackTop from '@/components/common/BackTop.vue'
 </script>
 
 <style scoped>

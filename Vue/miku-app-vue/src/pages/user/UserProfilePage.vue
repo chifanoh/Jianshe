@@ -343,7 +343,7 @@ const defaultAvatar =
   align-items: center;
   transition: all 0.3s ease;
   position: relative;
-  border-left: 5px solid transparent;
+  border-left: 4px solid transparent;
 }
 
 .menu-item:hover {
