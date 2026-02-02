@@ -1,8 +1,8 @@
 <template>
   <!-- 首页 -->
-  <div class="mask bg"></div>
-  <div id="homePage">
-    <div class="main-layout">
+  <div class="main-section-container">
+    <div class="mask bg"></div>
+    <div class="main-content-section">
       <!-- 左导航栏 -->
       <div class="sub-section">
         <div class="nav-sidebar py-30 mr-12">
@@ -208,9 +208,12 @@ const handleNavClick = (section: string, path: string) => {
 </script>
 
 <style scoped>
-#homePage {
-  padding: 80px 0 24px;
+.main-section-container {
   position: relative;
+  margin: 0 auto;
+  height: 100%;
+  padding: 80px 0 24px;
+  box-sizing: content-box;
 }
 
 a {
@@ -276,7 +279,7 @@ li {
   position: relative;
 }
 
-.main-layout {
+.main-content-section {
   width: 1200px;
   margin: 0 auto;
   display: flex;

@@ -164,7 +164,6 @@ const { showModal, articleTitle, articleContent, cancelCallback, submitCallback 
   width: 100vw;
   margin: 0 auto;
   min-width: 1268px;
-  /* background-color: rgba(0, 0, 0, 0.9); */
   background-color: #191918;
   backdrop-filter: blur(5px);
   z-index: 1000;
