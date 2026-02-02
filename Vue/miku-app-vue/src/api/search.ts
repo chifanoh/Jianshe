@@ -3,28 +3,28 @@ import type { Article } from '@/api/article'
 
 /**
  * 搜索文章
- * @param keyword 搜索关键词
+ * @param query 搜索关键词
  * @param page 页码
  * @param pageSize 每页数量
  * @returns 搜索结果列表
  */
 export async function searchArticles(
-  keyword: string,
+  query: string,
   page: number = 1,
   pageSize: number = 20,
 ): Promise<Article[]> {
-  if (!keyword || keyword.trim().length === 0) {
+  if (!query || query.trim().length === 0) {
     throw new Error('搜索关键词不能为空')
   }
 
-  if (keyword.trim().length > 20) {
+  if (query.trim().length > 20) {
     throw new Error('搜索关键词长度不能超过20个字符')
   }
 
   try {
     const response = await myAxios.get('/api/search', {
       params: {
-        keyword: keyword.trim(),
+        query: query.trim(),
         page,
         pageSize,
       },

@@ -4,7 +4,7 @@
     <div class="main-content-section">
       <div class="search-page">
         <!-- 搜索结果标题 -->
-        <p class="txt text-14 mx-24 pb-16 border">搜索"{{ keyword }}"，结果如下：</p>
+        <p class="txt text-14 mx-24 pb-16 border">搜索"{{ query }}"，结果如下：</p>
 
         <!-- 内容区域 -->
         <div class="content-container">
@@ -36,19 +36,19 @@ import ArticleCard from '@/components/Article/ArticleCard.vue'
 import type { Article } from '@/api/article'
 
 const route = useRoute()
-const keyword = ref('')
+const query = ref('')
 const articles = ref<Article[]>([])
 const loading = ref(false)
 
-const performSearch = async (searchKeyword: string) => {
-  if (!searchKeyword?.trim()) {
+const performSearch = async (searchQuery: string) => {
+  if (!searchQuery?.trim()) {
     articles.value = []
     return
   }
 
   loading.value = true
   try {
-    articles.value = await searchArticles(searchKeyword.trim())
+    articles.value = await searchArticles(searchQuery.trim())
   } catch (error) {
     console.error('搜索失败:', error)
     articles.value = []
@@ -58,15 +58,15 @@ const performSearch = async (searchKeyword: string) => {
 }
 
 onMounted(() => {
-  keyword.value = (route.query.q as string) || ''
-  performSearch(keyword.value)
+  query.value = (route.query.q as string) || ''
+  performSearch(query.value)
 })
 
 watch(
   () => route.query.q,
   (newQuery) => {
-    keyword.value = (newQuery as string) || ''
-    performSearch(keyword.value)
+    query.value = (newQuery as string) || ''
+    performSearch(query.value)
   },
 )
 </script>
