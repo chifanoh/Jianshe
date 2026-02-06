@@ -19,6 +19,5 @@ public class ArticlesVO implements Serializable {
     private Integer comments;
     private Integer likes;
     private List<String> images;
-    private List<TopicVO> topics;
     private LocalDateTime createdTime;
 }

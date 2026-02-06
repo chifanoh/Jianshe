@@ -23,6 +23,5 @@ public class ArticleDetailVO implements Serializable {
     private Integer likes;
     private Integer favorite;
     private List<String> images;
-    private List<TopicVO> topics;
     private LocalDateTime createdTime;
 }
