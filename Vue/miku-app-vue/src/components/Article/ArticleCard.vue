@@ -48,19 +48,8 @@
       </div>
     </router-link>
 
-    <!-- 话题标签 & 互动数据 -->
+    <!-- 互动数据 -->
     <div class="footer">
-      <div class="topics" v-if="articleData.topics && articleData.topics.length > 0">
-        <span v-for="topic in articleData.topics" :key="topic.id" class="topic-tag">
-          <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-            <path
-              d="M28 12v-2h-6V4h-2v6h-8V4h-2v6H4v2h6v8H4v2h6v6h2v-6h8v6h2v-6h6v-2h-6v-8zm-8 8h-8v-8h8z"
-              fill="currentColor"
-            ></path>
-          </svg>
-          {{ topic.name }}
-        </span>
-      </div>
       <div class="interaction">
         <span class="stat">
           <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -115,7 +104,7 @@ const props = withDefaults(defineProps<Props>(), {
     title: '',
     content: '',
     images: [],
-    topics: [],
+
     comments: 0,
     likes: 0,
     favorite: 0,
@@ -363,21 +352,6 @@ const firstParagraphContent = computed(() => {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-
-.topics {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-}
-
-.topic-tag {
-  padding: 4px 8px;
-  background: #f5f5f5;
-  color: #666;
-  border-radius: 4px;
-  font-size: 12px;
 }
 
 .interaction {

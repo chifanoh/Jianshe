@@ -13,7 +13,6 @@ export function useArticlePublish() {
   // 表单数据
   const articleTitle = ref('')
   const articleContent = ref('')
-  const articleTags = ref<string[]>([])
 
   // 发布文章
   function cancelCallback() {
@@ -37,7 +36,6 @@ export function useArticlePublish() {
       const response = await createArticle({
         title: articleTitle.value.trim(),
         content: articleContent.value.trim(),
-        topicIds: articleTags.value.length > 0 ? articleTags.value : undefined,
       })
 
       if (response.data.code === 200) {
@@ -47,7 +45,6 @@ export function useArticlePublish() {
         // 重置表单
         articleTitle.value = ''
         articleContent.value = ''
-        articleTags.value = []
 
         // 可以在这里添加跳转到文章详情页的逻辑
         if (response.data.data && response.data.data.id) {
@@ -69,7 +66,6 @@ export function useArticlePublish() {
     publishing,
     articleTitle,
     articleContent,
-    articleTags,
     cancelCallback,
     submitCallback,
   }

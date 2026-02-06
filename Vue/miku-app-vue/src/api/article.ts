@@ -12,18 +12,12 @@ export interface ArticleUser {
   sex?: number
 }
 
-export interface ArticleTopic {
-  id: string | number
-  name: string
-}
-
 export interface Article {
   id: string | number
   user: ArticleUser
   title: string
   content: string
   images: string[] | null
-  topics: ArticleTopic[] | null
   views: number
   comments: number
   likes: number
@@ -57,7 +51,6 @@ export const getArticleList = async (params?: {
   page?: number
   pageSize?: number
   userId?: string | number
-  topicId?: string | number
 }) => {
   return myAxios.request<ArticleListResponse>({
     url: '/api/article/list',
@@ -87,7 +80,6 @@ export const createArticle = async (data: {
   title: string
   content: string
   images?: string[]
-  topicIds?: string[] | number[]
 }) => {
   return myAxios.request<CreateArticleResponse>({
     url: '/api/article/create',
@@ -108,7 +100,6 @@ export const updateArticle = async (
     title?: string
     content?: string
     images?: string[]
-    topicIds?: string[] | number[]
   },
 ) => {
   return myAxios.request({

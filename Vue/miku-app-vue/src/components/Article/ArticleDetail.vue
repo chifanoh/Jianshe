@@ -506,22 +506,6 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.article-topics {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  max-width: 300px;
-}
-
-.topic-tag {
-  padding: 4px 10px;
-  background: #f0f7ff;
-  color: #1890ff;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
 /* 文章正文 */
 .article-body {
   margin-bottom: 22px;

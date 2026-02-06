@@ -12,12 +12,6 @@ export interface ArticleAuthor {
   sex?: number
 }
 
-// 文章话题信息
-export interface ArticleTopic {
-  id: string | number
-  name: string
-}
-
 // 文章数据结构 - 适配后端实际返回格式
 export interface Article {
   id: string | number
@@ -25,7 +19,6 @@ export interface Article {
   title: string
   content: string
   images: string[] | null
-  topics: ArticleTopic[] | null
   views: number
   comments: number
   likes: number
@@ -49,7 +42,6 @@ export interface ArticleQueryParams {
   page?: number
   pageSize?: number
   userId?: string | number
-  topicId?: string | number
   keyword?: string
 }
 
@@ -58,7 +50,6 @@ export interface CreateArticleParams {
   title: string
   content: string
   images?: string[]
-  topicIds?: string[] | number[]
 }
 
 // 更新文章参数
@@ -66,5 +57,4 @@ export interface UpdateArticleParams {
   title?: string
   content?: string
   images?: string[]
-  topicIds?: string[] | number[]
 }
