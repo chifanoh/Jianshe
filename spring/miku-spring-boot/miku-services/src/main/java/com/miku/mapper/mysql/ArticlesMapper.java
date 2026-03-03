@@ -1,4 +1,4 @@
-package com.miku.mapper;
+package com.miku.mapper.mysql;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.miku.entity.Articles;
