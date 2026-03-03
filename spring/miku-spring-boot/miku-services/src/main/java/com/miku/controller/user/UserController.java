@@ -14,6 +14,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -71,7 +72,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response){
+    public Result<UserLoginVO> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response){
         log.info("用户登录:{}", userLoginDTO);
         User user = userService.login(userLoginDTO);
 

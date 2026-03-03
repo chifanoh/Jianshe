@@ -1,5 +1,7 @@
 package com.miku.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +24,8 @@ public class CreateArticlesDTO implements Serializable {
     /**
      * 文章标题
      */
+    @NotBlank(message = "标题不能为空")
+    @Size(message = "标题最长不能超过{max}", max = 30)
     private String title;
 
     /**

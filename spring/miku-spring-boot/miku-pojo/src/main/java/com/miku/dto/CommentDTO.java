@@ -1,6 +1,8 @@
 package com.miku.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.extern.java.Log;
 
@@ -22,5 +24,7 @@ public class CommentDTO implements Serializable {
     private Long parentId;
 
     //评论内容
+    @NotBlank(message = "内容不能为空")
+    @Size(message = "内容不能超过{max}个字符", max = 50)
     private String content;
 }
