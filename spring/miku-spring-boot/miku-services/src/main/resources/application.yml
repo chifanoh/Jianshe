@@ -3,11 +3,14 @@ server:
 
 spring:
   datasource:
-    # 配置数据库MYSQl
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/miku_spring_boot
-    username: root
-    password: REMOVED
+    # 单独配置数据库 MYSQl(因为使用manticore多个数据源)
+    mysql:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/miku_spring_boot
+      username: root
+      password: "REMOVED"
+      pool-name: MySQLPool
+      maximum-pool-size: 20
 
   data:
     redis:
