@@ -5,7 +5,7 @@ import com.miku.dto.UserLoginDTO;
 import com.miku.entity.User;
 import com.miku.exception.AccountNotFoundException;
 import com.miku.exception.PasswordErrorException;
-import com.miku.mapper.UserMapper;
+import com.miku.mapper.mysql.UserMapper;
 import com.miku.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
