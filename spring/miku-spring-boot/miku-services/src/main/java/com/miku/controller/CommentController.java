@@ -5,6 +5,7 @@ import com.miku.dto.PageQueryDTO;
 import com.miku.result.PageResult;
 import com.miku.result.Result;
 import com.miku.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +25,8 @@ public class CommentController {
      * @return
      */
     @PostMapping("/submit")
-    public Result<CommentDTO> putComment(@RequestBody CommentDTO commentDTO){
+    public Result<CommentDTO> putComment(@Valid @RequestBody CommentDTO commentDTO){
         log.info("提交评论:{}",commentDTO);
-        if(commentDTO.getContent() == null){
-            return Result.error("error");
-        }
         CommentDTO comment = commentService.putComment(commentDTO);
         return Result.success(comment);
     }
