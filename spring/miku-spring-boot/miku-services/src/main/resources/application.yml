@@ -27,20 +27,19 @@ logging:
         controller: info
         service: info
 
-mybatis:
-  # Mapper XML 文件路径
-  mapper-locations: classpath:mapper/*.xml
+mybatis-plus:
   # 实体类别名包路径
   type-aliases-package: com.miku.entity
-  # 开启驼峰命名映射 (下划线转驼峰)
+  # Mapper XML 文件路径
+  mapper-locations: classpath:mapper/*.xml
   configuration:
+    # 开启 MYSQL 驼峰映射
     map-underscore-to-camel-case: true
-
-mybatis-plus:
   global-config:
     db-config:
       # 使用数据库自增id (使用MP会默认开启雪花id)
       id-type: auto
+
 
 miku:
   jwt:
