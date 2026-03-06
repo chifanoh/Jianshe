@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.extern.java.Log;
 
 import java.io.Serializable;
 
@@ -25,6 +24,6 @@ public class CommentDTO implements Serializable {
 
     //评论内容
     @NotBlank(message = "内容不能为空")
-    @Size(message = "内容不能超过{max}个字符", max = 50)
+    @Size(message = "内容不能超过50个字符", max = 101)
     private String content;
 }
