@@ -11,7 +11,7 @@
             <div class="input-group">
               <input
                 type="text"
-                placeholder="用户名或邮箱"
+                placeholder="用户名"
                 v-model="formState.emailOrName"
                 required
                 class="login-input"
@@ -115,7 +115,7 @@ const validateField = (field: keyof FieldErrors): boolean => {
 
   if (field === 'emailOrName') {
     if (!formState.emailOrName.trim()) {
-      fieldErrors.emailOrName = '请输入用户名或邮箱'
+      fieldErrors.emailOrName = '请输入用户名'
       return false
     }
 
@@ -132,8 +132,8 @@ const validateField = (field: keyof FieldErrors): boolean => {
       return false
     }
 
-    if (formState.password.length < 6) {
-      fieldErrors.password = '密码长度不能少于6位'
+    if (formState.password.length < 6 || formState.password.length > 10) {
+      fieldErrors.password = '密码长度必须在6-10位之间'
       return false
     }
   }
@@ -163,6 +163,7 @@ const isFormValid = computed(() => {
     emailOrName &&
     password &&
     password.length >= 6 &&
+    password.length <= 10 &&
     (isEmail(emailOrName) || isValidUsername(emailOrName))
   )
 })
@@ -190,12 +191,10 @@ const handleSubmit = async () => {
   errorMessage.value = ''
 
   try {
-    // 根据输入类型构建请求参数
+    // 构建请求参数，使用统一的account字段匹配后端UserLoginDTO
     const loginParams = {
+      account: formState.emailOrName.trim(),
       password: CryptoJS.MD5(formState.password).toString(),
-      ...(isEmail(formState.emailOrName)
-        ? { email: formState.emailOrName }
-        : { name: formState.emailOrName }),
     }
 
     const res = await userLogin(loginParams)
