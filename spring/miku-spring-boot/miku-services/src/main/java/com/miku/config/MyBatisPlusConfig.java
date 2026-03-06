@@ -16,7 +16,20 @@ import javax.sql.DataSource;
 
 @Configuration
 @MapperScan(basePackages = "com.miku.mapper.mysql", sqlSessionFactoryRef = "mysqlSqlSessionFactory")
-public class MybatisPlusConfig {
+public class MyBatisPlusConfig {
+
+    @Primary
+    @Bean("mysqlSqlSessionFactory")
+    public SqlSessionFactory mysqlSqlSessionFactory(
+            @Qualifier("mysqlDataSource") DataSource dataSource) throws Exception {
+        
+        MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
+        factoryBean.setDataSource(dataSource);
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
+                .getResources("classpath*:mapper/mysql/**/*.xml")
+        );
+        return factoryBean.getObject();
+    }
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
@@ -25,14 +38,4 @@ public class MybatisPlusConfig {
         return interceptor;
     }
 
-    @Primary
-    @Bean(name = "mysqlSqlSessionFactory")
-    public SqlSessionFactory mysqlSqlSessionFactory(@Qualifier("mysqlDataSource") DataSource dataSource)
-            throws Exception {
-
-        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
-        bean.setDataSource(dataSource);
-        bean.setPlugins(mybatisPlusInterceptor());
-        return bean.getObject();
-    }
 }
