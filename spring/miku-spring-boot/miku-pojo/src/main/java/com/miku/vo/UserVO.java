@@ -8,7 +8,6 @@ import java.io.Serializable;
 @Data
 @Builder
 public class UserVO implements Serializable {
-
     //id
     private Long id;
 
