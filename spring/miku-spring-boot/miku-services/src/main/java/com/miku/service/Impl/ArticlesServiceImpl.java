@@ -93,9 +93,13 @@ public class ArticlesServiceImpl implements ArticlesService {
      */
     @Override
     public ArticleDetailVO getArticleDetail(Integer id) {
-        // 查询数据库
         // 1.获取文章详细页
-        Articles articles = articlesMapper.selectById(id);
+        Articles articles = articlesMapper.selectOne(new LambdaQueryWrapper<Articles>()
+                .select(Articles::getId, Articles::getUserId,
+                        Articles::getTitle, Articles::getViews,
+                        Articles::getComments, Articles::getLikes,
+                        Articles::getFavorite, Articles::getCreatedTime)
+                .eq(Articles::getId, id));
 
         // 文章为空直接返回
         if (articles == null){
@@ -106,7 +110,7 @@ public class ArticlesServiceImpl implements ArticlesService {
         Long uid = articles.getUserId();
         User user = userMapper.selectById(uid);
 
-        // 数据拷贝
+        // 数据拷贝,拼装
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
         UserArticleDetailVO userArticleDetailVO = new UserArticleDetailVO();
         BeanUtils.copyProperties(articles,articleDetailVO);
