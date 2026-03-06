@@ -42,22 +42,22 @@ public class Articles implements Serializable {
     private String images;
 
     /**
-     * 文章浏览量
+     * 文章浏览数
      */
     private Integer views;
 
     /**
-     * 文章评论
+     * 文章评论数
      */
     private Integer comments;
 
     /**
-     * 文章点赞
+     * 文章点赞数
      */
     private Integer likes;
 
     /**
-     * 文章收藏
+     * 文章收藏数
      */
     private Integer favorite;
 
