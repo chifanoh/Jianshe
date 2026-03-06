@@ -3,6 +3,7 @@ package com.miku.controller.user;
 import com.miku.constant.JwtClaimsConstant;
 import com.miku.context.BaseContext;
 import com.miku.dto.UserLoginDTO;
+import com.miku.dto.UserRegisterDTO;
 import com.miku.entity.User;
 import com.miku.properties.JwtProperties;
 import com.miku.result.Result;
@@ -64,6 +65,18 @@ public class UserController {
                 .email(user.getEmail())
                 .build();
         return Result.success(userVO);
+    }
+
+    /**
+     * 用户注册
+     * @param userRegisterDTO
+     * @return
+     */
+    @PostMapping("/register")
+    public Result register(@Valid UserRegisterDTO userRegisterDTO){
+        log.info("用户注册{}",userRegisterDTO);
+        userService.register(userRegisterDTO);
+        return Result.success("注册成功");
     }
 
     /**

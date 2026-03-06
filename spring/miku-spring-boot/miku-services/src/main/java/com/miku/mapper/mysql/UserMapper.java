@@ -13,4 +13,15 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     User selectByUserName(String name);
+    User selectByEmail(String account);
+
+    /**
+     * 查用户名, 用户邮箱是否唯一
+     * @param name
+     * @return
+     */
+    String countByName(String name);
+    String countByEmail(String email);
+
+
 }
