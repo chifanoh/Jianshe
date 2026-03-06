@@ -96,9 +96,10 @@ public class ArticlesServiceImpl implements ArticlesService {
         // 1.获取文章详细页
         Articles articles = articlesMapper.selectOne(new LambdaQueryWrapper<Articles>()
                 .select(Articles::getId, Articles::getUserId,
-                        Articles::getTitle, Articles::getViews,
-                        Articles::getComments, Articles::getLikes,
-                        Articles::getFavorite, Articles::getCreatedTime)
+                        Articles::getTitle, Articles::getContent,
+                        Articles::getViews, Articles::getComments,
+                        Articles::getLikes, Articles::getFavorite,
+                        Articles::getCreatedTime)
                 .eq(Articles::getId, id));
 
         // 文章为空直接返回
@@ -113,8 +114,8 @@ public class ArticlesServiceImpl implements ArticlesService {
         // 数据拷贝,拼装
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
         UserArticleDetailVO userArticleDetailVO = new UserArticleDetailVO();
-        BeanUtils.copyProperties(articles,articleDetailVO);
-        BeanUtils.copyProperties(user,userArticleDetailVO);
+        BeanUtils.copyProperties(articles,articleDetailVO);//文章信息
+        BeanUtils.copyProperties(user,userArticleDetailVO);//用户信息
         articleDetailVO.setUser(userArticleDetailVO);
         return articleDetailVO;
     }
