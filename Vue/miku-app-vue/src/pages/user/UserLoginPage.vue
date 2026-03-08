@@ -132,8 +132,8 @@ const validateField = (field: keyof FieldErrors): boolean => {
       return false
     }
 
-    if (formState.password.length < 6 || formState.password.length > 10) {
-      fieldErrors.password = '密码长度必须在6-10位之间'
+    if (formState.password.length < 6 || formState.password.length > 12) {
+      fieldErrors.password = '密码长度必须在6-12位之间'
       return false
     }
   }
@@ -163,7 +163,7 @@ const isFormValid = computed(() => {
     emailOrName &&
     password &&
     password.length >= 6 &&
-    password.length <= 10 &&
+    password.length <= 12 &&
     (isEmail(emailOrName) || isValidUsername(emailOrName))
   )
 })

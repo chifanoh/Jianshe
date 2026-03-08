@@ -263,7 +263,10 @@ const formatTime = (timeString: string) => {
 }
 
 // 格式化内容（处理换行）
-const formatContent = (content: string) => {
+const formatContent = (content: string | null) => {
+  if (!content) {
+    return ''
+  }
   return content.replace(/\n/g, '<br>')
 }
 

@@ -12,39 +12,66 @@
               <input
                 type="text"
                 placeholder="用户名"
-                v-model="username"
+                v-model="formState.username"
                 required
                 class="register-input"
+                :class="{ error: fieldErrors.username }"
+                @blur="validateField('username')"
+                @input="clearFieldError('username')"
               />
+              <span v-if="fieldErrors.username" class="field-error">{{
+                fieldErrors.username
+              }}</span>
             </div>
             <div class="input-group">
               <input
                 type="text"
                 placeholder="邮箱"
-                v-model="email"
+                v-model="formState.email"
                 required
                 class="register-input"
+                :class="{ error: fieldErrors.email }"
+                @blur="validateField('email')"
+                @input="clearFieldError('email')"
               />
+              <span v-if="fieldErrors.email" class="field-error">{{ fieldErrors.email }}</span>
             </div>
             <div class="input-group">
               <input
                 type="text"
                 placeholder="验证码"
-                v-model="code"
+                v-model="formState.code"
                 required
                 class="register-input"
+                :class="{ error: fieldErrors.code }"
+                @blur="validateField('code')"
+                @input="clearFieldError('code')"
               />
+              <span v-if="fieldErrors.code" class="field-error">{{ fieldErrors.code }}</span>
             </div>
             <div class="input-group">
               <input
                 type="password"
                 placeholder="密码"
-                v-model="password"
+                v-model="formState.password"
                 required
                 class="register-input"
+                :class="{ error: fieldErrors.password }"
+                @blur="validateField('password')"
+                @input="clearFieldError('password')"
               />
+              <span v-if="fieldErrors.password" class="field-error">{{
+                fieldErrors.password
+              }}</span>
             </div>
-            <button type="submit" class="register-button">注册</button>
+            <button
+              type="submit"
+              class="register-button"
+              :disabled="loading || !isFormValid"
+              :class="{ loading: loading }"
+            >
+              {{ loading ? '注册中...' : '注册' }}
+            </button>
           </form>
           <div class="divider-section">
             <hr class="divider-line" />
@@ -59,19 +86,159 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
-const username = ref('')
-const password = ref('')
+interface FormState {
+  username: string
+  email: string
+  code: string
+  password: string
+}
+
+interface FieldErrors {
+  username: string
+  email: string
+  code: string
+  password: string
+}
+
+const formState = reactive<FormState>({
+  username: '',
+  email: '',
+  code: '',
+  password: '',
+})
+
+const fieldErrors = reactive<FieldErrors>({
+  username: '',
+  email: '',
+  code: '',
+  password: '',
+})
+
+const loading = ref(false)
 const router = useRouter()
 
+// 验证QQ邮箱格式（只允许QQ邮箱）
+const isQQEmail = (str: string): boolean => {
+  const qqEmailRegex = /^[1-9]\d{4,11}@qq\.com$/
+  return qqEmailRegex.test(str)
+}
+
+// 验证用户名格式（1-6字符）
+const isValidUsername = (str: string): boolean => {
+  return str.length >= 1 && str.length <= 6
+}
+
+// 验证单个字段
+const validateField = (field: keyof FieldErrors): boolean => {
+  fieldErrors[field] = ''
+
+  if (field === 'username') {
+    if (!formState.username.trim()) {
+      fieldErrors.username = '请输入用户名'
+      return false
+    }
+    if (!isValidUsername(formState.username.trim())) {
+      fieldErrors.username = '用户名长度必须在1-6字符之间'
+      return false
+    }
+  }
+
+  if (field === 'email') {
+    if (!formState.email.trim()) {
+      fieldErrors.email = '请输入邮箱'
+      return false
+    }
+    if (!isQQEmail(formState.email.trim())) {
+      fieldErrors.email = '请输入正确的QQ邮箱格式'
+      return false
+    }
+  }
+
+  if (field === 'password') {
+    if (!formState.password.trim()) {
+      fieldErrors.password = '请输入密码'
+      return false
+    }
+    if (formState.password.length < 6 || formState.password.length > 12) {
+      fieldErrors.password = '密码长度必须在6-12字符之间'
+      return false
+    }
+  }
+
+  if (field === 'code') {
+    if (!formState.code.trim()) {
+      fieldErrors.code = '请输入验证码'
+      return false
+    }
+  }
+
+  return true
+}
+
+// 清除字段错误
+const clearFieldError = (field: keyof FieldErrors) => {
+  fieldErrors[field] = ''
+}
+
+// 表单整体验证
+const validateForm = (): boolean => {
+  const usernameValid = validateField('username')
+  const emailValid = validateField('email')
+  const passwordValid = validateField('password')
+  const codeValid = validateField('code')
+  return usernameValid && emailValid && passwordValid && codeValid
+}
+
+// 计算表单是否有效
+const isFormValid = computed(() => {
+  const username = formState.username.trim()
+  const email = formState.email.trim()
+  const password = formState.password
+  const code = formState.code.trim()
+
+  return (
+    username &&
+    isValidUsername(username) &&
+    email &&
+    isQQEmail(email) &&
+    password &&
+    password.length >= 6 &&
+    password.length <= 12 &&
+    code
+  )
+})
+
 const register = () => {
-  // 简单的登录逻辑，实际应用中应与后端交互
-  if (username.value === 'test' && password.value === '123456') {
-    router.push('/') // 登录成功后直接跳转到主页面
-  } else {
-    alert('用户名或密码错误！')
+  if (!validateForm()) {
+    return
+  }
+
+  // 防止重复提交
+  if (loading.value) {
+    return
+  }
+
+  loading.value = true
+
+  try {
+    // 这里添加实际的注册逻辑
+    console.log('注册参数：', {
+      username: formState.username.trim(),
+      email: formState.email.trim(),
+      password: formState.password,
+      code: formState.code.trim(),
+    })
+
+    // 模拟注册成功
+    alert('注册功能开发中...')
+    // router.push('/user/login')
+  } catch (error) {
+    console.error('注册失败:', error)
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -188,5 +355,43 @@ const register = () => {
 .register-link {
   color: dodgerblue;
   text-decoration: none;
+}
+
+.field-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.register-input.error {
+  border-color: #ff4d4f;
+}
+
+.register-button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.register-button.loading {
+  position: relative;
+}
+
+.register-button.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
