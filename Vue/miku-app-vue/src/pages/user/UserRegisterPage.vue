@@ -36,19 +36,7 @@
               />
               <span v-if="fieldErrors.email" class="field-error">{{ fieldErrors.email }}</span>
             </div>
-            <div class="input-group">
-              <input
-                type="text"
-                placeholder="验证码"
-                v-model="formState.code"
-                required
-                class="register-input"
-                :class="{ error: fieldErrors.code }"
-                @blur="validateField('code')"
-                @input="clearFieldError('code')"
-              />
-              <span v-if="fieldErrors.code" class="field-error">{{ fieldErrors.code }}</span>
-            </div>
+
             <div class="input-group">
               <input
                 type="password"
@@ -73,12 +61,6 @@
               {{ loading ? '注册中...' : '注册' }}
             </button>
           </form>
-          <div class="divider-section">
-            <hr class="divider-line" />
-            <span class="divider-text">或</span>
-            <hr class="divider-line" />
-          </div>
-          <button class="forgot-password-button">忘记密码</button>
         </div>
       </div>
     </main>
@@ -92,28 +74,24 @@ import { useRouter } from 'vue-router'
 interface FormState {
   username: string
   email: string
-  code: string
   password: string
 }
 
 interface FieldErrors {
   username: string
   email: string
-  code: string
   password: string
 }
 
 const formState = reactive<FormState>({
   username: '',
   email: '',
-  code: '',
   password: '',
 })
 
 const fieldErrors = reactive<FieldErrors>({
   username: '',
   email: '',
-  code: '',
   password: '',
 })
 
@@ -168,13 +146,6 @@ const validateField = (field: keyof FieldErrors): boolean => {
     }
   }
 
-  if (field === 'code') {
-    if (!formState.code.trim()) {
-      fieldErrors.code = '请输入验证码'
-      return false
-    }
-  }
-
   return true
 }
 
@@ -188,8 +159,7 @@ const validateForm = (): boolean => {
   const usernameValid = validateField('username')
   const emailValid = validateField('email')
   const passwordValid = validateField('password')
-  const codeValid = validateField('code')
-  return usernameValid && emailValid && passwordValid && codeValid
+  return usernameValid && emailValid && passwordValid
 }
 
 // 计算表单是否有效
@@ -197,7 +167,6 @@ const isFormValid = computed(() => {
   const username = formState.username.trim()
   const email = formState.email.trim()
   const password = formState.password
-  const code = formState.code.trim()
 
   return (
     username &&
@@ -206,8 +175,7 @@ const isFormValid = computed(() => {
     isQQEmail(email) &&
     password &&
     password.length >= 6 &&
-    password.length <= 12 &&
-    code
+    password.length <= 12
   )
 })
 
@@ -229,7 +197,6 @@ const register = () => {
       username: formState.username.trim(),
       email: formState.email.trim(),
       password: formState.password,
-      code: formState.code.trim(),
     })
 
     // 模拟注册成功
@@ -246,7 +213,6 @@ const register = () => {
 <style scoped>
 #userRegisterPage {
   overflow: hidden;
-  background-color: rgb(245, 245, 245);
   color: #fff;
   min-height: 50vh;
   display: flex;
@@ -264,7 +230,7 @@ const register = () => {
 
 .register-container {
   width: 320px;
-  height: 600px;
+  height: 450px;
   background-color: rgb(24, 24, 27);
   padding: 20px;
   border-radius: 20px;

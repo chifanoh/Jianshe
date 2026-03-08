@@ -244,7 +244,6 @@ const login = () => {
 <style scoped>
 #userLoginPage {
   overflow: hidden;
-  background-color: rgb(245, 245, 245);
   color: #fff;
   min-height: 50vh;
   display: flex;
