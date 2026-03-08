@@ -15,10 +15,6 @@ export function useArticlePublish() {
   const articleContent = ref('')
 
   // 发布文章
-  function cancelCallback() {
-    return
-  }
-
   async function submitCallback() {
     if (!articleTitle.value.trim()) {
       message.warning('请输入文章标题')
@@ -66,7 +62,6 @@ export function useArticlePublish() {
     publishing,
     articleTitle,
     articleContent,
-    cancelCallback,
     submitCallback,
   }
 }

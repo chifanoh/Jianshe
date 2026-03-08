@@ -61,48 +61,32 @@
           preset="dialog"
           title="试着发布一篇文章吧"
           :show-icon="false"
-          positive-text="确认"
-          negative-text="算了"
-          :positive-button-props="{
-            size: 'large',
-          }"
-          :negative-button-props="{
-            size: 'large',
-          }"
-          @positive-click="submitCallback"
-          @negative-click="cancelCallback"
+          :closable="false"
           class="publish-modal"
           transform-origin="center"
         >
-          <div class="publish-modal-content">
-            <div class="publish-form">
-              <div class="form-item">
-                <label class="form-label">文章标题</label>
-                <n-input
-                  v-model:value="articleTitle"
-                  placeholder="请输入文章标题 (必填)"
-                  maxlength="30"
-                  show-count
-                  size="large"
-                />
-              </div>
-              <div class="form-item">
-                <label class="form-label">文章内容</label>
-                <RichEditor v-model="articleContent" />
-              </div>
-              <!-- <div class="form-item">
-                <label class="form-label">话题标签</label>
-                <n-space vertical>
-                  <n-select
-                    v-model:value="articleTags"
-                    placeholder="选择话题标签"
-                    multiple
-                    :options="tagOptions"
-                    clearable
-                  />
-                </n-space>
-              </div> -->
-            </div>
+          <div class="form-item">
+            <label class="form-label">文章标题</label>
+            <n-input
+              v-model:value="articleTitle"
+              placeholder="请输入文章标题 (必填)"
+              maxlength="30"
+              show-count
+              size="large"
+            />
+          </div>
+          <div class="form-item">
+            <label class="form-label">文章内容</label>
+            <RichEditor v-model="articleContent" />
+          </div>
+          <div class="modal-footer" style="display: flex; justify-content: flex-end">
+            <n-button
+              @click="submitCallback"
+              type="primary"
+              style="background: #fe2c55; color: #fff; width: 120px; border-radius: 4px"
+            >
+              发布
+            </n-button>
           </div>
         </n-modal>
 
@@ -153,8 +137,7 @@ import { useArticlePublish } from '@/composables/useArticlePublish'
 
 const { loginUser, options, handleDropdownSelect } = useAuth()
 const { searchQuery, handleSearchInput, goToSearch } = useSearch()
-const { showModal, articleTitle, articleContent, cancelCallback, submitCallback } =
-  useArticlePublish()
+const { showModal, articleTitle, articleContent, submitCallback } = useArticlePublish()
 </script>
 
 <style scoped>
@@ -226,7 +209,7 @@ const { showModal, articleTitle, articleContent, cancelCallback, submitCallback 
 }
 
 .search-container {
-  width: 400px;
+  width: 350px;
   margin-right: 20px;
 }
 
@@ -299,14 +282,6 @@ const { showModal, articleTitle, articleContent, cancelCallback, submitCallback 
 .publish-modal {
   border-radius: 12px;
   overflow: hidden;
-}
-
-.publish-modal-content {
-  padding: 24px 0 16px;
-}
-
-.publish-form {
-  margin-bottom: 8px;
 }
 
 .form-item {
