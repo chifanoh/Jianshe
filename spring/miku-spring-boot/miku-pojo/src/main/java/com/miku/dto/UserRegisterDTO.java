@@ -20,6 +20,6 @@ public class UserRegisterDTO {
 
     // 用户密码
     @NotBlank(message = "密码不能为空")
-    @Size(message = "密码长度6-10", min = 6 , max = 10)
+    @Size(message = "密码长度6-10", min = 6 , max = 12)
     private String password;
 }
