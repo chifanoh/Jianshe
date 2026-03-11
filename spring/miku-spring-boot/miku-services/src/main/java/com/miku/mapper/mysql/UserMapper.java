@@ -16,7 +16,7 @@ public interface UserMapper extends BaseMapper<User> {
     User selectByEmail(String account);
 
     /**
-     * 查用户名, 用户邮箱是否唯一
+     * 用户注册
      * @param name
      * @return
      */
