@@ -57,11 +57,6 @@ public class Articles implements Serializable {
     private Integer likes;
 
     /**
-     * 文章收藏数
-     */
-    private Integer favorite;
-
-    /**
     * 创建时间
     */
     private LocalDateTime createdTime;
