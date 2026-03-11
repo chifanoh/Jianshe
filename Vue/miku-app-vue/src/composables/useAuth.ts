@@ -13,8 +13,8 @@ export function useAuth() {
       return
     }
 
-    // 如果头像为空或者用户名为'未登录'，才尝试获取用户信息
-    if (!loginUser.loginUser.userAvatar || loginUser.loginUser.userName === '未登录') {
+    // 如果用户名为'未登录'，才尝试获取用户信息
+    if (loginUser.loginUser.userName === '未登录') {
       await loginUser.loadUserFromCache()
     }
   })
