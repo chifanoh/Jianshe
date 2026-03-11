@@ -198,7 +198,6 @@ const handleFocus = () => {
 // 取消评论
 const handleCancel = () => {
   // 可以在这里添加取消评论的逻辑
-  console.log('取消评论')
 }
 
 // 组件挂载时加载评论数据

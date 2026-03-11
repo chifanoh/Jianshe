@@ -21,6 +21,7 @@ export default defineConfigWithVueTs(
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      'no-console': ['error', { allow: ['error'] }],
     },
   },
   skipFormatting,

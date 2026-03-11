@@ -58,9 +58,21 @@
               <div class="stat-label">评论</div>
             </div>
 
-            <div class="stat-item mb-20">
-              <div class="icon"></div>
-              <img src="@sicons/antd/HeartOutlined.svg" alt="" />
+            <div class="stat-item mb-20" @click="toggleLike">
+              <div class="icon">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  :class="{ liked: isLiked }"
+                >
+                  <path
+                    d="M22.45 6a5.47 5.47 0 0 1 3.91 1.64a5.7 5.7 0 0 1 0 8L16 26.13L5.64 15.64a5.7 5.7 0 0 1 0-8a5.48 5.48 0 0 1 7.82 0l2.54 2.6l2.53-2.58A5.44 5.44 0 0 1 22.45 6m0-2a7.47 7.47 0 0 0-5.34 2.24L16 7.36l-1.11-1.12a7.49 7.49 0 0 0-10.68 0a7.72 7.72 0 0 0 0 10.82L16 29l11.79-11.94a7.72 7.72 0 0 0 0-10.82A7.49 7.49 0 0 0 22.45 4z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </div>
               <span class="stat-number">{{ article.likes }}</span>
               <div class="stat-label">点赞</div>
             </div>
@@ -193,7 +205,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getArticleDetail } from '@/api/article'
+import { getArticleDetail, likeArticle, unlikeArticle } from '@/api/article'
 import ServerError from '@/Result/ServerError.vue'
 import LostError from '@/Result/LostError.vue'
 import type { Article } from '@/types/article'
@@ -204,6 +216,7 @@ const article = ref<Article | null>(null)
 const loading = ref(true)
 const error = ref<string>('')
 const containerRef = ref<HTMLElement | undefined>(undefined)
+const isLiked = ref(false) // 点赞状态
 
 // 加载文章详情
 const loadArticle = async () => {
@@ -274,6 +287,26 @@ const getSkeletonLineWidth = (index: number): string => {
   if (index % 3 === 0) return '70%'
   if (index % 3 === 1) return '90%'
   return '80%'
+}
+
+// 点赞功能
+const toggleLike = async () => {
+  if (!article.value) return
+
+  try {
+    if (isLiked.value) {
+      // 取消点赞
+      await unlikeArticle(article.value.id)
+      article.value.likes--
+    } else {
+      // 点赞
+      await likeArticle(article.value.id)
+      article.value.likes++
+    }
+    isLiked.value = !isLiked.value
+  } catch (error) {
+    console.error('点赞操作失败:', error)
+  }
 }
 
 // 组件挂载时加载文章
@@ -422,12 +455,7 @@ onMounted(() => {
   gap: 8px;
   padding: 16px 8px;
   border-radius: 12px;
-  transition: all 0.3s ease;
   cursor: pointer;
-}
-
-.stat-item:hover {
-  transform: translateY(-3px);
 }
 
 .stat-number {
@@ -445,30 +473,20 @@ onMounted(() => {
 /* 点赞效果 */
 .stat-item {
   cursor: pointer;
-  transition: all 0.3s ease;
   border-radius: 8px;
   padding: 8px 4px;
 }
 
-.stat-item:hover {
-  background: #f5f7fa;
-  transform: translateY(-2px);
+/* 点赞图标红色效果 */
+.stat-item .icon svg {
+  transition:
+    fill 0.2s ease,
+    color 0.2s ease;
 }
 
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+.stat-item .icon svg.liked {
+  fill: #ff4757;
+  color: #ff4757;
 }
 .header-section {
   border-bottom: 1px solid #edeff5;
@@ -525,11 +543,6 @@ onMounted(() => {
   border-radius: 8px;
   margin: 12px 0;
   cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.article-image:hover {
-  transform: scale(1.02);
 }
 
 /* 右侧用户卡片 */
@@ -573,12 +586,6 @@ onMounted(() => {
   border-radius: 5px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.follow-btn:hover {
-  background: #fe2c55;
-  color: white;
 }
 
 .user-name {

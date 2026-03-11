@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router' // 暂时注释，后续注册功能实现时使用
 
 interface FormState {
   username: string
@@ -96,7 +96,7 @@ const fieldErrors = reactive<FieldErrors>({
 })
 
 const loading = ref(false)
-const router = useRouter()
+// const router = useRouter() // 暂时注释，后续注册功能实现时使用
 
 // 验证QQ邮箱格式（只允许QQ邮箱）
 const isQQEmail = (str: string): boolean => {
@@ -193,13 +193,6 @@ const register = () => {
 
   try {
     // 这里添加实际的注册逻辑
-    console.log('注册参数：', {
-      username: formState.username.trim(),
-      email: formState.email.trim(),
-      password: formState.password,
-    })
-
-    // 模拟注册成功
     alert('注册功能开发中...')
     // router.push('/user/login')
   } catch (error) {

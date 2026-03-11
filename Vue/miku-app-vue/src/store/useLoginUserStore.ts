@@ -122,9 +122,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
           // 保存到IndexedDB缓存（秒级存储）
           try {
             await saveUserDataWithTimestamp(userData)
-          } catch (cacheError) {
-            console.warn(cacheError)
-          }
+          } catch {}
 
           return { success: true, data: userData }
         } else {
@@ -133,9 +131,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
           // 清除IndexedDB缓存
           try {
             await clearAllUserData()
-          } catch (cacheError) {
-            console.warn('清除IndexedDB缓存失败:', cacheError)
-          }
+          } catch {}
 
           return { success: false, message: res.data.msg || '获取用户信息失败' }
         }
@@ -211,9 +207,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     // 同时保存到IndexedDB缓存（秒级存储）
     try {
       await saveUserDataWithTimestamp(user)
-    } catch (cacheError) {
-      console.warn(cacheError)
-    }
+    } catch {}
   }
 
   // 更新用户头像

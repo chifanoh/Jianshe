@@ -218,7 +218,7 @@ const handleSubmit = async () => {
         const { saveUserDataWithTimestamp } = await import('@/utils/indexedDB')
         await saveUserDataWithTimestamp(userData)
       } catch (error) {
-        console.warn('保存用户数据到IndexedDB失败:', error)
+        console.error('保存用户数据到IndexedDB失败:', error)
       }
 
       // 跳转到首页或重定向页面
