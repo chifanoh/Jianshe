@@ -22,7 +22,6 @@ export interface Article {
   views: number
   comments: number
   likes: number
-  favorite: number
   createdTime: string
   updatedTime?: string
 }

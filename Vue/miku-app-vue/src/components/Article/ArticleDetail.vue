@@ -60,13 +60,6 @@
 
             <div class="stat-item mb-20">
               <div class="icon"></div>
-              <img src="@sicons/antd/StarOutlined.svg" alt="" />
-              <span class="stat-number">{{ article.favorite }}</span>
-              <div class="stat-label">收藏</div>
-            </div>
-
-            <div class="stat-item mb-20">
-              <div class="icon"></div>
               <img src="@sicons/antd/HeartOutlined.svg" alt="" />
               <span class="stat-number">{{ article.likes }}</span>
               <div class="stat-label">点赞</div>

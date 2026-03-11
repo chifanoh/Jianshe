@@ -107,7 +107,6 @@ const props = withDefaults(defineProps<Props>(), {
 
     comments: 0,
     likes: 0,
-    favorite: 0,
     views: 0,
     createdTime: new Date().toISOString(),
   }),
