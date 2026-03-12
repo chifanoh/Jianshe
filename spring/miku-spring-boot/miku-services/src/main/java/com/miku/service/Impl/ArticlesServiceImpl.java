@@ -33,7 +33,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     private UserMapper userMapper;
 
     /**
-     * 文章查询
+     * 文章列表查询
      * @param pageQueryDTO
      * @return
      */

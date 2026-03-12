@@ -7,7 +7,7 @@ import com.miku.vo.ArticleDetailVO;
 
 public interface ArticlesService {
     /**
-     * 文章查询
+     * 文章列表查询
      * @param pageQueryDTO
      * @return
      */
