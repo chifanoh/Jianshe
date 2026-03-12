@@ -19,7 +19,7 @@ public class CreateArticlesDTO implements Serializable {
     /**
      * 用户ID
      */
-    private Long userId;
+    private String userId;
 
     /**
      * 文章标题

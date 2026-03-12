@@ -14,10 +14,10 @@ import java.util.List;
 public class CommentVO {
 
     //评论ID
-    private Long id;
+    private String id;
 
     //用户ID
-    private Long userId;
+    private String userId;
 
     //用户名
     private String userName;
@@ -26,7 +26,7 @@ public class CommentVO {
     private String userAvatar;
 
     //父评论ID.用于前端判断评论层级关系
-    private Long parentId;
+    private String parentId;
 
     //评论内容
     private String content;

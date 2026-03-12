@@ -1,5 +1,7 @@
 package com.miku.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,21 +21,25 @@ public class Comment implements Serializable {
     /**
     * 评论ID
     */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
     * 评论用户ID
     */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
     /**
     * 文章ID
     */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long articleId;
 
     /**
     * 父评论ID，用于回复
     */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**
