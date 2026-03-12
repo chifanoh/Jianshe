@@ -22,7 +22,7 @@ public class ArticlesContrller {
     private ArticlesService articlesService;
 
     /**
-     * 文章查询
+     * 文章列表查询
      * @param pageQueryDTO
      * @return
      */
@@ -59,6 +59,37 @@ public class ArticlesContrller {
         Long uid = BaseContext.getCurrentId();
         //3.存储文章数据
         articlesService.createArtics(uid, createArticlesDTO);
+        return Result.success();
+    }
+
+    /**
+     * 点赞信息
+     * @param id
+     * @return
+     */
+    public Result getLikeStatus(@PathVariable Integer id){
+        return Result.success();
+    }
+
+    /**
+     * 点赞
+     * @param id
+     */
+    @PostMapping("/like/{id}")
+    public Result likeArticle(@PathVariable Integer id){
+        Long userId = BaseContext.getCurrentId();
+        log.info("用户:{}点赞:{}",userId, id);
+        return Result.success();
+    }
+
+    /**
+     * 取消点赞
+     * @param id
+     */
+    @PostMapping("/unlike/{id}")
+    public Result unlikeArticle(@PathVariable Integer id){
+        Long userId = BaseContext.getCurrentId();
+        log.info("用户:{}取消点赞:{}",userId, id);
         return Result.success();
     }
 }
