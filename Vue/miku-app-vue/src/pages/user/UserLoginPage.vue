@@ -194,7 +194,7 @@ const handleSubmit = async () => {
     // 构建请求参数，使用统一的account字段匹配后端UserLoginDTO
     const loginParams = {
       account: formState.emailOrName.trim(),
-      password: CryptoJS.MD5(formState.password).toString(),
+      password: CryptoJS.MD5(formState.password).toString().toLowerCase(),
     }
 
     const res = await userLogin(loginParams)

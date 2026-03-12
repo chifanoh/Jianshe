@@ -4,35 +4,59 @@
     <div v-if="loading" class="skeleton-container">
       <!-- 骨架屏加载状态 -->
       <div class="article-content">
-        <!-- 左侧统计骨架 -->
-        <div class="skeleton-sidebar-left">
-          <n-skeleton height="80px" width="80px" :sharp="false" />
-          <n-skeleton height="80px" width="80px" :sharp="false" />
-          <n-skeleton height="80px" width="80px" :sharp="false" />
-        </div>
-        <!-- 中间内容骨架 -->
-        <div class="skeleton-content-area">
-          <div class="skeleton-header">
-            <n-skeleton height="40px" width="40px" circle />
-            <div class="skeleton-user-info">
-              <n-skeleton height="16px" width="120px" :sharp="false" />
-              <n-skeleton height="14px" width="80px" :sharp="false" />
+        <div class="main-box flex">
+          <!-- 左侧统计骨架 -->
+          <div class="sub-section">
+            <div class="post-state-section mr-20">
+              <n-skeleton height="80px" width="80px" :sharp="false" class="mb-20" />
+              <n-skeleton height="80px" width="80px" :sharp="false" class="mb-20" />
             </div>
           </div>
-          <n-skeleton height="28px" width="80%" :sharp="false" />
-          <div class="skeleton-content">
-            <n-skeleton
-              v-for="i in 8"
-              :key="i"
-              height="14px"
-              :width="getSkeletonLineWidth(i)"
-              :sharp="false"
-            />
+          <!-- 中间内容骨架 -->
+          <div class="flex">
+            <div class="mr-12 main-section">
+              <div class="detail-section">
+                <div class="main-content-section">
+                  <div class="skeleton-header mb-16">
+                    <div class="skeleton-user-info flex mb-16">
+                      <n-skeleton height="40px" width="40px" :sharp="false" class="mr-16" />
+                      <div class="skeleton-user-text">
+                        <n-skeleton height="16px" width="120px" :sharp="false" class="mb-8" />
+                        <n-skeleton height="14px" width="80px" :sharp="false" />
+                      </div>
+                    </div>
+                  </div>
+                  <n-skeleton height="28px" width="80%" :sharp="false" class="mb-16" />
+                  <div class="skeleton-content">
+                    <n-skeleton
+                      v-for="i in 8"
+                      :key="i"
+                      height="14px"
+                      :width="getSkeletonLineWidth(i)"
+                      :sharp="false"
+                      class="mb-8"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <!-- 右侧用户骨架 -->
-        <div class="skeleton-sidebar-right">
-          <n-skeleton height="200px" width="280px" :sharp="false" />
+          <!-- 右侧用户骨架 -->
+          <div class="sub-box">
+            <div class="side-section">
+              <div class="skeleton-user-info-right flex mb-8">
+                <n-skeleton height="48px" width="48px" :sharp="false" class="mr-16" />
+                <div class="info-section">
+                  <n-skeleton height="16px" width="120px" :sharp="false" class="mb-8" />
+                  <div class="skeleton-stats flex">
+                    <n-skeleton height="14px" width="60px" :sharp="false" class="mr-16" />
+                    <n-skeleton height="14px" width="60px" :sharp="false" />
+                  </div>
+                </div>
+              </div>
+              <n-skeleton height="40px" width="100%" :sharp="false" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
