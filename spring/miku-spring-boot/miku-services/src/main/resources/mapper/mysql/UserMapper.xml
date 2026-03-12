@@ -3,19 +3,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.mapper.mysql.UserMapper">
     <select id="selectByUserName" resultType="com.miku.entity.User">
-        SELECT name
+        SELECT id, name, email, password, avatar
         FROM user
         WHERE name = #{name}
     </select>
 
     <select id="selectByEmail" resultType="com.miku.entity.User">
-        SELECT id, name,email, password, avatar
+        SELECT id, name, email, password, avatar
         FROM user
         WHERE email = #{email}
     </select>
 
     <select id="countByName" resultType="java.lang.String">
-        SELECT id, name,email, password, avatar
+        SELECT name
         FROM user
         WHERE name = #{name}
     </select>

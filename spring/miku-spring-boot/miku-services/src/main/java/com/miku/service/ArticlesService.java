@@ -18,7 +18,7 @@ public interface ArticlesService {
      * @param id
      * @return
      */
-    ArticleDetailVO getArticleDetail(String id);
+    ArticleDetailVO getArticleDetail(Integer id);
 
     /**
      * 发布文章

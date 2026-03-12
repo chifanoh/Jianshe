@@ -65,7 +65,7 @@ public class ArticlesServiceImpl implements ArticlesService {
         ArrayList<ArticlesVO> articlesVO = new ArrayList<>();
         for (Articles po : pageResult.getRecords()) {
             ArticlesVO vo = new ArticlesVO();
-            vo.setId(String.valueOf(po.getId()));
+            vo.setId(po.getId());
             vo.setTitle(po.getTitle());
             vo.setContent(po.getContent());
             vo.setComments(po.getComments());
@@ -76,7 +76,7 @@ public class ArticlesServiceImpl implements ArticlesService {
             User u = userMap.get(po.getUserId());
             //把用户转成UserArticlesVO
             UserArticlesVO userVO = UserArticlesVO.builder()
-                    .id(String.valueOf(u.getId()))
+                    .id(u.getId())
                     .name(u.getName())
                     .avatar(u.getAvatar())
                     .build();
@@ -92,13 +92,13 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @return
      */
     @Override
-    public ArticleDetailVO getArticleDetail(String id) {
+    public ArticleDetailVO getArticleDetail(Integer id) {
         // 1.获取文章详细页
         Articles articles = articlesMapper.selectOne(new LambdaQueryWrapper<Articles>()
                 .select(Articles::getId, Articles::getUserId,
                         Articles::getTitle, Articles::getContent,
                         Articles::getViews, Articles::getComments,
-                        Articles::getLikes, Articles::getFavorite,
+                        Articles::getLikes,
                         Articles::getCreatedTime)
                 .eq(Articles::getId, id));
 
