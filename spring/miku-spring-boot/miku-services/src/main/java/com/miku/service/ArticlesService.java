@@ -24,5 +24,5 @@ public interface ArticlesService {
      * 发布文章
      * @param uid
      */
-    void createArtics(String uid, CreateArticlesDTO createArticlesDTO);
+    void createArtics(Long uid, CreateArticlesDTO createArticlesDTO);
 }

@@ -10,7 +10,7 @@ public interface UserService {
      * @param uid
      * @return
      */
-    User current(String uid);
+    User current(Long uid);
 
     /**
      * 用户注册

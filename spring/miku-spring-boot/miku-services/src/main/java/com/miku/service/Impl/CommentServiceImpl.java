@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
         //对象拷贝
         BeanUtils.copyProperties(commentDTO, comment);
 
-        Long userId = Long.valueOf(BaseContext.getCurrentId());
+        Long userId = BaseContext.getCurrentId();
 
         //设置发布和修改时间
         comment.setUserId(userId);
@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
         commentMapper.insert(comment);
 
         //插入评论主键id
-        commentDTO.setId(String.valueOf(comment.getId()));
+        commentDTO.setId(comment.getId());
         return commentDTO;
 
     }
