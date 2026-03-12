@@ -7,6 +7,7 @@ import com.miku.result.PageResult;
 import com.miku.result.Result;
 import com.miku.service.ArticlesService;
 import com.miku.vo.ArticleDetailVO;
+import com.miku.vo.LikeArticleVO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ArticlesContrller {
     private ArticlesService articlesService;
 
     /**
-     * 文章查询
+     * 文章列表查询
      * @param pageQueryDTO
      * @return
      */
@@ -39,7 +40,7 @@ public class ArticlesContrller {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<ArticleDetailVO> getArticleDetail(@PathVariable Integer id){
+    public Result<ArticleDetailVO> getArticleDetail(@PathVariable String id){
         log.info("文章详细页查询结果:{}",id);
         ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id);
         //没有该文章
@@ -49,6 +50,10 @@ public class ArticlesContrller {
         return Result.success(articleDetailVO);
     }
 
+    public Result getLikeStatus(@PathVariable Integer id){
+        return Result.success();
+    }
+
     /**
      * 发布文章
      * @param createArticlesDTO
@@ -56,9 +61,31 @@ public class ArticlesContrller {
     @PostMapping("/create")
     public Result createArtics(@Valid @RequestBody CreateArticlesDTO createArticlesDTO){
         log.info("用户发布的文章:{}", createArticlesDTO);
-        Long uid = BaseContext.getCurrentId();
+        String uid = BaseContext.getCurrentId();
         //3.存储文章数据
         articlesService.createArtics(uid, createArticlesDTO);
+        return Result.success();
+    }
+
+    /**
+     * 点赞
+     * @param id
+     */
+    @PostMapping("/like/{id}")
+    public Result<LikeArticleVO> likeArticle(@PathVariable Integer id){
+        String userId = BaseContext.getCurrentId();
+        log.info("用户:{}点赞:{}",userId, id);
+        return Result.success();
+    }
+
+    /**
+     * 取消点赞
+     * @param id
+     */
+    @PostMapping("/unlike/{id}")
+    public Result<LikeArticleVO> unlikeArticle(@PathVariable Integer id){
+        String userId = BaseContext.getCurrentId();
+        log.info("用户:{}取消点赞:{}",userId, id);
         return Result.success();
     }
 }

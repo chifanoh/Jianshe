@@ -59,7 +59,7 @@ public class UserController {
         User user = userService.current(uid);
         //验签通过返回给前端
         UserVO userVO = UserVO.builder()
-                .id(user.getId())
+                .id(String.valueOf(user.getId()))
                 .avatar(user.getAvatar())
                 .name(user.getName())
                 .email(user.getEmail())
@@ -113,7 +113,7 @@ public class UserController {
 
         //返回给前端的数据
         UserLoginVO userLoginVO = UserLoginVO.builder()
-                .id(user.getId())
+                .id(String.valueOf(user.getId()))
                 .avatar(user.getAvatar())
                 .name(user.getName())
                 .email(user.getEmail())

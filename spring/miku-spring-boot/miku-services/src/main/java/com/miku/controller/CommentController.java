@@ -37,9 +37,9 @@ public class CommentController {
      * @return
      */
     @GetMapping("/list/{articleId}")
-    public Result<PageResult> getCommentList(@PathVariable Long articleId, PageQueryDTO pageQueryDTO){
+    public Result<PageResult> getCommentList(@PathVariable String articleId, PageQueryDTO pageQueryDTO){
         log.info("获取评论列表:{}",articleId);
-        PageResult pageResult = commentService.getCommentList(articleId,pageQueryDTO);
+        PageResult pageResult = commentService.getCommentList(Long.valueOf(articleId),pageQueryDTO);
         return Result.success(pageResult);
     }
 }

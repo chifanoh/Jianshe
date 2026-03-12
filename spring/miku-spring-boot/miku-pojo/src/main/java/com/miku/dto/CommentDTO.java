@@ -13,7 +13,7 @@ public class CommentDTO implements Serializable {
     private String id;
 
     //评论所属id
-    private Long articleId;
+    private String articleId;
 
     //用户id
     @JsonProperty("uid")

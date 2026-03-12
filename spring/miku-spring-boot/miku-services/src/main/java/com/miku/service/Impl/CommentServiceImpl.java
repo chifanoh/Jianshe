@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
         commentMapper.insert(comment);
 
         //插入评论主键id
-        commentDTO.setId(comment.getId());
+        commentDTO.setId(String.valueOf(comment.getId()));
         return commentDTO;
 
     }
