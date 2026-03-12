@@ -50,7 +50,7 @@ public class UserController {
     public Result<UserVO> current(HttpServletRequest request){
         log.info("密钥验签:{}",request);
 
-        Long uid = BaseContext.getCurrentId();
+        String uid = BaseContext.getCurrentId();
         if (uid == null){
             return Result.error("未登录");
         }

@@ -33,10 +33,11 @@ public class ArticlesServiceImpl implements ArticlesService {
     private UserMapper userMapper;
 
     /**
-     * 文章查询
+     * 文章列表查询
      * @param pageQueryDTO
      * @return
      */
+    // TODO
     @Override
     public PageResult pageQuery(PageQueryDTO pageQueryDTO) {
         // 设置分页参数
@@ -98,7 +99,7 @@ public class ArticlesServiceImpl implements ArticlesService {
                 .select(Articles::getId, Articles::getUserId,
                         Articles::getTitle, Articles::getContent,
                         Articles::getViews, Articles::getComments,
-                        Articles::getLikes, Articles::getFavorite,
+                        Articles::getLikes,
                         Articles::getCreatedTime)
                 .eq(Articles::getId, id));
 
@@ -125,13 +126,13 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @param uid
      */
     @Override
-    public void createArtics(Long uid, CreateArticlesDTO createArticlesDTO) {
+    public void createArtics(String uid, CreateArticlesDTO createArticlesDTO) {
         Articles articles = new Articles();
         //对象拷贝
         BeanUtils.copyProperties(createArticlesDTO,articles);
 
         //设置发布和修改时间
-        articles.setUserId(uid);
+        articles.setUserId(Long.valueOf(uid));
         articles.setCreatedTime(LocalDateTime.now());
         articles.setUpdatedTime(LocalDateTime.now());
         articlesMapper.insert(articles);

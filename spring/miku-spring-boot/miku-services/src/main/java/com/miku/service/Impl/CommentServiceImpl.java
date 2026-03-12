@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
         //对象拷贝
         BeanUtils.copyProperties(commentDTO, comment);
 
-        Long userId = BaseContext.getCurrentId();
+        String userId = BaseContext.getCurrentId();
 
         //设置发布和修改时间
         comment.setUserId(userId);
@@ -76,7 +76,7 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> records = pageResult.getRecords();
 
         // 2. 批量用户 Map
-        Set<Long> userIds = records.stream().map(Comment::getUserId).collect(Collectors.toSet());
+        Set<String> userIds = records.stream().map(Comment::getUserId).collect(Collectors.toSet());
         Map<Long, User> userMap = userIds.isEmpty() ? Map.of()
                 : userMapper.selectList(Wrappers.<User>lambdaQuery().in(User::getId, userIds))
                 .stream().collect(Collectors.toMap(User::getId, u -> u));

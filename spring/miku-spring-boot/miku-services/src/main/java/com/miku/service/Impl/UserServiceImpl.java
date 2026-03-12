@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public User current(Long uid) {
+    public User current(String uid) {
         User user = userMapper.selectById(uid);
         return user;
     }
