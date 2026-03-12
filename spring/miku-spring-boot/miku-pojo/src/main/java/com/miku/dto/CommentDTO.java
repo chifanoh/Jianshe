@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 public class CommentDTO implements Serializable {
 
-    private String id;
+    private Long id;
 
     //评论所属id
     private String articleId;

@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleDetailVO implements Serializable {
-    private String id;
+    private Long id;
     private UserArticleDetailVO user;
     private String title;
     private String content;

@@ -1,7 +1,5 @@
 package com.miku.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +19,6 @@ public class Articles implements Serializable {
     /**
     * 主键ID
     */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**

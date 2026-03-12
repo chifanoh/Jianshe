@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UserArticlesVO implements Serializable {
     //id
-    private String id;
+    private Long id;
 
     //用户名
     private String name;

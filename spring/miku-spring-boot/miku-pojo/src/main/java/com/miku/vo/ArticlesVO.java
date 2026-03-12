@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticlesVO implements Serializable {
-    private String id;
+    private Long id;
     private UserArticlesVO user;
     private String title;
     private String content;

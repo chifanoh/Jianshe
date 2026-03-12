@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Builder
 public class UserLoginVO implements Serializable {
     //id
-    private String id;
+    private Long id;
 
     //用户头像
     private String avatar;
