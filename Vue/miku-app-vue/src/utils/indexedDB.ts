@@ -33,11 +33,9 @@ const generateTimestampKey = (): string => {
 export const initDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION)
-
     request.onerror = () => {
       reject(new Error('Failed to open IndexedDB'))
     }
-
     request.onsuccess = () => {
       db = request.result
       resolve(db)
@@ -45,12 +43,10 @@ export const initDB = (): Promise<IDBDatabase> => {
 
     request.onupgradeneeded = (event) => {
       const database = (event.target as IDBOpenDBRequest).result
-
       // 如果存在旧的存储，先删除它
       if (database.objectStoreNames.contains(STORE_NAME)) {
         database.deleteObjectStore(STORE_NAME)
       }
-
       // 创建新的用户数据存储
       const store = database.createObjectStore(STORE_NAME, { keyPath: 'key' })
       store.createIndex('key', 'key', { unique: true })
@@ -71,7 +67,6 @@ export const saveUserData = async (key: string, data: any): Promise<void> => {
   return new Promise((resolve, reject) => {
     const transaction = db!.transaction([STORE_NAME], 'readwrite')
     const store = transaction.objectStore(STORE_NAME)
-
     const request = store.put({
       key: key, // ISO格式时间戳字符串
       data: data, // 用户数据对象
@@ -98,9 +93,7 @@ export const getUserData = async (key: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     const transaction = db!.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
-
     const request = store.get(key)
-
     request.onsuccess = () => {
       const result = request.result
       if (result) {
@@ -117,30 +110,6 @@ export const getUserData = async (key: string): Promise<any> => {
 }
 
 /**
- * 删除用户数据
- */
-export const removeUserData = async (key: string): Promise<void> => {
-  if (!db) {
-    await initDB()
-  }
-
-  return new Promise((resolve, reject) => {
-    const transaction = db!.transaction([STORE_NAME], 'readwrite')
-    const store = transaction.objectStore(STORE_NAME)
-
-    const request = store.delete(key)
-
-    request.onsuccess = () => {
-      resolve()
-    }
-
-    request.onerror = () => {
-      reject(new Error('Failed to remove user data'))
-    }
-  })
-}
-
-/**
  * 清除所有用户数据
  */
 export const clearAllUserData = async (): Promise<void> => {
@@ -151,9 +120,7 @@ export const clearAllUserData = async (): Promise<void> => {
   return new Promise((resolve, reject) => {
     const transaction = db!.transaction([STORE_NAME], 'readwrite')
     const store = transaction.objectStore(STORE_NAME)
-
     const request = store.clear()
-
     request.onsuccess = () => {
       resolve()
     }
@@ -178,9 +145,7 @@ export const isDataExpired = async (
   return new Promise((resolve, reject) => {
     const transaction = db!.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
-
     const request = store.get(key)
-
     request.onsuccess = () => {
       const result = request.result
       if (result) {
@@ -211,10 +176,7 @@ export const getLatestUserData = async (): Promise<any> => {
   return new Promise((resolve, reject) => {
     const transaction = db!.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
-
-    // 获取所有数据
     const request = store.getAll()
-
     request.onsuccess = () => {
       const results = request.result
       if (results && results.length > 0) {
@@ -229,7 +191,6 @@ export const getLatestUserData = async (): Promise<any> => {
         resolve(null)
       }
     }
-
     request.onerror = () => {
       reject(new Error('Failed to get latest user data'))
     }
@@ -250,7 +211,6 @@ export default {
   initDB,
   saveUserData,
   getUserData,
-  removeUserData,
   clearAllUserData,
   isDataExpired,
   getLatestUserData,
