@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getCurrentUser, userLogin, userLogout, userRegister } from '@/api/user'
+import { getCurrentUser } from '@/api/user'
 import { saveUserDataWithTimestamp, getLatestUserData, clearAllUserData } from '@/utils/indexedDB'
 
 // 用户类型定义 - 规范:使用接口继承和可选字段
@@ -146,60 +146,6 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     return fetchUserPromise
   }
 
-  // 用户登录
-  async function login(userAccount: string, userPassword: string) {
-    try {
-      const res = await userLogin({ userAccount, userPassword })
-      if (res.data.code === 200 && res.data.data) {
-        // 使用统一的映射函数处理登录返回数据
-        const userData = normalizeUserData(res.data.data)
-        // 保存用户数据到状态管理和IndexedDB
-        await setLoginUser(userData)
-        return { success: true, data: userData, message: '登录成功' }
-      } else {
-        return { success: false, message: res.data.msg || '登录失败' }
-      }
-    } catch {
-      return { success: false, message: '网络错误，请稍后重试' }
-    }
-  }
-
-  // 用户注册
-  async function register(userAccount: string, userPassword: string, checkPassword: string) {
-    try {
-      const res = await userRegister({ userAccount, userPassword, checkPassword })
-      if (res.data.code === 200 && res.data.data) {
-        // 使用统一的映射函数处理注册返回数据
-        const userData = normalizeUserData(res.data.data)
-        // 保存用户数据到状态管理和IndexedDB
-        await setLoginUser(userData)
-        return { success: true, data: userData, message: '注册成功' }
-      } else {
-        return { success: false, message: res.data.msg || '注册失败' }
-      }
-    } catch {
-      return { success: false, message: '网络错误，请稍后重试' }
-    }
-  }
-
-  // 用户登出
-  async function logout() {
-    try {
-      const res = await userLogout({})
-      if (res.data.code === 200) {
-        // 清空状态管理中的用户数据
-        loginUser.value = { userName: '未登录' }
-        // 同时清空IndexedDB缓存
-        await clearAllUserData()
-        return { success: true, message: '登出成功' }
-      } else {
-        return { success: false, message: res.data.msg || '登出失败' }
-      }
-    } catch {
-      return { success: false, message: '网络错误，请稍后重试' }
-    }
-  }
-
   // 单独设置用户信息
   async function setLoginUser(user: User) {
     loginUser.value = user
@@ -234,9 +180,6 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     isLogin,
     loadUserFromCache,
     fetchLoginUser,
-    login,
-    register,
-    logout,
     setLoginUser,
     updateUserAvatar,
     updateUserName,
