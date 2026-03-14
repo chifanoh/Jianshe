@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
+import com.miku.entity.ArticleLike;
 import com.miku.entity.Articles;
 import com.miku.entity.User;
+import com.miku.mapper.mysql.ArticleLikeMapper;
 import com.miku.mapper.mysql.ArticlesMapper;
 import com.miku.mapper.mysql.UserMapper;
 import com.miku.result.PageResult;
@@ -16,6 +18,7 @@ import com.miku.vo.UserArticleDetailVO;
 import com.miku.vo.UserArticlesVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +34,9 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private ArticleLikeMapper articleLikeMapper;
 
     /**
      * 文章列表查询
@@ -92,7 +98,7 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @return
      */
     @Override
-    public ArticleDetailVO getArticleDetail(Integer id) {
+    public ArticleDetailVO getArticleDetail(Long id) {
         // 1.获取文章详细页
         Articles articles = articlesMapper.selectOne(new LambdaQueryWrapper<Articles>()
                 .select(Articles::getId, Articles::getUserId,
@@ -135,6 +141,43 @@ public class ArticlesServiceImpl implements ArticlesService {
         articles.setCreatedTime(LocalDateTime.now());
         articles.setUpdatedTime(LocalDateTime.now());
         articlesMapper.insert(articles);
+    }
+
+    /**
+     * 获取点赞信息
+     * @param userId
+     * @param articleId
+     * @return
+     */
+    @Override
+    public boolean getLikeStatus(Long userId, Long articleId) {
+        LambdaQueryWrapper<ArticleLike> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ArticleLike::getArticleId, articleId)
+                .eq(ArticleLike::getUserId, userId);
+        return this.articleLikeMapper.exists(wrapper);
+    }
+
+    /**
+     * 点赞
+     * @param userId
+     * @param articleId
+     */
+    @Override
+    public void toggleLike(Long userId, Long articleId) {
+        try {
+            // 点赞
+            ArticleLike articleLike = new ArticleLike();
+            articleLike.setUserId(userId);
+            articleLike.setArticleId(articleId);
+            articleLike.setCreatedTime(LocalDateTime.now());
+            articleLikeMapper.insert(articleLike);
+        }catch (DuplicateKeyException e){
+            // 取消点赞
+            articleLikeMapper.delete(new LambdaQueryWrapper<ArticleLike>()
+                    .eq(ArticleLike::getArticleId, articleId)
+                    .eq(ArticleLike::getUserId, userId)
+            );
+        }
     }
 
 }

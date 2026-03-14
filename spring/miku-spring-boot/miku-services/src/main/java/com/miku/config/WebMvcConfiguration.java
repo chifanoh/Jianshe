@@ -18,8 +18,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 "/api/user/current",
                 "/api/user/logout",
                 "/api/article/create",
-                "/api/article/like/{id}",
-                "/api/article/unlike/{id}",
+                "/api/article/status/{articleId}",
+                "/api/article/like/{articleId}",
                 "/api/comment/submit",
         };
     }

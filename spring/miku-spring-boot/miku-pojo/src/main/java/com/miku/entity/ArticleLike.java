@@ -1,7 +1,8 @@
 package com.miku.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,13 @@ public class ArticleLike implements Serializable {
     /**
      * 文章ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
+    @TableId(type = IdType.INPUT)
     private Long articleId;
 
     /**
      * 用户ID
      */
+    @TableField()
     private Long userId;
 
     /**

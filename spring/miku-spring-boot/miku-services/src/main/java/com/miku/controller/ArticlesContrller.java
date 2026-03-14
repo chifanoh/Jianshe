@@ -39,7 +39,7 @@ public class ArticlesContrller {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<ArticleDetailVO> getArticleDetail(@PathVariable Integer id){
+    public Result<ArticleDetailVO> getArticleDetail(@PathVariable Long id){
         log.info("文章详细页查询结果:{}",id);
         ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id);
         //没有该文章
@@ -63,33 +63,27 @@ public class ArticlesContrller {
     }
 
     /**
-     * 点赞信息
-     * @param id
+     * 获取点赞信息
+     * @param articleId
      * @return
      */
-    public Result getLikeStatus(@PathVariable Integer id){
-        return Result.success();
+    @GetMapping("/status/{articleId}")
+    public Result<Boolean> getLikeStatus(@PathVariable Long articleId){
+        Long userId = BaseContext.getCurrentId();
+        log.info("用户:{}获取文章:{}点赞信息",userId, articleId);
+        boolean liked = articlesService.getLikeStatus(userId, articleId);
+        return Result.success(liked);
     }
 
     /**
      * 点赞
-     * @param id
+     * @param articleId
      */
-    @PostMapping("/like/{id}")
-    public Result likeArticle(@PathVariable Integer id){
+    @PostMapping("/like/{articleId}")
+    public Result toggleLike(@PathVariable Long articleId){
         Long userId = BaseContext.getCurrentId();
-        log.info("用户:{}点赞:{}",userId, id);
-        return Result.success();
-    }
-
-    /**
-     * 取消点赞
-     * @param id
-     */
-    @PostMapping("/unlike/{id}")
-    public Result unlikeArticle(@PathVariable Integer id){
-        Long userId = BaseContext.getCurrentId();
-        log.info("用户:{}取消点赞:{}",userId, id);
+        log.info("用户:{}触发点赞文章按钮:{}",userId, articleId);
+        articlesService.toggleLike(userId, articleId);
         return Result.success();
     }
 }
