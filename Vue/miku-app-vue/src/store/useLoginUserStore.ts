@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getCurrentUser } from '@/api/user'
+import { getCurrentUser, userLogout } from '@/api/user'
 import { saveUserDataWithTimestamp, getLatestUserData, clearAllUserData } from '@/utils/indexedDB'
 
 // ==================== 类型定义 ====================
@@ -78,15 +78,13 @@ export const useLoginUserStore = defineStore('loginUser', () => {
 
   // 验证 Cookie 并同步状态
   async function validateAndSync(): Promise<void> {
-    const res = await getCurrentUser()
-    if (!res.data.data) {
-      // Cookie 无效，清空状态
+    // 直接使用 fetchLoginUser，避免重复调用 getCurrentUser
+    const result = await fetchLoginUser()
+    if (!result.success) {
+      // Cookie 无效或获取失败，清空状态
       loginUser.value = { userName: '未登录' }
       await silentlyClearUserData()
-      return
     }
-    // Cookie 有效，刷新最新数据
-    await fetchLoginUser()
   }
 
   // 延迟执行（让 UI 先渲染缓存）
@@ -169,6 +167,19 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     }
   }
 
+  // ========== 退出登录 ==========
+  async function logout() {
+    try {
+      await userLogout() // 不需要传参
+    } catch (error) {
+      console.error('退出请求失败:', error)
+    } finally {
+      // 无论后端成功与否，前端都清空
+      loginUser.value = { userName: '未登录' }
+      await clearAllUserData()
+    }
+  }
+
   /**
    * 设置用户信息（同时更新缓存）
    */
@@ -199,6 +210,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
   return {
     loginUser,
     isLogin,
+    logout,
     loadUserFromCache,
     fetchLoginUser,
     setLoginUser,
