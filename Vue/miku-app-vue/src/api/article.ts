@@ -125,21 +125,9 @@ export const deleteArticle = async (id: string | number) => {
  * @param id 文章ID
  * @returns 点赞结果
  */
-export const likeArticle = async (id: string | number) => {
+export const toggleLikeApi = async (id: string | number) => {
   return myAxios.request({
     url: `/api/article/like/${id}`,
-    method: 'POST',
-  })
-}
-
-/**
- * 取消点赞文章
- * @param id 文章ID
- * @returns 取消结果
- */
-export const unlikeArticle = async (id: string | number) => {
-  return myAxios.request({
-    url: `/api/article/unlike/${id}`,
     method: 'POST',
   })
 }
@@ -161,5 +149,21 @@ export const getUserArticles = async (
     url: `/api/article/user/${userId}`,
     method: 'GET',
     params,
+  })
+}
+
+/**
+ * 获取文章点赞状态
+ * @param articleId 文章ID
+ * @returns 点赞状态（true/false）
+ */
+export const getLikeStatus = async (articleId: string | number) => {
+  return myAxios.request<{
+    code: number
+    msg: string | null
+    data: boolean
+  }>({
+    url: `/api/article/status/${articleId}`,
+    method: 'GET',
   })
 }

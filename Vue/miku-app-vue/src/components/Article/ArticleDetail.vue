@@ -82,7 +82,14 @@
               <div class="stat-label">评论</div>
             </div>
 
-            <div class="stat-item mb-20" @click="toggleLike">
+            <div
+              class="stat-item mb-20"
+              @click="
+                toggleLike(article!.id, article!.likes, (updatedLikes) => {
+                  article!.likes = updatedLikes
+                })
+              "
+            >
               <div class="icon">
                 <svg
                   width="32"
@@ -136,7 +143,7 @@
                   </div>
                   <div class="content-footer text-14">
                     <div class="left-section">
-                      <span class="mr-24">浏览：{{ article.likes }}</span>
+                      <span class="mr-24">浏览：{{ article.views }}</span>
                     </div>
                   </div>
                 </div>
@@ -229,10 +236,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getArticleDetail, likeArticle, unlikeArticle } from '@/api/article'
+import { getArticleDetail } from '@/api/article'
 import ServerError from '@/Result/ServerError.vue'
 import LostError from '@/Result/LostError.vue'
 import type { Article } from '@/types/article'
+import { useArticleLike } from '@/composables/useArticleLike'
 
 // 路由和状态
 const route = useRoute()
@@ -240,23 +248,22 @@ const article = ref<Article | null>(null)
 const loading = ref(true)
 const error = ref<string>('')
 const containerRef = ref<HTMLElement | undefined>(undefined)
-const isLiked = ref(false) // 点赞状态
+const { isLiked, toggleLike, initLikeStatus } = useArticleLike()
 
 // 加载文章详情
 const loadArticle = async () => {
   loading.value = true
   error.value = ''
-
   try {
     const articleId = route.params.id
     if (!articleId) {
       error.value = '文章ID不能为空'
       return
     }
-
     const response = await getArticleDetail(String(articleId))
     if (response.data.code === 200) {
       article.value = response.data.data
+      await initLikeStatus(String(articleId))
     } else if (response.data.code === 500) {
       error.value = 'article_not_found'
     }
@@ -311,26 +318,6 @@ const getSkeletonLineWidth = (index: number): string => {
   if (index % 3 === 0) return '70%'
   if (index % 3 === 1) return '90%'
   return '80%'
-}
-
-// 点赞功能
-const toggleLike = async () => {
-  if (!article.value) return
-
-  try {
-    if (isLiked.value) {
-      // 取消点赞
-      await unlikeArticle(article.value.id)
-      article.value.likes--
-    } else {
-      // 点赞
-      await likeArticle(article.value.id)
-      article.value.likes++
-    }
-    isLiked.value = !isLiked.value
-  } catch (error) {
-    console.error('点赞操作失败:', error)
-  }
 }
 
 // 组件挂载时加载文章
@@ -512,6 +499,7 @@ onMounted(() => {
   fill: #ff4757;
   color: #ff4757;
 }
+
 .header-section {
   border-bottom: 1px solid #edeff5;
 }
@@ -610,6 +598,11 @@ onMounted(() => {
   border-radius: 5px;
   font-size: 14px;
   cursor: pointer;
+}
+
+.follow-btn:hover {
+  background: #fe2c55;
+  color: white;
 }
 
 .user-name {
