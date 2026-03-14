@@ -59,11 +59,10 @@ export const getUserList = async (username: any) => {
  * 用户登出
  * @returns
  */
-export const userLogout = async (params: any) => {
+export const userLogout = async () => {
   return myAxios.request({
     url: '/api/user/logout',
     method: 'POST',
-    data: params,
     // 重要：允许携带cookie，用于清除服务端session
     withCredentials: true,
   })

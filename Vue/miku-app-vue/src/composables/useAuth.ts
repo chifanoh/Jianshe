@@ -1,23 +1,9 @@
-import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
 
 export function useAuth() {
   const loginUser = useLoginUserStore()
   const router = useRouter()
-
-  // 只在需要时获取用户信息
-  onMounted(async () => {
-    // 如果已经登录且有用户信息，不需要重复获取
-    if (loginUser.isLogin && loginUser.loginUser.id) {
-      return
-    }
-
-    // 如果用户名为'未登录'，才尝试获取用户信息
-    if (loginUser.loginUser.userName === '未登录') {
-      await loginUser.loadUserFromCache()
-    }
-  })
 
   // 头像下拉菜单选项
   const options = [

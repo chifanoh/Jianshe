@@ -26,7 +26,7 @@ export const useArticleLike = () => {
 
     try {
       const response = await getLikeStatus(articleId)
-      isLiked.value = response.data
+      isLiked.value = response.data.data
     } catch (error) {
       console.error('获取点赞状态失败:', error)
       isLiked.value = false
@@ -50,7 +50,7 @@ export const useArticleLike = () => {
     if (!loginUserStore.isLogin) {
       // 未登录，跳转登录页
       console.error(loginUserStore.isLogin)
-      router.push('/login')
+      router.push('/user/login')
       return isLiked.value
     }
 

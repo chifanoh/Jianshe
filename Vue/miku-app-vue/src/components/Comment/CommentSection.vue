@@ -202,11 +202,6 @@ const handleCancel = () => {
 
 // 组件挂载时加载评论数据
 onMounted(async () => {
-  // 确保用户信息已加载
-  if (!loginUserStore.isLogin && loginUserStore.loginUser.userName === '未登录') {
-    await loginUserStore.loadUserFromCache()
-  }
-
   await more(1)
 })
 
