@@ -101,16 +101,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
 
 const loginUserStore = useLoginUserStore()
 
-onMounted(async () => {
-  if (!loginUserStore.isLogin) {
-    await loginUserStore.loadUserFromCache()
-  }
-})
 const userName = computed(() => loginUserStore.loginUser.userName || '未登录')
 
 const avatarSrc = computed(() => {
