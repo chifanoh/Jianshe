@@ -3,7 +3,8 @@ import { ref, computed } from 'vue'
 import { getCurrentUser } from '@/api/user'
 import { saveUserDataWithTimestamp, getLatestUserData, clearAllUserData } from '@/utils/indexedDB'
 
-// 用户类型定义 - 规范:使用接口继承和可选字段
+// ==================== 类型定义 ====================
+
 export interface BaseUser {
   id?: string | number
   userName: string
@@ -20,161 +21,181 @@ export interface BaseUser {
   token?: string
 }
 
-// 后端返回的用户数据类型
 export interface ApiUser extends BaseUser {
   name?: string
   avatar?: string
 }
 
-// 前端使用的用户类型
 export type User = BaseUser
 
-// 用户数据映射工具 - 规范:单一映射函数
+// ==================== 工具函数 ====================
+
 function normalizeUserData(apiUser: ApiUser): User {
   return {
     id: apiUser.id,
     userName: apiUser.name || apiUser.userName || '未登录',
     userAvatar: apiUser.avatar || apiUser.userAvatar,
-    userAccount: apiUser.userAccount,
-    userProfile: apiUser.userProfile,
-    userRole: apiUser.userRole,
     sex: apiUser.sex,
     phone: apiUser.phone,
     email: apiUser.email,
-    userStatus: apiUser.userStatus,
-    createTime: apiUser.createTime,
-    updateTime: apiUser.updateTime,
-    token: apiUser.token,
   }
 }
 
-export const useLoginUserStore = defineStore('loginUser', () => {
-  // 用户信息状态
-  const loginUser = ref<User>({
-    userName: '未登录',
-  })
+// 静默清理 IndexedDB（失败不抛出）
+async function silentlyClearUserData(): Promise<void> {
+  try {
+    await clearAllUserData()
+  } catch {
+    // 清理失败静默处理，不影响主流程
+  }
+}
 
-  // 登录状态
+// 静默保存用户数据（失败不抛出）
+async function silentlySaveUserData(user: User): Promise<void> {
+  try {
+    await saveUserDataWithTimestamp(user)
+  } catch {
+    // 保存失败静默处理，不影响主流程
+  }
+}
+
+// ==================== Store 定义 ====================
+
+export const useLoginUserStore = defineStore('loginUser', () => {
+  // ---------- 状态 ----------
+  const loginUser = ref<User>({ userName: '未登录' })
+
   const isLogin = computed(() => {
     return loginUser.value.id !== undefined && loginUser.value.id !== null
   })
 
-  // 从IndexedDB加载用户数据 - 优先显示缓存头像与基本信息
-  async function loadUserFromCache() {
-    try {
-      // 首先尝试从IndexedDB获取缓存的用户数据（秒级恢复）
-      const cachedUser = await getLatestUserData()
-      if (cachedUser) {
-        // 使用统一的映射函数处理缓存数据
-        loginUser.value = normalizeUserData(cachedUser)
-        // 异步验证Cookie认证状态，如果无效清空；有效则后台刷新最新数据
-        // 优化：如果缓存数据已存在且用户已登录，则不再立即调用 getCurrentUser
-        if (isLogin.value) {
-          setTimeout(async () => {
-            // 只有在缓存数据不完整时才刷新
-            if (!loginUser.value.userAvatar || loginUser.value.userName === '未登录') {
-              await fetchLoginUser()
-            }
-          }, 100)
-        } else {
-          // 如果缓存存在但用户未登录，则需要验证Cookie
-          setTimeout(async () => {
-            const isAuth = await getCurrentUser()
-            if (!isAuth) {
-              loginUser.value = { userName: '未登录' }
-              await clearAllUserData()
-            } else {
-              await fetchLoginUser()
-            }
-          }, 100)
+  // ---------- 私有辅助方法 ----------
+
+  // 检查用户数据是否需要刷新（信息不完整）
+  function needsRefresh(): boolean {
+    return !loginUser.value.userAvatar || loginUser.value.userName === '未登录'
+  }
+
+  // 验证 Cookie 并同步状态
+  async function validateAndSync(): Promise<void> {
+    const res = await getCurrentUser()
+    if (!res.data.data) {
+      // Cookie 无效，清空状态
+      loginUser.value = { userName: '未登录' }
+      await silentlyClearUserData()
+      return
+    }
+    // Cookie 有效，刷新最新数据
+    await fetchLoginUser()
+  }
+
+  // 延迟执行（让 UI 先渲染缓存）
+  function defer(fn: () => void | Promise<void>, ms = 100): void {
+    setTimeout(fn, ms)
+  }
+
+  // ---------- 核心方法 ----------
+
+  /**
+   * 从服务器获取最新用户信息
+   * 使用 Promise 锁防止重复请求
+   */
+  let fetchUserPromise: Promise<{ success: boolean; data?: User; message?: string }> | null = null
+
+  async function fetchLoginUser(): Promise<{ success: boolean; data?: User; message?: string }> {
+    if (fetchUserPromise) return fetchUserPromise
+
+    fetchUserPromise = getCurrentUser()
+      .then(async (res) => {
+        if (res.data.code !== 200 || !res.data.data) {
+          loginUser.value = { userName: '未登录' }
+          await silentlyClearUserData()
+          return {
+            success: false,
+            message: res.data.msg || '获取用户信息失败',
+          }
         }
 
-        return true
+        const userData = normalizeUserData(res.data.data)
+        loginUser.value = userData
+        await silentlySaveUserData(userData)
+
+        return { success: true, data: userData }
+      })
+      .catch((error) => {
+        console.error('获取用户信息失败:', error)
+        return { success: false, message: '网络错误，请稍后重试' }
+      })
+      .finally(() => {
+        fetchUserPromise = null
+      })
+
+    return fetchUserPromise
+  }
+
+  /**
+   * 初始化：优先从 IndexedDB 加载，后台验证/刷新
+   * 流程：读缓存 → 显示 → 后台验证 → 按需刷新
+   */
+  async function loadUserFromCache(): Promise<boolean> {
+    try {
+      const cachedUser = await getLatestUserData()
+
+      // 无缓存：直接走服务器
+      if (!cachedUser) {
+        const result = await fetchLoginUser()
+        return result.success
       }
 
-      // 如果IndexedDB中没有数据，直接从服务器获取用户信息
-      const userRes = await fetchLoginUser()
-      return userRes.success
+      // 有缓存：立即显示
+      loginUser.value = normalizeUserData(cachedUser)
+
+      // 后台处理认证验证（不阻塞 UI）
+      defer(async () => {
+        if (isLogin.value) {
+          // 已登录态：仅信息不完整时才刷新
+          if (needsRefresh()) {
+            await fetchLoginUser()
+          }
+        } else {
+          // 未登录态：验证 Cookie 有效性
+          await validateAndSync()
+        }
+      })
+
+      return true
     } catch {
       return false
     }
   }
 
-  // 远程获取登录用户信息
-  let fetchUserPromise: Promise<{ success: boolean; data?: User; message?: string }> | null = null
-
-  async function fetchLoginUser() {
-    if (fetchUserPromise) {
-      return fetchUserPromise
-    }
-
-    // 创建新的请求Promise
-    fetchUserPromise = (async () => {
-      try {
-        //TODO: 优化：如果缓存数据已存在且用户已登录，则不再立即调用 getCurrentUser
-        const res = await getCurrentUser()
-        if (res.data.code === 200 && res.data.data) {
-          const payload = res.data.data
-          // 使用统一的映射函数处理API返回数据
-          const userData = normalizeUserData(payload)
-          loginUser.value = userData
-
-          // 保存到IndexedDB缓存（秒级存储）
-          try {
-            await saveUserDataWithTimestamp(userData)
-          } catch {}
-
-          return { success: true, data: userData }
-        } else {
-          loginUser.value = { userName: '未登录' }
-
-          // 清除IndexedDB缓存
-          try {
-            await clearAllUserData()
-          } catch {}
-
-          return { success: false, message: res.data.msg || '获取用户信息失败' }
-        }
-      } catch (error) {
-        console.error('获取用户信息失败:', error)
-        return { success: false, message: '网络错误，请稍后重试' }
-      } finally {
-        fetchUserPromise = null
-      }
-    })()
-
-    return fetchUserPromise
-  }
-
-  // 单独设置用户信息
-  async function setLoginUser(user: User) {
+  /**
+   * 设置用户信息（同时更新缓存）
+   */
+  async function setLoginUser(user: User): Promise<void> {
     loginUser.value = user
-
-    // 同时保存到IndexedDB缓存（秒级存储）
-    try {
-      await saveUserDataWithTimestamp(user)
-    } catch {}
+    await silentlySaveUserData(user)
   }
 
-  // 更新用户头像
-  function updateUserAvatar(avatarUrl: string) {
+  // ---------- 轻量更新方法（仅修改内存，不同步缓存）----------
+
+  function updateUserAvatar(avatarUrl: string): void {
     if (loginUser.value) {
       loginUser.value.userAvatar = avatarUrl
     }
   }
 
-  // 更新用户名
-  function updateUserName(userName: string) {
+  function updateUserName(userName: string): void {
     if (loginUser.value) {
       loginUser.value.userName = userName
     }
   }
 
-  // 清除用户信息（用于登出或会话过期）
-  function clearUser() {
+  function clearUser(): void {
     loginUser.value = { userName: '未登录' }
   }
 
+  // ---------- 导出 ----------
   return {
     loginUser,
     isLogin,
