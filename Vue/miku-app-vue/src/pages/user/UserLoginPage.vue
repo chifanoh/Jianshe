@@ -1,83 +1,62 @@
 <template>
-  <!-- 登录表单 -->
   <div id="userLoginPage">
+    <GlobalHeader :simple-mode="true" />
     <main class="login-main">
-      <div class="login-container">
-        <div class="form-section">
-          <div class="left-nav">
-            <h2>登录</h2>
-          </div>
-          <form @submit.prevent="login" class="login-form">
-            <div class="input-group">
-              <input
-                type="text"
-                placeholder="用户名"
-                v-model="formState.emailOrName"
-                required
-                class="login-input"
-                :class="{ error: fieldErrors.emailOrName }"
-                @blur="validateField('emailOrName')"
-                @input="clearFieldError('emailOrName')"
-              />
-              <span v-if="fieldErrors.emailOrName" class="field-error">{{
-                fieldErrors.emailOrName
-              }}</span>
-            </div>
-            <div class="input-group">
-              <input
-                type="password"
-                placeholder="密码"
-                v-model="formState.password"
-                required
-                class="login-input"
-                :class="{ error: fieldErrors.password }"
-                @blur="validateField('password')"
-                @input="clearFieldError('password')"
-              />
-              <span v-if="fieldErrors.password" class="field-error">{{
-                fieldErrors.password
-              }}</span>
-            </div>
-            <button
-              type="submit"
-              class="login-button"
-              :disabled="loading || !isFormValid"
-              :class="{ loading: loading }"
+      <n-card class="login-card" :bordered="false">
+        <div class="login-title">登录</div>
+        <n-form ref="formRef" :model="formState" :rules="rules" size="large" class="login-form">
+          <n-form-item path="emailOrName">
+            <n-input v-model:value="formState.emailOrName" placeholder="用户名或邮箱" clearable />
+          </n-form-item>
+          <n-form-item path="password">
+            <n-input
+              v-model:value="formState.password"
+              type="password"
+              placeholder="密码"
+              clearable
+              show-password-on="mousedown"
+              @keyup.enter="handleSubmit"
+            />
+          </n-form-item>
+          <n-form-item>
+            <n-button
+              type="primary"
+              size="large"
+              :loading="loading"
+              :disabled="!isFormValid"
+              block
+              @click="handleSubmit"
             >
-              {{ loading ? '登录中...' : '登录' }}
-            </button>
-            <div v-if="errorMessage" class="error-message">
-              {{ errorMessage }}
-            </div>
-          </form>
-          <div class="divider-section">
-            <hr class="divider-line" />
-            <span class="divider-text">或</span>
-            <hr class="divider-line" />
-          </div>
-          <button class="forgot-password-button" @click="handleForgotPassword">忘记密码</button>
-          <div class="register-section">
-            没有账号? <a :href="'/user/register'" class="register-link">注册账号</a>
-          </div>
+              登录
+            </n-button>
+          </n-form-item>
+        </n-form>
+        <div class="divider"></div>
+        <div class="login-footer">
+          <span>没有账号?</span>
+          <router-link to="/user/register" class="register-link">注册账号</router-link>
         </div>
-      </div>
+      </n-card>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { userLogin } from '@/api/user'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { reactive, ref, computed } from 'vue'
+import { useMessage, type FormInst, type FormRules } from 'naive-ui'
+import { userLogin } from '@/api/user'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
+import GlobalHeader from '@/components/common/GlobalHeader.vue'
 import CryptoJS from 'crypto-js'
 
-interface FormState {
-  emailOrName: string
-  password: string
-}
+const router = useRouter()
+const message = useMessage()
+const loginUserStore = useLoginUserStore()
+const formRef = ref<FormInst | null>(null)
+const loading = ref(false)
 
-interface FieldErrors {
+interface FormState {
   emailOrName: string
   password: string
 }
@@ -87,78 +66,41 @@ const formState = reactive<FormState>({
   password: '',
 })
 
-const fieldErrors = reactive<FieldErrors>({
-  emailOrName: '',
-  password: '',
-})
-
-const loading = ref(false)
-const errorMessage = ref('')
-const router = useRouter()
-const loginUserStore = useLoginUserStore()
-
 // 验证邮箱格式
 const isEmail = (str: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(str)
 }
 
-// 验证用户名格式（只允许字母、数字、下划线，3-16位）
+// 验证用户名格式
 const isValidUsername = (str: string): boolean => {
   const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/
   return usernameRegex.test(str)
 }
 
-// 验证单个字段
-const validateField = (field: keyof FieldErrors): boolean => {
-  fieldErrors[field] = ''
-
-  if (field === 'emailOrName') {
-    if (!formState.emailOrName.trim()) {
-      fieldErrors.emailOrName = '请输入用户名'
-      return false
-    }
-
-    const input = formState.emailOrName.trim()
-    if (!isEmail(input) && !isValidUsername(input)) {
-      fieldErrors.emailOrName = '请输入有效的用户名或邮箱'
-      return false
-    }
-  }
-
-  if (field === 'password') {
-    if (!formState.password.trim()) {
-      fieldErrors.password = '请输入密码'
-      return false
-    }
-
-    if (formState.password.length < 6 || formState.password.length > 12) {
-      fieldErrors.password = '密码长度必须在6-12位之间'
-      return false
-    }
-  }
-
-  return true
-}
-
-// 清除字段错误
-const clearFieldError = (field: keyof FieldErrors) => {
-  fieldErrors[field] = ''
-  errorMessage.value = ''
-}
-
-// 表单整体验证
-const validateForm = (): boolean => {
-  const emailOrNameValid = validateField('emailOrName')
-  const passwordValid = validateField('password')
-  return emailOrNameValid && passwordValid
+const rules: FormRules = {
+  emailOrName: [
+    { required: true, message: '请输入用户名或邮箱', trigger: 'blur' },
+    {
+      validator: (rule, value) => {
+        if (!value) return true
+        const input = value.trim()
+        return isEmail(input) || isValidUsername(input)
+      },
+      message: '请输入有效的用户名或邮箱',
+      trigger: 'blur',
+    },
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, max: 12, message: '密码长度必须在6-12位之间', trigger: 'blur' },
+  ],
 }
 
 // 计算表单是否有效
 const isFormValid = computed(() => {
   const emailOrName = formState.emailOrName.trim()
   const password = formState.password
-
   return (
     emailOrName &&
     password &&
@@ -168,254 +110,150 @@ const isFormValid = computed(() => {
   )
 })
 
-// 处理忘记密码
-const handleForgotPassword = () => {
-  // 可以跳转到忘记密码页面或显示找回密码表单
-  alert('忘记密码功能开发中...')
-}
-
-/**
- * 提交表单
- */
 const handleSubmit = async () => {
-  if (!validateForm()) {
-    return
-  }
+  if (!formRef.value) return
 
-  // 防止重复提交
-  if (loading.value) {
-    return
-  }
+  await formRef.value.validate(async (errors) => {
+    if (errors) return
 
-  loading.value = true
-  errorMessage.value = ''
+    if (loading.value) return
 
-  let res: any = null
+    loading.value = true
 
-  try {
-    // 构建请求参数，使用统一的account字段匹配后端UserLoginDTO
-    const loginParams = {
-      account: formState.emailOrName.trim(),
-      password: CryptoJS.MD5(formState.password).toString().toLowerCase(),
-    }
-
-    res = await userLogin(loginParams)
-
-    // 登录成功处理
-    if (res.data.code === 200 && res.data.data) {
-      // 将接口数据转换为前端需要的格式
-      const userData = {
-        id: res.data.data.id,
-        userName: res.data.data.name,
-        userAvatar: res.data.data.avatar,
-        email: res.data.data.email,
-        token: res.data.data.token,
+    try {
+      const loginParams = {
+        account: formState.emailOrName.trim(),
+        password: CryptoJS.MD5(formState.password).toString().toLowerCase(),
       }
 
-      // 保存用户数据到状态管理和IndexedDB
-      await loginUserStore.setLoginUser(userData)
+      const res = await userLogin(loginParams)
 
-      // 保存到IndexedDB缓存
-      try {
-        const { saveUserDataWithTimestamp } = await import('@/utils/indexedDB')
-        await saveUserDataWithTimestamp(userData)
-      } catch (error) {
-        console.error('保存用户数据到IndexedDB失败:', error)
+      if (res.data.code === 200 && res.data.data) {
+        const userData = {
+          id: res.data.data.id,
+          userName: res.data.data.name,
+          userAvatar: res.data.data.avatar,
+          email: res.data.data.email,
+          token: res.data.data.token,
+        }
+
+        await loginUserStore.setLoginUser(userData)
+
+        try {
+          const { saveUserDataWithTimestamp } = await import('@/utils/indexedDB')
+          await saveUserDataWithTimestamp(userData)
+        } catch (error) {
+          console.error('保存用户数据到IndexedDB失败:', error)
+        }
+
+        message.success('登录成功')
+        router.push({ path: '/', replace: true })
+      } else {
+        message.error(res.data.message || '登录失败，账号或密码错误')
       }
-
-      // 跳转到首页或重定向页面
-      router.push({
-        path: '/',
-        replace: true,
-      })
-    } else {
-      errorMessage.value = res.data.message || '登录失败，账号或密码错误'
+    } catch (error: any) {
+      message.error(error.response?.data?.message || '登录失败，请检查网络连接')
+    } finally {
+      loading.value = false
     }
-  } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || '登录失败，请检查网络连接'
-  } finally {
-    // 如果登录成功，保存用户信息到缓存
-    if (res.data.code === 200 && res.data.data) {
-      try {
-        const { saveUserDataWithTimestamp } = await import('@/utils/indexedDB')
-        await saveUserDataWithTimestamp(res.data.data)
-      } catch (error) {
-        console.error('保存用户数据到IndexedDB失败:', error)
-      }
-    }
-    loading.value = false
-  }
-}
-
-const login = () => {
-  handleSubmit()
+  })
 }
 </script>
 
 <style scoped>
 #userLoginPage {
-  overflow: hidden;
-  color: #fff;
-  min-height: 50vh;
+  min-height: 100vh;
+  background-color: #0d0d0d;
   display: flex;
   flex-direction: column;
-  padding-top: 60px;
 }
 
 .login-main {
   flex: 1;
-  padding: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 40px 20px;
 }
 
-.login-container {
-  width: 320px;
-  height: 450px;
-  background-color: rgb(24, 24, 27);
-  padding: 20px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.login-card {
+  width: 400px;
+  background-color: transparent;
 }
 
-.left-nav {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  white-space: nowrap;
+.login-card :deep(.n-card__content) {
+  padding: 0;
 }
 
-.left-nav h2 {
-  font-size: 30px;
-}
-
-.form-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.input-group {
-  width: 90%;
-  margin-bottom: 20px;
-}
-
-.login-input {
-  width: 100%;
-  padding: 15px;
-  border: 1px solid #333;
-  background-color: #1a1a1d;
+.login-title {
+  font-size: 28px;
+  font-weight: 600;
   color: #fff;
-  border-radius: 10px;
-  box-sizing: border-box;
-}
-
-.login-button {
-  width: 90%;
-  padding: 10px;
-  background-color: rgb(0, 90, 200);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.login-button:disabled {
-  background-color: #666;
-  cursor: not-allowed;
-}
-
-.login-button.loading {
-  position: relative;
-}
-
-.login-button.loading::after {
-  content: '';
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  margin: auto;
-  border: 2px solid transparent;
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.error-message {
-  color: #ff4d4f;
-  font-size: 14px;
-  margin-top: 10px;
   text-align: center;
+  margin-bottom: 32px;
 }
 
-.login-input.error {
-  border-color: #ff4d4f;
-}
-
-.field-error {
-  color: #ff4d4f;
-  font-size: 12px;
-  margin-top: 4px;
+.login-form :deep(.n-form-item) {
+  margin-bottom: 12px;
   display: block;
 }
 
-.divider-section {
-  width: 90%;
+.login-form :deep(.n-form-item-feedback-wrapper) {
+  min-height: 0;
+  margin-top: 4px;
+}
+
+.login-form :deep(.n-input) {
+  --n-color: #1a1a1a !important;
+  --n-color-focus: #1a1a1a !important;
+  --n-border: none !important;
+  --n-border-focus: none !important;
+  --n-border-hover: none !important;
+  --n-border-active: none !important;
+  --n-placeholder-color: #666 !important;
+  --n-text-color: #fff !important;
+  --n-height: 48px !important;
+}
+
+.login-form :deep(.n-input__input-el) {
+  color: #fff;
+}
+
+.login-form :deep(.n-button) {
+  --n-color: #1a3a5c !important;
+  --n-color-hover: #2563eb !important;
+  --n-color-focus: #2563eb !important;
+  --n-color-pressed: #1d4ed8 !important;
+  --n-text-color: #fff !important;
+  --n-text-color-hover: #fff !important;
+  --n-text-color-focus: #fff !important;
+  --n-text-color-pressed: #fff !important;
+}
+
+.login-form :deep(.n-button:not(.n-button--disabled)) {
+  --n-color: #2563eb !important;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: #333;
+  margin: 16px 0;
+}
+
+.login-footer {
   text-align: center;
-  margin-top: 20px;
-  color: darkgray;
-  display: flex;
-  align-items: center;
-}
-
-.divider-line {
-  flex: 1;
-  border: none;
-  border-top: 1px solid #333;
-}
-
-.divider-text {
-  margin: 0 10px;
-}
-
-.forgot-password-button {
-  width: 90%;
-  padding: 10px;
-  background-color: transparent;
-  color: dodgerblue;
-  border: 1px solid dodgerblue;
-  border-radius: 10px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-.register-section {
-  margin-top: 20px;
-  color: darkgray;
+  color: #888;
+  font-size: 14px;
 }
 
 .register-link {
-  color: dodgerblue;
+  color: #2563eb;
   text-decoration: none;
+  margin-left: 4px;
+}
+
+.register-link:hover {
+  text-decoration: underline;
 }
 </style>
