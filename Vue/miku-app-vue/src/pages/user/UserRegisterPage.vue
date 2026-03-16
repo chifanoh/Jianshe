@@ -205,17 +205,41 @@ const handleSubmit = async () => {
 .register-form :deep(.n-input) {
   --n-color: #1a1a1a !important;
   --n-color-focus: #1a1a1a !important;
+  --n-color-hover: #1a1a1a !important;
+  --n-color-active: #1a1a1a !important;
+  --n-color-disabled: #1a1a1a !important;
   --n-border: none !important;
   --n-border-focus: none !important;
   --n-border-hover: none !important;
   --n-border-active: none !important;
+  --n-border-disabled: none !important;
   --n-placeholder-color: #666 !important;
   --n-text-color: #fff !important;
   --n-height: 48px !important;
 }
 
 .register-form :deep(.n-input__input-el) {
-  color: #fff;
+  color: #fff !important;
+}
+
+.register-form :deep(.n-input__placeholder) {
+  color: #666 !important;
+}
+
+.register-form :deep(.n-input-wrapper) {
+  background-color: #1a1a1a !important;
+}
+
+.register-form :deep(.n-input--focus) {
+  background-color: #1a1a1a !important;
+}
+
+.register-form :deep(.n-input--hover) {
+  background-color: #1a1a1a !important;
+}
+
+.register-form :deep(.n-input--active) {
+  background-color: #1a1a1a !important;
 }
 
 .register-form :deep(.n-button) {
