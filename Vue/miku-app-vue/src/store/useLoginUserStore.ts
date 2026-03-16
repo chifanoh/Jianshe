@@ -71,27 +71,6 @@ export const useLoginUserStore = defineStore('loginUser', () => {
 
   // ---------- 私有辅助方法 ----------
 
-  // 检查用户数据是否需要刷新（信息不完整）
-  function needsRefresh(): boolean {
-    return !loginUser.value.userAvatar || loginUser.value.userName === '未登录'
-  }
-
-  // 验证 Cookie 并同步状态
-  async function validateAndSync(): Promise<void> {
-    // 直接使用 fetchLoginUser，避免重复调用 getCurrentUser
-    const result = await fetchLoginUser()
-    if (!result.success) {
-      // Cookie 无效或获取失败，清空状态
-      loginUser.value = { userName: '未登录' }
-      await silentlyClearUserData()
-    }
-  }
-
-  // 延迟执行（让 UI 先渲染缓存）
-  function defer(fn: () => void | Promise<void>, ms = 100): void {
-    setTimeout(fn, ms)
-  }
-
   // ---------- 核心方法 ----------
 
   /**
@@ -106,6 +85,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     fetchUserPromise = getCurrentUser()
       .then(async (res) => {
         if (res.data.code !== 200 || !res.data.data) {
+          // 接口失败：清空状态和缓存
           loginUser.value = { userName: '未登录' }
           await silentlyClearUserData()
           return {
@@ -114,6 +94,7 @@ export const useLoginUserStore = defineStore('loginUser', () => {
           }
         }
 
+        // 接口成功：保存用户信息到状态和缓存
         const userData = normalizeUserData(res.data.data)
         loginUser.value = userData
         await silentlySaveUserData(userData)
@@ -132,37 +113,32 @@ export const useLoginUserStore = defineStore('loginUser', () => {
   }
 
   /**
-   * 初始化：优先从 IndexedDB 加载，后台验证/刷新
-   * 流程：读缓存 → 显示 → 后台验证 → 按需刷新
+   * 初始化：优先从 IndexedDB 加载
+   * 规范：
+   * - 刷新页面（内存丢失）→ 调用 /current
+   * - 访问新页面（路由跳转）→ 不调用，用前端缓存
+   * - 未登录用户 → 不调用，清除缓存
    */
   async function loadUserFromCache(): Promise<boolean> {
     try {
       const cachedUser = await getLatestUserData()
 
-      // 无缓存：直接走服务器
       if (!cachedUser) {
-        const result = await fetchLoginUser()
-        return result.success
+        // 无缓存：直接使用默认状态，不调用接口
+        return true
       }
 
-      // 有缓存：立即显示
+      // 有缓存：立即显示，不调用接口（路由跳转场景）
       loginUser.value = normalizeUserData(cachedUser)
 
-      // 后台处理认证验证（不阻塞 UI）
-      defer(async () => {
-        if (isLogin.value) {
-          // 已登录态：仅信息不完整时才刷新
-          if (needsRefresh()) {
-            await fetchLoginUser()
-          }
-        } else {
-          // 未登录态：验证 Cookie 有效性
-          await validateAndSync()
-        }
-      })
+      // 如果缓存是未登录状态，清除缓存（避免脏数据）
+      if (!isLogin.value) {
+        await silentlyClearUserData()
+      }
 
       return true
-    } catch {
+    } catch (error) {
+      console.error('[loadUserFromCache] 出错:', error)
       return false
     }
   }

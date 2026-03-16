@@ -6,7 +6,6 @@
         <template v-if="initialized">
           <BasicLayouts />
         </template>
-        <div v-else class="global-loading">加载中...</div>
       </n-message-provider>
     </n-dialog-provider>
   </n-config-provider>

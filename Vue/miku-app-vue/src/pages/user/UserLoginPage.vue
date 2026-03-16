@@ -190,6 +190,8 @@ const handleSubmit = async () => {
   loading.value = true
   errorMessage.value = ''
 
+  let res: any = null
+
   try {
     // 构建请求参数，使用统一的account字段匹配后端UserLoginDTO
     const loginParams = {
@@ -197,7 +199,7 @@ const handleSubmit = async () => {
       password: CryptoJS.MD5(formState.password).toString().toLowerCase(),
     }
 
-    const res = await userLogin(loginParams)
+    res = await userLogin(loginParams)
 
     // 登录成功处理
     if (res.data.code === 200 && res.data.data) {
@@ -232,6 +234,15 @@ const handleSubmit = async () => {
   } catch (error: any) {
     errorMessage.value = error.response?.data?.message || '登录失败，请检查网络连接'
   } finally {
+    // 如果登录成功，保存用户信息到缓存
+    if (res.data.code === 200 && res.data.data) {
+      try {
+        const { saveUserDataWithTimestamp } = await import('@/utils/indexedDB')
+        await saveUserDataWithTimestamp(res.data.data)
+      } catch (error) {
+        console.error('保存用户数据到IndexedDB失败:', error)
+      }
+    }
     loading.value = false
   }
 }
