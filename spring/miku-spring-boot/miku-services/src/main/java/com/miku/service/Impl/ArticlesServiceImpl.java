@@ -75,7 +75,7 @@ public class ArticlesServiceImpl implements ArticlesService {
             vo.setTitle(po.getTitle());
             vo.setContent(po.getContent());
             vo.setComments(po.getComments());
-            vo.setLikes(po.getLikes());
+            vo.setLikes(po.getLikes_count());
             vo.setCreatedTime(po.getCreatedTime());
 
             //取出用户
@@ -104,7 +104,7 @@ public class ArticlesServiceImpl implements ArticlesService {
                 .select(Articles::getId, Articles::getUserId,
                         Articles::getTitle, Articles::getContent,
                         Articles::getViews, Articles::getComments,
-                        Articles::getLikes,
+                        Articles::getLikes_count,
                         Articles::getCreatedTime)
                 .eq(Articles::getId, id));
 

@@ -54,7 +54,7 @@ public class Articles implements Serializable {
     /**
      * 文章点赞数
      */
-    private Integer likes;
+    private Integer likes_count;
 
     /**
     * 创建时间

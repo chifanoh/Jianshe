@@ -54,7 +54,7 @@ public class Comment implements Serializable {
     /**
     * 点赞数
     */
-    private Integer likes;
+    private Integer likes_count;
 
     /**
     * 评论状态 (0: 正常, 1: 待审核, 2: 已删除)
