@@ -11,10 +11,7 @@ spring:
       password: "REMOVED"
       pool-name: MySQLPool
       maximum-pool-size: 20
-    manticore:
-      jdbc-url: jdbc:mysql://localhost:9306/
-      username:
-      password:
+    # Manticore数据源配置已移至DataSourceConfig.java，不使用连接池
 
   data:
     redis:

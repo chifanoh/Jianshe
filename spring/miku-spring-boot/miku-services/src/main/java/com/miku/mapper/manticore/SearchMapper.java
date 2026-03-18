@@ -1,6 +1,6 @@
 package com.miku.mapper.manticore;
 
-import com.miku.vo.ArticlesVO;
+import com.miku.entity.ManticoreArticle;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public interface SearchMapper {
      * @param pageSize
      * @return
      */
-    List<ArticlesVO> searchArticles(String keyword, int page, int pageSize);
+    List<ManticoreArticle> searchArticles(String keyword, int page, int pageSize);
 
     /**
      * 统计总数

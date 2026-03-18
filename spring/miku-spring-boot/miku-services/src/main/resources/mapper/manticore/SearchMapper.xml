@@ -2,43 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.mapper.manticore.SearchMapper">
-    <select id="searchArticles" resultType="com.miku.vo.ArticlesVO">
+    <select id="searchArticles" resultType="com.miku.entity.ManticoreArticle">
         SELECT
-        a.id,
-        a.title,
-        a.content,
-        a.comments,
-        a.likes,
-        a.createdTime,
-        u.id,
-        u.name,
-        u.avatar
-        FROM article_search a
-        LEFT JOIN user_search u ON a.user_id = u.id
-        <where>
-            a.status = 1
-            <if test="keyword != null and keyword != ''">
-                AND (
-                a.title LIKE CONCAT('%', #{keyword}, '%')
-                OR a.content LIKE CONCAT('%', #{keyword}, '%')
-                )
-            </if>
-        </where>
-        ORDER BY a.pub_time DESC
-        LIMIT #{page}, #{pageSize}
+            id,
+            user_id as userId,
+            title,
+            content,
+            comments,
+            likes_count as likesCount,
+            created_time as createdTime,
+            WEIGHT() as relevance
+        FROM articles_search
+        WHERE MATCH(#{keyword})
+        ORDER BY relevance DESC, created_time DESC
+        LIMIT #{pageSize} OFFSET #{page}
     </select>
 
     <select id="countSearchArticles" resultType="int">
         SELECT COUNT(*)
-        FROM article_search a
-        <where>
-            a.status = 1
-            <if test="keyword != null and keyword != ''">
-                AND (
-                a.title LIKE CONCAT('%', #{keyword}, '%')
-                OR a.content LIKE CONCAT('%', #{keyword}, '%')
-                )
-            </if>
-        </where>
+        FROM articles_search
+        WHERE MATCH(#{keyword})
     </select>
 </mapper>

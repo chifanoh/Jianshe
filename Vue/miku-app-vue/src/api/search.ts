@@ -34,7 +34,13 @@ export async function searchArticles(
     })
 
     if (response.data.code === 200) {
-      return response.data.data || []
+      const resultData = response.data.data
+      if (Array.isArray(resultData)) {
+        return resultData
+      } else if (resultData && Array.isArray(resultData.records)) {
+        return resultData.records
+      }
+      return []
     } else {
       throw new Error(response.data.message || '搜索失败')
     }
