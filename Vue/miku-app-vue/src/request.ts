@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建 axios 实例
 export const myAxios = axios.create({
-  baseURL: 'http://localhost:8080/',
+  baseURL: '/',
   timeout: 10000,
   withCredentials: true, // 关键：允许发送和接收 HttpOnly Cookie
 })

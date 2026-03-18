@@ -22,11 +22,14 @@ export async function searchArticles(
   }
 
   try {
-    const response = await myAxios.get('/api/search', {
-      params: {
-        query: query.trim(),
-        page,
-        pageSize,
+    const formData = new FormData()
+    formData.append('query', query.trim())
+    formData.append('page', page.toString())
+    formData.append('pageSize', pageSize.toString())
+
+    const response = await myAxios.post('/api/search', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
     })
 
@@ -36,7 +39,7 @@ export async function searchArticles(
       throw new Error(response.data.message || '搜索失败')
     }
   } catch (error) {
-    console.error('搜索请求失败:', error)
+    console.error('请求失败:', error)
     throw error
   }
 }
