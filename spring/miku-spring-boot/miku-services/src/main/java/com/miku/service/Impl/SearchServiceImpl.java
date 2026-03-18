@@ -1,7 +1,7 @@
 package com.miku.service.Impl;
 
 import com.miku.dto.SearchDTO;
-import com.miku.mapper.search.SearchMapper;
+import com.miku.mapper.manticore.SearchMapper;
 import com.miku.result.PageResult;
 import com.miku.service.SearchService;
 import com.miku.vo.ArticlesVO;

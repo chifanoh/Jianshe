@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = "com.miku.mapper.search", sqlSessionFactoryRef = "manticoreSqlSessionFactory")
+@MapperScan(basePackages = "com.miku.mapper.manticore", sqlSessionFactoryRef = "manticoreSqlSessionFactory")
 public class MyBatisManticoreConfig {
 
     @Bean("manticoreSqlSessionFactory")

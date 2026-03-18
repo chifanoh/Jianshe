@@ -1,4 +1,4 @@
-package com.miku.mapper.search;
+package com.miku.mapper.manticore;
 
 import com.miku.vo.ArticlesVO;
 import org.apache.ibatis.annotations.Mapper;
