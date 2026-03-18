@@ -11,8 +11,8 @@ public class SearchDTO {
 
     // 搜索关键字参数
     @NotBlank(message = "关键字不能为空")
-    @Size(message = "搜索内容最长不能超过{20}个字符", max = 20)
-    private String query;
+    @Size(message = "搜索内容最长不能超过{max}个字符", max = 20)
+    private String keyword;
 
     // 页码
     @Min(value = 1)

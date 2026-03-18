@@ -9,21 +9,21 @@ import type { Article } from '@/api/article'
  * @returns 搜索结果列表
  */
 export async function searchArticles(
-  query: string,
+  keyword: string,
   page: number = 1,
   pageSize: number = 20,
 ): Promise<Article[]> {
-  if (!query || query.trim().length === 0) {
+  if (!keyword || keyword.trim().length === 0) {
     throw new Error('搜索关键词不能为空')
   }
 
-  if (query.trim().length > 20) {
+  if (keyword.trim().length > 20) {
     throw new Error('搜索关键词长度不能超过20个字符')
   }
 
   try {
     const formData = new FormData()
-    formData.append('query', query.trim())
+    formData.append('keyword', keyword.trim())
     formData.append('page', page.toString())
     formData.append('pageSize', pageSize.toString())
 
