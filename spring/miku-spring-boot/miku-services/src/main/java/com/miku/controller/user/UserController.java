@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:5173"},allowCredentials = "true")
 public class UserController {
 
     @Autowired
