@@ -277,6 +277,6 @@ const handleSubmit = async () => {
 }
 
 .login-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 </style>

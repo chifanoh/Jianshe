@@ -32,6 +32,15 @@
           </n-form-item>
         </n-form>
         <div class="divider"></div>
+        <n-button
+          class="forgot-password-btn"
+          type="primary"
+          size="large"
+          block
+          @click="handleForgotPassword"
+        >
+          忘记密码
+        </n-button>
         <div class="login-footer">
           <span>没有账号?</span>
           <router-link to="/user/register" class="register-link">注册账号</router-link>
@@ -109,6 +118,12 @@ const isFormValid = computed(() => {
     (isEmail(emailOrName) || isValidUsername(emailOrName))
   )
 })
+
+// 处理忘记密码
+const handleForgotPassword = () => {
+  // TODO: 实现忘记密码功能
+  message.info('忘记密码功能开发中...')
+}
 
 const handleSubmit = async () => {
   if (!formRef.value) return
@@ -278,6 +293,18 @@ const handleSubmit = async () => {
 }
 
 .register-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.forgot-password-btn {
+  margin-bottom: 16px;
+  --n-color: #2563eb !important;
+  --n-color-hover: #3b82f6 !important;
+  --n-color-focus: #2563eb !important;
+  --n-color-pressed: #1d4ed8 !important;
+  --n-text-color: #fff !important;
+  --n-text-color-hover: #fff !important;
+  --n-text-color-focus: #fff !important;
+  --n-text-color-pressed: #fff !important;
 }
 </style>
