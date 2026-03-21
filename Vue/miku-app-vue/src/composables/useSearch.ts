@@ -5,7 +5,7 @@ import { useMessage } from 'naive-ui'
 export function useSearch() {
   const router = useRouter()
   const message = useMessage()
-  
+
   // 搜索功能
   const searchQuery = ref('')
 
@@ -32,11 +32,11 @@ export function useSearch() {
     }
   }
 
-  // 跳转到搜索页面
   const goToSearch = () => {
     const query = searchQuery.value.trim()
     if (validateSearchInput(query)) {
-      router.push({ path: '/search', query: { q: query } })
+      const url = router.resolve({ path: '/search', query: { q: query } }).href
+      window.open(url, '_blank')
     }
   }
 
