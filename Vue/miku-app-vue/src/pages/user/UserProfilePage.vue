@@ -4,7 +4,8 @@
     <div class="main-content-section">
       <div class="main-box flex">
         <div class="flex">
-          <div class="container">
+          <div class="profile-container">
+            <!-- 用户信息头部 -->
             <div class="info-section mb-12">
               <div class="main-info-section">
                 <div class="flex mb-15">
@@ -17,78 +18,60 @@
                     <div class="flex-vertical-center">
                       <span class="top-name">{{ userName }}</span>
                     </div>
-                    <div class="">
-                      <span class="top-id">ID: {{ loginUserStore.loginUser.id || '-' }}</span>
+                    <div>
+                      <span class="top-id">ID: {{ userId }}</span>
                     </div>
                   </div>
                 </div>
-                <div class="">
+                <div>
                   <div class="relation-section">
                     <span class="item pointer">关注：<span class="number">0</span></span>
                     <span class="item pointer">粉丝：<span class="number">0</span></span>
                     <span class="item pointer">获赞：<span class="number">0</span></span>
                   </div>
                   <div class="info-footer mt-20">
-                    <n-button color="#586370" strong secondary @click="menuValue = 'edit'"
-                      >编辑资料
+                    <n-button
+                      style="width: 96px; height: 40px"
+                      color="#586370"
+                      strong
+                      secondary
+                      @click="handleEditProfile"
+                    >
+                      编辑资料
                     </n-button>
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- 内容区域 -->
             <div class="content-sections flex">
+              <!-- 左侧菜单 -->
               <div class="sub-section mr-12">
                 <div class="sub-item-section mb-8">
-                  <div class="title text-18 mx-12 px-32 pb-20">个人中心</div>
+                  <div class="menu-title text-18 mx-12 px-32 pb-20">个人中心</div>
                   <ul class="content">
                     <li
                       v-for="item in menuOptions"
                       :key="item.key"
                       :class="['menu-item', { active: menuValue === item.key }]"
-                      @click="menuValue = item.key"
+                      @click="handleMenuClick(item.key)"
                     >
                       <span class="menu-label">{{ item.label }}</span>
                     </li>
                   </ul>
                 </div>
               </div>
+
+              <!-- 右侧内容 -->
               <div class="main-section px-24 py-20">
                 <div class="person-center-content-header">
-                  <div v-if="menuValue === 'posts'">
-                    <h2 class="title">我的帖子</h2>
-                  </div>
-                  <div v-else-if="menuValue === 'comments'">
-                    <h2 class="title">我的评论</h2>
-                  </div>
-                  <div v-else-if="menuValue === 'stars'">
-                    <h2 class="title">我的收藏</h2>
-                  </div>
-                  <div v-else-if="menuValue === 'follows'">
-                    <h2 class="title">我的关注</h2>
-                  </div>
-                  <div v-else>
-                    <h2 class="title">编辑资料</h2>
-                  </div>
+                  <h2 class="title">{{ currentMenu.title }}</h2>
                 </div>
 
                 <div class="content-section" style="min-height: 500px">
                   <div class="flex-center">
-                    <div v-if="menuValue === 'posts'">
-                      <span class="panel-placeholder">暂无数据</span>
-                    </div>
-                    <div v-else-if="menuValue === 'comments'">
-                      <span class="panel-placeholder">暂无数据</span>
-                    </div>
-                    <div v-else-if="menuValue === 'stars'">
-                      <span class="panel-placeholder">暂无数据</span>
-                    </div>
-                    <div v-else-if="menuValue === 'follows'">
-                      <span class="panel-placeholder">暂无数据</span>
-                    </div>
-                    <div v-else>
-                      <span class="panel-placeholder">暂不支持该功能</span>
-                    </div>
+                    <span class="panel-placeholder">{{ currentMenu.placeholder }}</span>
                   </div>
                 </div>
               </div>
@@ -101,31 +84,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useLoginUserStore } from '@/store/useLoginUserStore'
+import { useUserProfile } from '@/composables/useUserProfile'
 
-const loginUserStore = useLoginUserStore()
-
-const userName = computed(() => loginUserStore.loginUser.userName || '未登录')
-
-const avatarSrc = computed(() => {
-  const src = loginUserStore.loginUser.userAvatar
-  if (!src) return defaultAvatar
-  if (src.startsWith('http')) return src
-  return '/' + src.replace(/\\/g, '/')
-})
-
-const menuValue = ref('edit')
-
-const menuOptions = [
-  { label: '我的帖子', key: 'posts' },
-  { label: '我的评论', key: 'comments' },
-  { label: '我的收藏', key: 'stars' },
-  { label: '我的关注', key: 'follows' },
-]
-
-const defaultAvatar =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNmMGYwZjAiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNiIgcj0iMTAiIGZpbGw9IiNjY2MiLz4KPHBhdGggZD0iTTE4IDQ4QzE0IDQ4IDE0IDQyIDE0IDM2SDUwQzUwIDQyIDUwIDQ4IDQ2IDQ4SDE4WiIgZmlsbD0iI2NjYyIvPgo8L3N2Zz4K'
+const {
+  userName,
+  userId,
+  avatarSrc,
+  menuOptions,
+  menuValue,
+  currentMenu,
+  handleMenuClick,
+  handleEditProfile,
+} = useUserProfile()
 </script>
 
 <style scoped>
@@ -145,91 +115,28 @@ const defaultAvatar =
   background-color: #f7f8fa;
 }
 
-.flex {
+.main-content-section {
+  height: 100%;
+  width: 1208px;
+  margin: 0 auto;
+  position: relative;
+  justify-content: center;
+  z-index: 1;
+}
+
+.main-box {
   display: flex;
+  position: relative;
+  justify-content: center;
 }
 
-.mr-12 {
-  margin-right: 12px;
-}
-
-.mb-8 {
-  margin-bottom: 8px;
-}
-
-.mb-15 {
-  margin-bottom: 15px;
-}
-
-.mr-24 {
-  margin-right: 24px;
-}
-
-.mt-20 {
-  margin-top: 20px;
-}
-
-.text-18 {
-  font-size: 18px;
-  line-height: 26px;
-}
-
-.mx-12 {
-  margin-left: 12px;
-  margin-right: 12px;
-}
-
-.px-32 {
-  padding-left: 32px;
-}
-
-.container {
+.profile-container {
+  width: 892px;
   display: flex;
   flex-direction: column;
 }
 
-.content-sections {
-  flex-grow: 1;
-}
-
-.main-section {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding-right: 32px;
-}
-
-.pb-20 {
-  padding-bottom: 20px;
-}
-
-.py-20 {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-.px-24 {
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.mb-12 {
-  margin-bottom: 12px;
-}
-
-.person-center-content-header .title {
-  display: inline;
-  width: 100%;
-  font-size: 18px;
-  line-height: 26px;
-  font-weight: 700;
-  color: #393f4d;
-  margin: 0;
-}
-
-.container {
-  width: 892px;
-}
-
+/* 用户信息头部 */
 .info-section {
   position: relative;
   display: flex;
@@ -238,42 +145,15 @@ const defaultAvatar =
   background: #fff;
   border-radius: 8px;
   height: auto;
+  margin-bottom: 12px;
 }
 
-.info-footer {
-  width: 96px;
-  height: 40px;
-  font-weight: 500;
-  color: #586370;
-  background: #f3f6f8;
-  border-radius: 4px;
+.main-info-section {
+  position: relative;
 }
 
-.relation-section {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  color: #8c95a3;
-  word-break: none;
-}
-
-.number {
-  font-weight: 700;
-  color: #333;
-}
-
-.flex-vertical-center {
+.icon-section {
   display: flex;
-}
-
-.flex-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .top-avatar {
@@ -281,6 +161,11 @@ const defaultAvatar =
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.user-base-info {
+  display: flex;
+  flex-direction: column;
 }
 
 .top-name {
@@ -301,23 +186,71 @@ const defaultAvatar =
   font-size: 13px;
 }
 
-.main-content-section {
+.relation-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #8c95a3;
+}
+
+.number {
+  font-weight: 700;
+  color: #333;
+}
+
+.info-footer {
+  width: 96px;
+  height: 40px;
+  font-weight: 500;
+  color: #586370;
+  background: #f3f6f8;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+/* 内容区域 */
+.content-sections {
+  flex-grow: 1;
+  position: relative;
   height: 100%;
-  width: 1208px;
-  margin: 0 auto;
-  position: relative;
-  justify-content: center;
-  z-index: 1;
-}
-
-.main-info-section {
-  position: relative;
-}
-
-.main-box {
+  min-height: calc(100vh - 340px);
   display: flex;
-  position: relative;
-  justify-content: center;
+}
+
+/* 左侧菜单 */
+.sub-section {
+  position: sticky;
+  top: 76px;
+  min-width: 250px;
+  height: 881px;
+  width: 240px;
+  flex: 1;
+  max-height: calc(100vh - 76px);
+  margin-right: 12px;
+}
+
+.sub-item-section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px 0;
+  margin-bottom: 8px;
+}
+
+.menu-title {
+  font-weight: 700;
+  border-bottom: 1px solid #edeff5;
+  margin-bottom: 20px;
+  color: #393f4d;
+  font-size: 18px;
+  line-height: 26px;
+  margin-left: 12px;
+  margin-right: 12px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 20px;
 }
 
 .content {
@@ -352,11 +285,18 @@ const defaultAvatar =
   font-weight: 500;
 }
 
+/* 右侧内容 */
 .main-section {
+  flex-grow: 1;
+  overflow-y: auto;
   width: calc(100% - 300px);
   background-color: #fff;
   border-radius: 8px;
   margin-bottom: 40px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .person-center-content-header {
@@ -364,14 +304,14 @@ const defaultAvatar =
   padding-bottom: 20px;
 }
 
-.panel-placeholder {
-  color: #999;
-}
-
-.content-sections {
-  position: relative;
-  height: 100%;
-  min-height: calc(100vh - 340px);
+.person-center-content-header .title {
+  display: inline;
+  width: 100%;
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 700;
+  color: #393f4d;
+  margin: 0;
 }
 
 .content-section {
@@ -380,26 +320,35 @@ const defaultAvatar =
   min-height: calc(100% - 67px);
 }
 
-.sub-section {
-  position: sticky;
-  top: 76px;
-  min-width: 250px;
-  height: 881px;
-  width: 240px;
-  flex: 1;
-  max-height: calc(100vh - 76px);
+.flex-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.sub-item-section {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px 0;
+.panel-placeholder {
+  color: #999;
 }
 
-.title {
-  font-weight: 700;
-  border-bottom: 1px solid #edeff5;
-  margin-bottom: 20px;
-  color: #393f4d;
+/* 工具类 */
+.flex {
+  display: flex;
+}
+
+.flex-vertical-center {
+  display: flex;
+}
+
+.mr-24 {
+  margin-right: 24px;
+}
+
+.mb-15 {
+  margin-bottom: 15px;
+}
+
+.pointer {
+  cursor: pointer;
 }
 </style>

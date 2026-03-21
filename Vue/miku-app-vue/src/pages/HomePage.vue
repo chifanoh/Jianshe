@@ -12,7 +12,7 @@
           <div
             class="nav-item"
             :class="{ active: activeSection === 'follow' }"
-            @click="handleNavClick('follow', '/follow')"
+            @click="handleFollowClick()"
           >
             <svg
               width="24"
@@ -194,8 +194,10 @@
 import ArticleList from '@/components/Article/ArticleList.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useFollow } from '@/composables/useFollow'
 
 const router = useRouter()
+const { handleFollowClick } = useFollow()
 
 // 导航状态
 const activeSection = ref('recommend')
