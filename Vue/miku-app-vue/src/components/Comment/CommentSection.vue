@@ -1,8 +1,16 @@
 <template>
   <u-comment-scroll :disable="disable" @more="more">
-    <u-comment :config="config" @submit="handleSubmit" @focus="handleFocus" @cancel="handleCancel">
+    <u-comment :config="config" @submit="handleSubmit" @focus="handleFocus">
       <!-- 把二级回复按钮暴露出来 -->
       <template #reply-btn> </template>
+      <!-- 操作栏 - 只显示在当前用户的评论上 -->
+      <template #operate="scope">
+        <Operate
+          v-if="scope.uid === loginUserStore.loginUser.id"
+          :comment="scope"
+          @remove="handleRemove"
+        />
+      </template>
     </u-comment>
   </u-comment-scroll>
 </template>
@@ -12,7 +20,8 @@ import { reactive, ref, onMounted, watch } from 'vue'
 import { UToast } from 'undraw-ui'
 import type { CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
-import { getComments, submitComment } from '@/api/comment'
+import { getComments, submitComment, deleteComment } from '@/api/comment'
+import Operate from './Operate.vue'
 
 // Props定义
 interface Props {
@@ -62,13 +71,16 @@ watch(
       config.user = {
         id: newUser.id,
         username: newUser.userName,
-        avatar: newUser.userAvatar || '/UserAvatar.svg',
+        avatar:
+          newUser.userAvatar ||
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmMGYwZjAiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNiIgcj0iNiIgZmlsbD0iI2NjYyIvPgo8cGF0aCBkPSJNMTIgMzJDOCAzMiA4IDI4IDggMjRIMzJDMzIgMjggMzIgMzIgMjggMzJIMTJ6IiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo=',
       }
     } else {
       config.user = {
         id: '',
         username: '游客',
-        avatar: '/UserAvatar.svg',
+        avatar:
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmMGYwZjAiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNiIgcj0iNiIgZmlsbD0iI2NjYyIvPgo8cGF0aCBkPSJNMTIgMzJDOCAzMiA4IDI4IDggMjRIMzJDMzIgMjggMzIgMzIgMjggMzJIMTJ6IiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPgo=',
       }
     }
   },
@@ -195,9 +207,37 @@ const handleFocus = () => {
   }
 }
 
-// 取消评论
-const handleCancel = () => {
-  // 可以在这里添加取消评论的逻辑
+// 处理删除评论
+const handleRemove = async (comment: CommentApi) => {
+  try {
+    // 检查用户是否登录
+    if (!loginUserStore.isLogin) {
+      UToast({
+        message: '请先登录后再操作',
+        type: 'warn',
+      })
+      return
+    }
+
+    // 调用API删除评论
+    const response = await deleteComment(String(comment.id))
+    if (response.data.code === 200) {
+      // 从评论列表中移除
+      config.comments = config.comments.filter((c) => c.id !== comment.id)
+      UToast({ message: '删除成功', type: 'info' })
+    } else {
+      UToast({
+        message: response.data.message || '删除失败',
+        type: 'error',
+      })
+    }
+  } catch (error) {
+    console.error('删除评论失败:', error)
+    UToast({
+      message: '网络错误，请稍后重试',
+      type: 'error',
+    })
+  }
 }
 
 // 组件挂载时加载评论数据

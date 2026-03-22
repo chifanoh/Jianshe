@@ -53,7 +53,7 @@ export const submitComment = async (
 export const deleteComment = async (commentId: string) => {
   return myAxios.request({
     url: `/api/comment/delete/${commentId}`,
-    method: 'DELETE',
+    method: 'POST',
   })
 }
 

@@ -23,12 +23,14 @@ declare module 'vue' {
     GlobalHeader: typeof import('./src/components/common/GlobalHeader.vue')['default']
     GloubalFooter: typeof import('./src/components/GloubalFooter.vue')['default']
     GloubalHeader: typeof import('./src/components/GloubalHeader.vue')['default']
+    Operate: typeof import('./src/components/Comment/Operate.vue')['default']
     RichEditor: typeof import('./src/components/Article/RichEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     UComment: typeof import('undraw-ui')['UComment']
     UCommentNav: typeof import('undraw-ui')['UCommentNav']
     UCommentScroll: typeof import('undraw-ui')['UCommentScroll']
+    UIcon: typeof import('undraw-ui')['UIcon']
   }
 }
 
@@ -45,10 +47,12 @@ declare global {
   const GlobalHeader: typeof import('./src/components/common/GlobalHeader.vue')['default']
   const GloubalFooter: typeof import('./src/components/GloubalFooter.vue')['default']
   const GloubalHeader: typeof import('./src/components/GloubalHeader.vue')['default']
+  const Operate: typeof import('./src/components/Comment/Operate.vue')['default']
   const RichEditor: typeof import('./src/components/Article/RichEditor.vue')['default']
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
   const UComment: typeof import('undraw-ui')['UComment']
   const UCommentNav: typeof import('undraw-ui')['UCommentNav']
   const UCommentScroll: typeof import('undraw-ui')['UCommentScroll']
+  const UIcon: typeof import('undraw-ui')['UIcon']
 }
