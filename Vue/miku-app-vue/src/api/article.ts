@@ -158,12 +158,15 @@ export const getUserArticles = async (
  * @returns 点赞状态（true/false）
  */
 export const getLikeStatus = async (articleId: string | number) => {
+  const formData = new FormData()
+  formData.append('articleId', String(articleId))
   return myAxios.request<{
     code: number
     msg: string | null
     data: boolean
   }>({
-    url: `/api/article/status/${articleId}`,
-    method: 'GET',
+    url: `/api/article/getLikeStatus`,
+    method: 'POST',
+    data: formData,
   })
 }

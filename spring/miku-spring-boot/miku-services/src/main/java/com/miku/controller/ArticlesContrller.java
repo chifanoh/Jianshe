@@ -66,8 +66,8 @@ public class ArticlesContrller {
      * @param articleId
      * @return
      */
-    @GetMapping("/status/{articleId}")
-    public Result<Boolean> getLikeStatus(@PathVariable Long articleId){
+    @PostMapping("/getLikeStatus")
+    public Result<Boolean> getLikeStatus(@RequestParam Long articleId){
         Long userId = BaseContext.getCurrentId();
         log.info("用户:{}获取文章:{}点赞信息",userId, articleId);
         boolean liked = articlesService.getLikeStatus(userId, articleId);

@@ -18,7 +18,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 "/api/user/current",
                 "/api/user/logout",
                 "/api/article/create",
-                "/api/article/status/{articleId}",
+                "/api/article/getLikeStatus",
                 "/api/article/like/{articleId}",
                 "/api/comment/submit",
                 "/api/comment/delete/{commentId}",
