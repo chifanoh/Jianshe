@@ -21,6 +21,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 "/api/article/status/{articleId}",
                 "/api/article/like/{articleId}",
                 "/api/comment/submit",
+                "/api/comment/delete/{commentId}",
         };
     }
 

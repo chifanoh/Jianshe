@@ -1,5 +1,6 @@
 package com.miku.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miku.context.BaseContext;
@@ -109,4 +110,25 @@ public class CommentServiceImpl implements CommentService {
         return v;
     }
 
+
+    /**
+     * 根据评论表主键id删除评论
+     *
+     * @param id
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean delectComment(Long id, Long userId) {
+        // 当前操作用户是否是评论用户
+        boolean exists = commentMapper.exists(new LambdaQueryWrapper<Comment>()
+                .eq(Comment::getUserId, userId));
+        if (exists){
+            // 删除
+            commentMapper.deleteById(id);
+            return true;
+        }
+        // 返回false删除失败
+        return false;
+    }
 }

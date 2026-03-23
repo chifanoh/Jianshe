@@ -1,5 +1,6 @@
 package com.miku.controller;
 
+import com.miku.context.BaseContext;
 import com.miku.dto.CommentDTO;
 import com.miku.dto.PageQueryDTO;
 import com.miku.result.PageResult;
@@ -40,5 +41,21 @@ public class CommentController {
         log.info("获取评论列表:{}",articleId);
         PageResult pageResult = commentService.getCommentList(articleId,pageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 根据评论表主键id删除评论
+     * @param id
+     * @return
+     */
+    @PostMapping("/delete/{commentId}")
+    public Result deleteComment(@PathVariable("commentId") Long id){
+        log.info("删除评论:{}",id);
+        Long userId = BaseContext.getCurrentId();
+        boolean success = commentService.delectComment(id, userId);
+        if (success){
+            return Result.success("删除成功");
+        }
+        return Result.error("删除失败");
     }
 }

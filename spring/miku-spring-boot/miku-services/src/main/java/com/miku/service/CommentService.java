@@ -3,7 +3,6 @@ package com.miku.service;
 import com.miku.dto.CommentDTO;
 import com.miku.dto.PageQueryDTO;
 import com.miku.result.PageResult;
-import com.miku.vo.CommentVO;
 
 public interface CommentService {
 
@@ -19,4 +18,13 @@ public interface CommentService {
      * @return
      */
     PageResult getCommentList(Long articleId, PageQueryDTO pageQueryDTO);
+
+    /**
+     * 根据评论表主键id删除评论
+     *
+     * @param id
+     * @param userId
+     * @return
+     */
+    boolean delectComment(Long id, Long userId);
 }
