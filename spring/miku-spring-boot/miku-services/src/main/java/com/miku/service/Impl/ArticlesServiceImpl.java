@@ -1,6 +1,8 @@
 package com.miku.service.Impl;
 
+import cn.hutool.core.util.BooleanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
@@ -18,8 +20,9 @@ import com.miku.vo.UserArticleDetailVO;
 import com.miku.vo.UserArticlesVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,6 +40,9 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     @Autowired
     private ArticleLikeMapper articleLikeMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 文章列表查询
@@ -163,20 +169,78 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @param articleId
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void toggleLike(Long userId, Long articleId) {
-        try {
-            // 点赞
-            ArticleLike articleLike = new ArticleLike();
-            articleLike.setUserId(userId);
-            articleLike.setArticleId(articleId);
-            articleLike.setCreatedTime(LocalDateTime.now());
-            articleLikeMapper.insert(articleLike);
-        }catch (DuplicateKeyException e){
-            // 取消点赞
-            articleLikeMapper.delete(new LambdaQueryWrapper<ArticleLike>()
+        UpdateWrapper<Articles> updateWrapper = new UpdateWrapper<>();
+        // 使用文章id作为key
+        String key = "liked:articles:" + articleId;
+        // 判断缓存是否命中
+        if (stringRedisTemplate.hasKey(key)){
+            // 缓存命中
+            // 判断当前登录用户是否点赞
+            Boolean isMember = stringRedisTemplate.opsForSet().isMember(key, userId.toString());
+            if (BooleanUtil.isFalse(isMember)) {
+                // 未点赞数据库文章表点赞数 + 1
+                updateWrapper.setSql("likes_count = likes_count + 1").eq("id", articleId);
+
+                // 双写: 更新数据库点赞表用户点赞状态
+                ArticleLike articleLike = new ArticleLike().builder()
+                        .userId(userId)
+                        .articleId(articleId)
+                        .createdTime(LocalDateTime.now())
+                        .build();
+                articleLikeMapper.insert(articleLike);
+
+                // 双写: 保存用户数据到Redis
+                boolean isSuccess = articlesMapper.update(null, updateWrapper) > 0;
+                if (isSuccess) {
+                    stringRedisTemplate.opsForSet().add(key ,userId.toString());
+                }
+
+            }else {
+                // 已点赞数据库文章表点赞数 - 1
+                updateWrapper.setSql("likes_count = likes_count - 1").eq("id", articleId);
+
+                // 双写: 更新数据库点赞表用户点赞状态
+                articleLikeMapper.delete(new LambdaQueryWrapper<ArticleLike>()
                     .eq(ArticleLike::getArticleId, articleId)
-                    .eq(ArticleLike::getUserId, userId)
+                    .eq(ArticleLike::getUserId, userId));
+
+                // 双写: 保存用户数据到Redis
+                boolean isSuccess = articlesMapper.update(null, updateWrapper) > 0;
+                if (isSuccess) {
+                    stringRedisTemplate.opsForSet().remove(key ,userId.toString());
+                }
+            }
+
+        }else {
+            // 缓存未命中
+            // 查数据库
+            boolean exists = articleLikeMapper.exists(new LambdaQueryWrapper<ArticleLike>()
+                            .eq(ArticleLike::getUserId, userId)
+                            .eq(ArticleLike::getArticleId, articleId)
             );
+
+            // 判断: 未点赞: 写Redis; 已点赞: 不写Redis
+            if (exists) {
+                // 更新数据库点赞状态
+                updateWrapper.setSql("likes_count = likes_count - 1").eq("id", articleId);
+                articleLikeMapper.delete(new LambdaQueryWrapper<ArticleLike>()
+                        .eq(ArticleLike::getArticleId, articleId)
+                        .eq(ArticleLike::getUserId, userId));
+            }else {
+
+                // 更新数据库点赞状态
+                updateWrapper.setSql("likes_count = likes_count + 1").eq("id", articleId);
+                ArticleLike articleLike = new ArticleLike().builder()
+                        .userId(userId)
+                        .articleId(articleId)
+                        .createdTime(LocalDateTime.now())
+                        .build();
+                articleLikeMapper.insert(articleLike);
+                // 重建缓存写Redis
+                stringRedisTemplate.opsForSet().add(key ,userId.toString());
+            }
         }
     }
 
