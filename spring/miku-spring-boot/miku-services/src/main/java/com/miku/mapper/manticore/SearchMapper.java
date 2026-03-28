@@ -22,4 +22,10 @@ public interface SearchMapper {
      * @return
      */
     int countSearchArticles(String keyword);
+
+    /**
+     * 双写同步数据库文章
+     * @param manticoreArticle
+     */
+    void insert(ManticoreArticle manticoreArticle);
 }

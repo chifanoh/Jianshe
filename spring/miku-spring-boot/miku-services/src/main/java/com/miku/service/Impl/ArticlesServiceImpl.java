@@ -8,7 +8,9 @@ import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.entity.ArticleLike;
 import com.miku.entity.Articles;
+import com.miku.entity.ManticoreArticle;
 import com.miku.entity.User;
+import com.miku.mapper.manticore.SearchMapper;
 import com.miku.mapper.mysql.ArticleLikeMapper;
 import com.miku.mapper.mysql.ArticlesMapper;
 import com.miku.mapper.mysql.UserMapper;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +46,9 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private SearchMapper searchMapper;
 
     /**
      * 文章列表查询
@@ -140,14 +146,27 @@ public class ArticlesServiceImpl implements ArticlesService {
     @Override
     public void createArtics(Long uid, CreateArticlesDTO createArticlesDTO) {
         Articles articles = new Articles();
+        LocalDateTime now = LocalDateTime.now();
         //对象拷贝
         BeanUtils.copyProperties(createArticlesDTO,articles);
 
         //设置发布和修改时间
         articles.setUserId(uid);
-        articles.setCreatedTime(LocalDateTime.now());
-        articles.setUpdatedTime(LocalDateTime.now());
+        articles.setCreatedTime(now);
+        articles.setUpdatedTime(now);
         articlesMapper.insert(articles);
+
+        // 为 Manticore 创建专用对象，转换时间为时间戳
+        ManticoreArticle manticoreArticle = new ManticoreArticle();
+        BeanUtils.copyProperties(articles, manticoreArticle);
+        manticoreArticle.setImages("");
+        manticoreArticle.setViews(0);
+        manticoreArticle.setComments(0);
+        manticoreArticle.setLikesCount(0);
+        manticoreArticle.setStatus(1);
+        manticoreArticle.setCreatedTime(now.toEpochSecond(ZoneOffset.ofHours(8)));
+        manticoreArticle.setUpdatedTime(now.toEpochSecond(ZoneOffset.ofHours(8)));
+        searchMapper.insert(manticoreArticle);
     }
 
     /**

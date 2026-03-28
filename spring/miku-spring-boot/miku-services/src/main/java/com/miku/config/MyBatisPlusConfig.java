@@ -38,13 +38,4 @@ public class MyBatisPlusConfig {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
-
-    @Bean
-    public MybatisPlusPropertiesCustomizer mybatisPlusPropertiesCustomizer() {
-        return properties -> {
-            GlobalConfig globalConfig = properties.getGlobalConfig();
-            globalConfig.getDbConfig().setIdType(IdType.AUTO);
-        };
-    }
-
 }

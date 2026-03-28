@@ -17,6 +17,13 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
+    datasource:
+      url: jdbc:mysql://localhost:3306/miku_spring_boot
+      username: root
+      password: REMOVED
+    task:
+      scheduling:
+        enabled: true  # 开启定时任务
 
 logging:
   level:
@@ -36,11 +43,6 @@ mybatis-plus:
   configuration:
     # 开启 MYSQL 驼峰映射
     map-underscore-to-camel-case: true
-  global-config:
-    db-config:
-      # 使用数据库自增id (使用MP会默认开启雪花id)
-      id-type: auto
-
 
 miku:
   jwt:

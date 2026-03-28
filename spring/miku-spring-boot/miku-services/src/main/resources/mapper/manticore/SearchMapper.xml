@@ -23,4 +23,10 @@
         FROM articles_search
         WHERE MATCH(#{keyword})
     </select>
+
+    <insert id="insert">
+        INSERT INTO articles_search
+        (id, user_id, title, content, images, views, comments, likes_count, created_time, updated_time, status)
+        VALUES (#{id}, #{userId}, #{title}, #{content}, #{images}, #{views}, #{comments}, #{likesCount}, #{createdTime,jdbcType=BIGINT}, #{updatedTime,jdbcType=BIGINT}, #{status})
+    </insert>
 </mapper>

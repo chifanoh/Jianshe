@@ -1,5 +1,7 @@
 package com.miku.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,7 @@ public class Comment implements Serializable {
     /**
     * 评论ID
     */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
