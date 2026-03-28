@@ -39,7 +39,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public PageResult search(SearchDTO searchDTO) {
         // 查询数据
-        int page = (searchDTO.getPage() - 1) * searchDTO.getPageSize();
+        int page = (searchDTO.getPage() - 1) * searchDTO.getPageSize(); // 计算偏移值
         List<ManticoreArticle> articles = searchMapper.searchArticles(
                 searchDTO.getKeyword(),
                 page,
