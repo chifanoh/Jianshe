@@ -52,6 +52,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     @Override
     public PageResult pageQuery(PageQueryDTO pageQueryDTO) {
         // 设置分页参数
+        pageQueryDTO.setPage((pageQueryDTO.getPage() - 1) * pageQueryDTO.getPageSize()); // 计算偏移值
         Page<Articles> page = new Page<>(pageQueryDTO.getPage(), pageQueryDTO.getPageSize());
 
         // 构建查询条件
