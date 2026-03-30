@@ -1,6 +1,7 @@
 package com.miku.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.entity.ArticleLike;
@@ -156,7 +157,6 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @param articleId
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void toggleLike(Long userId, Long articleId) {
         try {
             // 点赞
@@ -166,12 +166,17 @@ public class ArticlesServiceImpl implements ArticlesService {
                     .createdTime(LocalDateTime.now())
                     .build();
             articleLikeMapper.insert(articleLike);
+            articlesMapper.update(null, new UpdateWrapper<Articles>()
+                    .setSql("likes_count = likes_count + 1")
+                    .eq("id", articleId));
         } catch (DuplicateKeyException e) {
             // 取消点赞
             articleLikeMapper.delete(new LambdaQueryWrapper<ArticleLike>()
                     .eq(ArticleLike::getArticleId, articleId)
-                    .eq(ArticleLike::getUserId, userId)
-            );
+                    .eq(ArticleLike::getUserId, userId));
+            articlesMapper.update(null, new UpdateWrapper<Articles>()
+                    .setSql("likes_count = likes_count - 1")
+                    .eq("id", articleId));
         }
     }
 }

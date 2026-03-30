@@ -20,7 +20,7 @@ public class ArticleDetailVO implements Serializable {
     private String content;
     private Integer views;
     private Integer comments;
-    private Integer likes;
+    private Integer likesCount;
     private List<String> images;
     private LocalDateTime createdTime;
 }
