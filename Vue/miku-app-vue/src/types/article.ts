@@ -22,7 +22,7 @@ export interface Article {
   images: string[] | null
   views: number
   comments: number
-  likes: number
+  likesCount: number
   createdTime: string
   updatedTime?: string
 }

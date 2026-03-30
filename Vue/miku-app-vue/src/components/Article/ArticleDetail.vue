@@ -85,8 +85,8 @@
             <div
               class="stat-item mb-20"
               @click="
-                toggleLike(article!.id, article!.likes, (updatedLikes) => {
-                  article!.likes = updatedLikes
+                toggleLike(article!.id, article!.likesCount, (updatedLikes) => {
+                  article!.likesCount = updatedLikes
                 })
               "
             >
@@ -104,7 +104,7 @@
                   ></path>
                 </svg>
               </div>
-              <span class="stat-number">{{ article.likes }}</span>
+              <span class="stat-number">{{ article.likesCount }}</span>
               <div class="stat-label">点赞</div>
             </div>
           </div>

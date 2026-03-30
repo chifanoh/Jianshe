@@ -75,7 +75,7 @@
               fill="currentColor"
             ></path>
           </svg>
-          {{ articleData.likes }}
+          {{ articleData.likesCount }}
         </span>
       </div>
     </div>
@@ -106,7 +106,7 @@ const props = withDefaults(defineProps<Props>(), {
     images: [],
 
     comments: 0,
-    likes: 0,
+    likesCount: 0,
     views: 0,
     createdTime: new Date().toISOString(),
   }),

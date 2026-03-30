@@ -20,7 +20,7 @@ export interface Article {
   images: string[] | null
   views: number
   comments: number
-  likes: number
+  likesCount: number
   createdTime: string
   localDateTime?: string
   updatedTime?: string
@@ -125,9 +125,9 @@ export const deleteArticle = async (id: string | number) => {
  * @param id 文章ID
  * @returns 点赞结果
  */
-export const toggleLikeApi = async (id: string | number) => {
+export const toggleLikeApi = async (articleId: string | number) => {
   return myAxios.request({
-    url: `/api/article/like/${id}`,
+    url: `/api/article/like/${articleId}`,
     method: 'POST',
   })
 }
