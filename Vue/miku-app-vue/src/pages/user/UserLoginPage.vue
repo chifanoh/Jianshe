@@ -19,11 +19,21 @@
             />
           </n-form-item>
           <n-form-item>
+            <TurnstileCaptcha
+              ref="turnstileRef"
+              :site-key="siteKey"
+              theme="dark"
+              @verify="handleTurnstileVerify"
+              @error="handleTurnstileError"
+              @expire="handleTurnstileExpire"
+            />
+          </n-form-item>
+          <n-form-item>
             <n-button
               type="primary"
               size="large"
               :loading="loading"
-              :disabled="!isFormValid"
+              :disabled="!isFormValid || !turnstileToken"
               block
               @click="handleSubmit"
             >
@@ -57,13 +67,19 @@ import { useMessage, type FormInst, type FormRules } from 'naive-ui'
 import { userLogin } from '@/api/user'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
 import GlobalHeader from '@/components/common/GlobalHeader.vue'
+import TurnstileCaptcha from '@/components/common/TurnstileCaptcha.vue'
 import CryptoJS from 'crypto-js'
 
 const router = useRouter()
 const message = useMessage()
 const loginUserStore = useLoginUserStore()
 const formRef = ref<FormInst | null>(null)
+const turnstileRef = ref<InstanceType<typeof TurnstileCaptcha> | null>(null)
 const loading = ref(false)
+const turnstileToken = ref('')
+
+// Turnstile Site Key - 请替换为你的实际 Site Key
+const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY || ''
 
 interface FormState {
   emailOrName: string
@@ -74,6 +90,25 @@ const formState = reactive<FormState>({
   emailOrName: '',
   password: '',
 })
+
+// Turnstile 验证成功回调
+const handleTurnstileVerify = (token: string) => {
+  turnstileToken.value = token
+}
+
+// Turnstile 验证错误回调
+const handleTurnstileError = (error: Error) => {
+  console.error('Turnstile 验证错误:', error)
+  message.error('验证码加载失败，请刷新页面重试')
+  turnstileToken.value = ''
+}
+
+// Turnstile 验证过期回调
+const handleTurnstileExpire = () => {
+  message.warning('验证码已过期，请重新验证')
+  turnstileToken.value = ''
+  turnstileRef.value?.reset()
+}
 
 // 验证邮箱格式
 const isEmail = (str: string): boolean => {
@@ -114,7 +149,7 @@ const isFormValid = computed(() => {
     emailOrName &&
     password &&
     password.length >= 6 &&
-    password.length <= 12 &&
+    password.length <= 20 &&
     (isEmail(emailOrName) || isValidUsername(emailOrName))
   )
 })
@@ -139,6 +174,7 @@ const handleSubmit = async () => {
       const loginParams = {
         account: formState.emailOrName.trim(),
         password: CryptoJS.MD5(formState.password).toString().toLowerCase(),
+        turnstileToken: turnstileToken.value,
       }
 
       const res = await userLogin(loginParams)
@@ -170,6 +206,9 @@ const handleSubmit = async () => {
       message.error(error.response?.data?.message || '登录失败，请检查网络连接')
     } finally {
       loading.value = false
+      // 重置验证码
+      turnstileRef.value?.reset()
+      turnstileToken.value = ''
     }
   })
 }
