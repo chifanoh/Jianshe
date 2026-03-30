@@ -29,7 +29,7 @@
           <div class="title">
             <span class="title-text">{{ articleData.title }}</span>
           </div>
-          <article class="content" v-html="firstParagraphContent"></article>
+          <article class="content">{{ articleSummary }}</article>
         </div>
         <div class="preview">
           <div v-if="articleData.images && articleData.images.length > 0" class="image-preview">
@@ -147,11 +147,14 @@ const formattedTime = computed(() => {
 })
 
 /**
- * 截取文章内容的第一个段落
- * @param content 文章内容
- * @returns 第一个段落的内容
+ * 文章摘要 - 优先使用后端返回的 summary 字段
  */
-const firstParagraphContent = computed(() => {
+const articleSummary = computed(() => {
+  // 优先使用后端返回的 summary 字段
+  if (articleData.value.summary) {
+    return articleData.value.summary + '...'
+  }
+  // 如果没有 summary，则从 content 中提取第一段
   const content = articleData.value.content
   if (!content) return ''
 

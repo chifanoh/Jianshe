@@ -18,6 +18,7 @@ export interface Article {
   user: ArticleAuthor
   title: string
   content: string
+  summary?: string // 文章摘要，用于列表展示
   images: string[] | null
   views: number
   comments: number
