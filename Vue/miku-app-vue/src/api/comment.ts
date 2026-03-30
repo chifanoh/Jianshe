@@ -64,14 +64,18 @@ export const deleteComment = async (commentId: string) => {
  * @param size 每页大小
  * @returns 回复列表数据
  */
-export const getCommentReplies = async (parentId: string, page: number = 1, size: number = 5) => {
+export const getCommentReplies = async (
+  parentId: string,
+  page: number = 1,
+  pageSize: number = 5,
+) => {
   return myAxios.request({
     url: '/api/comment/replies',
     method: 'GET',
     params: {
       parentId,
       page,
-      size,
+      pageSize,
     },
   })
 }

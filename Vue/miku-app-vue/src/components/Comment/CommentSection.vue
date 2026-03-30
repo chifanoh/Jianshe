@@ -1,6 +1,6 @@
 <template>
   <u-comment-scroll :disable="disable" @more="more">
-    <u-comment :config="config" @submit="handleSubmit" @focus="handleFocus">
+    <u-comment :config="config" @submit="handleSubmit" @reply-page="replyPage" @focus="handleFocus">
       <!-- 把二级回复按钮暴露出来 -->
       <template #reply-btn> </template>
       <!-- 操作栏 - 只显示在当前用户的评论上 -->
@@ -18,9 +18,9 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, watch } from 'vue'
 import { UToast } from 'undraw-ui'
-import type { CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
+import type { CommentApi, CommentSubmitApi, ConfigApi, CommentReplyPageApi } from 'undraw-ui'
 import { useLoginUserStore } from '@/store/useLoginUserStore'
-import { getComments, submitComment, deleteComment } from '@/api/comment'
+import { getComments, submitComment, deleteComment, getCommentReplies } from '@/api/comment'
 import Operate from './Operate.vue'
 
 // Props定义
@@ -237,6 +237,40 @@ const handleRemove = async (comment: CommentApi) => {
       message: '网络错误，请稍后重试',
       type: 'error',
     })
+  }
+}
+
+// 回复分页加载
+const replyPage = async ({ parentId, current, size, finish }: CommentReplyPageApi) => {
+  try {
+    const response = await getCommentReplies(parentId, current, size)
+
+    if (response.data.code === 200) {
+      const { records, total } = response.data.data
+
+      const formattedReplies = records.map((r: any) => ({
+        id: r.id,
+        parentId: r.parentId,
+        uid: r.userId,
+        content: r.content,
+        likes: r.likes || 0,
+        createTime: r.createTime,
+        user: { username: r.userName, avatar: r.userAvatar },
+        reply: null,
+      }))
+
+      finish({
+        total: total,
+        list: formattedReplies,
+      })
+    } else {
+      UToast({ message: response.data.msg || '加载回复失败', type: 'error' })
+      finish({ total: 0, list: [] })
+    }
+  } catch (error) {
+    console.error('加载回复失败:', error)
+    UToast({ message: '网络错误，请稍后重试', type: 'error' })
+    finish({ total: 0, list: [] })
   }
 }
 
