@@ -118,7 +118,12 @@ const fetchArticles = async (isLoadMore = false) => {
       }
 
       total.value = response.data.total
-      hasMore.value = page.value < totalPages.value
+      // 支持后端用 total: -1 表示还有更多数据
+      if (total.value === -1) {
+        hasMore.value = newArticles.length === pageSize.value
+      } else {
+        hasMore.value = page.value < totalPages.value
+      }
     } else {
       error.value = response.msg || '获取文章列表失败'
     }
