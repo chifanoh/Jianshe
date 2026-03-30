@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,12 +101,62 @@ public class CommentServiceImpl implements CommentService {
         v.setUserAvatar(u == null ? "" : u.getAvatar());
 
         List<Comment> children = childrenMap.getOrDefault(c.getId(), List.of());
-        v.setReply(new CommentVO.Reply(children.size(), children.stream()
+        
+        // 只加载前5条二级评论，剩下的通过getCommentReplies分页获取
+        List<Comment> limitedChildren = children.stream()
+                .sorted((c1, c2) -> c2.getCreateTime().compareTo(c1.getCreateTime())) // 按时间降序
+                .limit(5)
+                .collect(Collectors.toList());
+                
+        v.setReply(new CommentVO.Reply(children.size(), limitedChildren.stream()
                 .map(child -> buildVO(child, userMap, Collections.emptyMap())) // 二级不再嵌套
                 .collect(Collectors.toList())));
         return v;
     }
 
+    /**
+     * 获取评论分页
+     * @param parentId
+     * @param pageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult getCommentReplies(Long parentId, PageQueryDTO pageQueryDTO) {
+        // 手动实现分页逻辑，避免MyBatis Plus分页插件的问题
+        int page = pageQueryDTO.getPage();
+        int pageSize = pageQueryDTO.getPageSize();
+        // 计算偏移量：第1页偏移0，第2页偏移5，第3页偏移10
+        int offset = (page - 1) * pageSize;
+        // 1. 先查询总数
+        long total = commentMapper.selectCount(Wrappers.<Comment>lambdaQuery()
+                .eq(Comment::getParentId, parentId));
+        // 2. 手动分页查询数据
+        List<Comment> records = commentMapper.selectList(
+                Wrappers.<Comment>lambdaQuery()
+                        .eq(Comment::getParentId, parentId)
+                        .orderByDesc(Comment::getCreateTime)
+                        .last("LIMIT " + offset + ", " + pageSize)
+        );
+        // 3. 批量查询用户信息
+        Set<Long> userIds = records.stream().map(Comment::getUserId).collect(Collectors.toSet());
+        Map<Long, User> userMap = userIds.isEmpty() ? Map.of()
+                : userMapper.selectList(Wrappers.<User>lambdaQuery().in(User::getId, userIds))
+                .stream().collect(Collectors.toMap(User::getId, u -> u));
+        // 4. 构建CommentVO列表
+        List<CommentVO> commentVOList = records.stream()
+                .map(comment -> {
+                    CommentVO vo = new CommentVO();
+                    BeanUtils.copyProperties(comment, vo);
+                    User user = userMap.getOrDefault(comment.getUserId(), null);
+                    vo.setUserName(user == null ? "" : user.getName());
+                    vo.setUserAvatar(user == null ? "" : user.getAvatar());
+                    // 回复评论不再嵌套子评论
+                    vo.setReply(new CommentVO.Reply(0, Collections.emptyList()));
+                    return vo;
+                })
+                .collect(Collectors.toList());
+        return new PageResult<>(total, commentVOList);
+    }
 
     /**
      * 根据评论表主键id删除评论

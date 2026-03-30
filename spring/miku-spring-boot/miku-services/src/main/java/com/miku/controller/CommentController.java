@@ -44,6 +44,17 @@ public class CommentController {
     }
 
     /**
+     * 获取评论分页
+     * @return
+     */
+    @GetMapping("/replies")
+    public Result<PageResult> getCommentReplies(Long parentId, PageQueryDTO pageQueryDTO){
+        log.info("获取评论分页:{}");
+        PageResult pageResult = commentService.getCommentReplies(parentId,pageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    /**
      * 根据评论表主键id删除评论
      * @param id
      * @return

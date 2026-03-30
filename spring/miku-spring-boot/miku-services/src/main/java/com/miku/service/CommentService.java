@@ -27,4 +27,6 @@ public interface CommentService {
      * @return
      */
     boolean delectComment(Long id, Long userId);
+
+    PageResult getCommentReplies(Long parentId, PageQueryDTO pageQueryDTO);
 }
