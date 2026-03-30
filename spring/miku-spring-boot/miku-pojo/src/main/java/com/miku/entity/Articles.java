@@ -40,6 +40,11 @@ public class Articles implements Serializable {
     private String content;
 
     /**
+     * 正文摘要
+     */
+    private String summary;
+
+    /**
      * 文章图片
      */
     private String images;

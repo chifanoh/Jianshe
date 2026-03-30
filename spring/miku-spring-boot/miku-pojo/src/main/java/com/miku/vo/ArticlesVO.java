@@ -13,11 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 public class ArticlesVO implements Serializable {
     private Long id;
+    private Long userId;
     private UserArticlesVO user;
     private String title;
-    private String content;
+    private String summary;
     private Integer comments;
-    private Integer likes;
+    private Integer likesCount;
     private List<String> images;
     private LocalDateTime createdTime;
 }

@@ -1,7 +1,6 @@
 package com.miku.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miku.dto.PageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.entity.ArticleLike;
@@ -26,10 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticlesServiceImpl implements ArticlesService {
@@ -52,52 +49,28 @@ public class ArticlesServiceImpl implements ArticlesService {
      */
     @Override
     public PageResult pageQuery(PageQueryDTO pageQueryDTO) {
-        // 设置分页参数
-        pageQueryDTO.setPage((pageQueryDTO.getPage() - 1) * pageQueryDTO.getPageSize()); // 计算偏移值
-        Page<Articles> page = new Page<>(pageQueryDTO.getPage(), pageQueryDTO.getPageSize());
-
-        // 构建查询条件
-        LambdaQueryWrapper<Articles> queryWrapper = new LambdaQueryWrapper<>();
-
-        //执行分页查询，查询Articles表
-        Page<Articles> pageResult = articlesMapper.selectPage(page,queryWrapper);
-
-        // 收集userid，分开查询后组装
-        ArrayList<Long> userId = new ArrayList<>();
-        for (Articles id : pageResult.getRecords()) {
-            userId.add(id.getUserId());
+        // 计算偏移量
+        int page = (pageQueryDTO.getPage() - 1) * pageQueryDTO.getPageSize();
+        // 1. 查文章（带 LIMIT，只返回 pageSize 条）
+        List<ArticlesVO> list = articlesMapper.selectArticlesList(page, pageQueryDTO.getPageSize());
+        if (list.isEmpty()) {
+            return new PageResult<>(0, Collections.emptyList());
         }
-        // 查询user表
-        List<User> userList = userMapper.selectBatchIds(userId);
-        // 把用户转成 Map<Integer, User> 方便后面取
-        Map<Long,User> userMap = new HashMap<>();
-        for (User u : userList) {
-            userMap.put(u.getId(), u);
-        }
-
-        // 遍历文章，组装VO
-        ArrayList<ArticlesVO> articlesVO = new ArrayList<>();
-        for (Articles po : pageResult.getRecords()) {
-            ArticlesVO vo = new ArticlesVO();
-            vo.setId(po.getId());
-            vo.setTitle(po.getTitle());
-            vo.setContent(po.getContent());
-            vo.setComments(po.getComments());
-            vo.setLikes(po.getLikesCount());
-            vo.setCreatedTime(po.getCreatedTime());
-
-            //取出用户
-            User u = userMap.get(po.getUserId());
-            //把用户转成UserArticlesVO
-            UserArticlesVO userVO = UserArticlesVO.builder()
-                    .id(u.getId())
-                    .name(u.getName())
-                    .avatar(u.getAvatar())
-                    .build();
-            vo.setUser(userVO);
-            articlesVO.add(vo);
-        }
-        return new PageResult(pageResult.getTotal(),articlesVO);
+        // 2. 批量查用户
+        Set<Long> userIds = list.stream()
+                .map(ArticlesVO::getUserId)
+                .collect(Collectors.toSet());
+        Map<Long, UserArticlesVO> userMap = userMapper.selectBatchIds(userIds)
+                .stream()
+                .map(u -> UserArticlesVO.builder()
+                        .id(u.getId())
+                        .name(u.getName())
+                        .avatar(u.getAvatar())
+                        .build())
+                .collect(Collectors.toMap(UserArticlesVO::getId, u -> u));
+        // 3. 组装用户到文章
+        list.forEach(vo -> vo.setUser(userMap.get(vo.getUserId())));
+        return new PageResult<>(-1, list);
     }
 
     /**
@@ -144,7 +117,6 @@ public class ArticlesServiceImpl implements ArticlesService {
         LocalDateTime now = LocalDateTime.now();
         //对象拷贝
         BeanUtils.copyProperties(createArticlesDTO,articles);
-
         //设置发布和修改时间
         articles.setUserId(uid);
         articles.setCreatedTime(now);
