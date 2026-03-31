@@ -8,7 +8,7 @@ import com.miku.entity.ArticleLike;
 import com.miku.entity.Articles;
 import com.miku.entity.ManticoreArticle;
 import com.miku.entity.User;
-import com.miku.mapper.manticore.SearchMapper;
+import com.miku.mapper.manticore.ArticlesSearchMapper;
 import com.miku.mapper.mysql.ArticleLikeMapper;
 import com.miku.mapper.mysql.ArticlesMapper;
 import com.miku.mapper.mysql.UserMapper;
@@ -18,7 +18,6 @@ import com.miku.vo.ArticleDetailVO;
 import com.miku.vo.ArticlesVO;
 import com.miku.vo.UserArticleDetailVO;
 import com.miku.vo.UserArticlesVO;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -43,7 +42,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     private ArticleLikeMapper articleLikeMapper;
 
     @Autowired
-    private SearchMapper searchMapper;
+    private ArticlesSearchMapper articlesSearchMapper;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -148,7 +147,7 @@ public class ArticlesServiceImpl implements ArticlesService {
         articles.setUpdatedTime(now);
         articlesMapper.insert(articles);
 
-        // 为 Manticore 创建专用对象，转换时间为时间戳
+        // 为 Manticore 创建专用对象
         ManticoreArticle manticoreArticle = new ManticoreArticle();
         BeanUtils.copyProperties(articles, manticoreArticle);
         manticoreArticle.setImages("");
@@ -158,7 +157,7 @@ public class ArticlesServiceImpl implements ArticlesService {
         manticoreArticle.setStatus(1);
         manticoreArticle.setCreatedTime(now.toEpochSecond(ZoneOffset.ofHours(8)));
         manticoreArticle.setUpdatedTime(now.toEpochSecond(ZoneOffset.ofHours(8)));
-        searchMapper.insert(manticoreArticle);
+        articlesSearchMapper.insert(manticoreArticle);
     }
 
     /**

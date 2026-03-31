@@ -1,14 +1,12 @@
 package com.miku.service.Impl;
 
 import com.miku.dto.SearchDTO;
-import com.miku.entity.Articles;
 import com.miku.entity.ManticoreArticle;
 import com.miku.entity.User;
-import com.miku.mapper.manticore.SearchMapper;
+import com.miku.mapper.manticore.ArticlesSearchMapper;
 import com.miku.mapper.mysql.UserMapper;
 import com.miku.result.PageResult;
 import com.miku.service.SearchService;
-import com.miku.vo.ArticlesVO;
 import com.miku.vo.ManticoreArticleVO;
 import com.miku.vo.UserArticlesVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +23,7 @@ import java.util.stream.Collectors;
 public class SearchServiceImpl implements SearchService {
 
     @Autowired
-    private SearchMapper searchMapper;
+    private ArticlesSearchMapper articlesSearchMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -40,7 +37,7 @@ public class SearchServiceImpl implements SearchService {
     public PageResult search(SearchDTO searchDTO) {
         // 查询数据
         int page = (searchDTO.getPage() - 1) * searchDTO.getPageSize(); // 计算偏移值
-        List<ManticoreArticle> articles = searchMapper.searchArticles(
+        List<ManticoreArticle> articles = articlesSearchMapper.searchArticles(
                 searchDTO.getKeyword(),
                 page,
                 searchDTO.getPageSize()
@@ -88,7 +85,7 @@ public class SearchServiceImpl implements SearchService {
                 .collect(Collectors.toList());
 
         // 统计总数
-        int total = searchMapper.countSearchArticles(searchDTO.getKeyword());
+        int total = articlesSearchMapper.countSearchArticles(searchDTO.getKeyword());
         return new PageResult(total, articlesVO);
     }
 }

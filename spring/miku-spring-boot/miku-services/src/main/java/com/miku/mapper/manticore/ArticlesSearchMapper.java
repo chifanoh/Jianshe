@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface SearchMapper {
+public interface ArticlesSearchMapper {
     /**
      * 搜索
      * @param keyword
