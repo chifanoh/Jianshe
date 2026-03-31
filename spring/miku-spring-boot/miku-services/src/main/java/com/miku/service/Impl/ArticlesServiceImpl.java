@@ -21,12 +21,13 @@ import com.miku.vo.UserArticlesVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +43,9 @@ public class ArticlesServiceImpl implements ArticlesService {
 
     @Autowired
     private SearchMapper searchMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 文章列表查询
@@ -89,16 +93,15 @@ public class ArticlesServiceImpl implements ArticlesService {
                         Articles::getLikesCount,
                         Articles::getCreatedTime)
                 .eq(Articles::getId, id));
-
         // 文章为空直接返回
         if (articles == null){
             return null;
         }
-
+        // 自定义方法计 viewArticle 算文章浏览量
+        viewArticle(id, articles.getUserId());
         // 2.获取用户信息
         Long uid = articles.getUserId();
         User user = userMapper.selectById(uid);
-
         // 数据拷贝,拼装
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
         UserArticleDetailVO userArticleDetailVO = new UserArticleDetailVO();
@@ -106,6 +109,26 @@ public class ArticlesServiceImpl implements ArticlesService {
         BeanUtils.copyProperties(user,userArticleDetailVO);//用户信息
         articleDetailVO.setUser(userArticleDetailVO);
         return articleDetailVO;
+    }
+
+    /**
+     * 计算文章浏览量
+     *
+     * @param id
+     * @param userId
+     */
+    public void viewArticle(Long id, Long userId) {
+        String key = "view:articles:" + id;
+        UpdateWrapper<Articles> updateWrapper = new UpdateWrapper<>();
+        // 判断缓存是否命中
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(key))) {
+            // 已访问,无任务
+            return;
+        }
+        // 未访问,浏览量 + 1
+        stringRedisTemplate.opsForValue().setIfAbsent(key, userId.toString(), 24, TimeUnit.HOURS);
+        updateWrapper.setSql("views = views + 1").eq("id", id);
+        articlesMapper.update(null,updateWrapper);
     }
 
     /**
