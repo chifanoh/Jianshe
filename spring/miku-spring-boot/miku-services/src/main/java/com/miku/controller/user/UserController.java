@@ -76,10 +76,16 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
-    public Result register(@Valid UserRegisterDTO userRegisterDTO){
-        log.info("用户注册{}",userRegisterDTO);
-        userService.register(userRegisterDTO);
-        return Result.success("注册成功");
+    public Result register(@Valid UserRegisterDTO userRegisterDTO,
+                           @RequestParam("cf-turnstile-response") String tokens, HttpServletRequest request){
+        // Cloudflare Turnstile人机验证
+        String ip = request.getRemoteAddr();
+        if (turnstileService.verify(tokens, ip)) {
+            log.info("用户注册{}",userRegisterDTO);
+            userService.register(userRegisterDTO);
+            return Result.success("注册成功");
+        }
+        return Result.error("人机验证失败");
     }
 
     /**

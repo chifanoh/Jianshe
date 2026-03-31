@@ -43,9 +43,11 @@ public class UserServiceImpl implements UserService {
     public void register(UserRegisterDTO userRegisterDTO) {
         // 查数据库是否重复
         if (userMapper.countByName(userRegisterDTO.getName()) != null) {
+            // 用户名已存在
             throw new PasswordErrorException(MessageConstant.USERNAME_ALREADY_EXISTS);
         }
         if (userMapper.countByEmail(userRegisterDTO.getEmail()) != null) {
+            // 邮箱已存在
             throw new PasswordErrorException(MessageConstant.EMAIL_ALREADY_EXISTS);
         }
 
