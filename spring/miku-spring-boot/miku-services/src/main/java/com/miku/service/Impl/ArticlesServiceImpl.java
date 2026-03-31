@@ -14,6 +14,7 @@ import com.miku.mapper.mysql.ArticlesMapper;
 import com.miku.mapper.mysql.UserMapper;
 import com.miku.result.CursorPageResult;
 import com.miku.service.ArticlesService;
+import com.miku.utils.WeightedShuffleUtil;
 import com.miku.vo.ArticleDetailVO;
 import com.miku.vo.ArticlesVO;
 import com.miku.vo.UserArticleDetailVO;
@@ -48,7 +49,7 @@ public class ArticlesServiceImpl implements ArticlesService {
     private StringRedisTemplate stringRedisTemplate;
 
     /**
-     * 文章列表查询（游标分页）
+     * 文章列表查询
      *
      * @param cursorPageQueryDTO
      * @return
@@ -64,6 +65,8 @@ public class ArticlesServiceImpl implements ArticlesService {
         if (list.isEmpty()) {
             return new CursorPageResult<>(0L, null, Collections.emptyList());
         }
+        // 使用模拟推荐算法打乱
+        WeightedShuffleUtil.shuffle(list);
         // 批量查用户
         Set<Long> userIds = list.stream()
                 .map(ArticlesVO::getUserId)
