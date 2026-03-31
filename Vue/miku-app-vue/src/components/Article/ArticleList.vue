@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import ArticleCard from './ArticleCard.vue'
 import { getArticleList } from '@/api/article'
 import type { Article, ArticleListResponse } from '@/types/article'
@@ -63,14 +63,10 @@ const articles = ref<Article[]>([])
 const loading = ref(false)
 const loadingMore = ref(false)
 const error = ref<string | null>(null)
-const page = ref(1)
+const cursor = ref<number | null>(null) // 游标，用于分页
 const pageSize = ref(20) // 初始加载20篇
-const total = ref(0)
 const hasMore = ref(true)
 const isInitialLoad = ref(true) // 标记是否为初始加载
-
-// 计算总页数
-const totalPages = computed(() => Math.ceil(total.value / pageSize.value))
 
 // 获取文章列表
 const fetchArticles = async (isLoadMore = false) => {
@@ -87,8 +83,8 @@ const fetchArticles = async (isLoadMore = false) => {
 
   try {
     const { data: response }: { data: ArticleListResponse } = await getArticleList({
-      page: page.value,
       pageSize: pageSize.value,
+      cursor: isLoadMore ? cursor.value : null,
     })
 
     if (response.code === 200) {
@@ -117,13 +113,9 @@ const fetchArticles = async (isLoadMore = false) => {
         }
       }
 
-      total.value = response.data.total
-      // 支持后端用 total: -1 表示还有更多数据
-      if (total.value === -1) {
-        hasMore.value = newArticles.length === pageSize.value
-      } else {
-        hasMore.value = page.value < totalPages.value
-      }
+      // 更新游标和是否还有更多
+      cursor.value = response.data.cursor
+      hasMore.value = newArticles.length === pageSize.value && cursor.value !== null
     } else {
       error.value = response.msg || '获取文章列表失败'
     }
@@ -155,14 +147,13 @@ const debounce = <T extends (...args: any[]) => any>(
 // 加载更多 - 添加防抖
 const loadMore = debounce(() => {
   if (hasMore.value && !loadingMore.value && !loading.value) {
-    page.value++
     fetchArticles(true)
   }
 }, 300)
 
 // 刷新数据
 const refresh = () => {
-  page.value = 1
+  cursor.value = null
   hasMore.value = true
   error.value = null
   fetchArticles()
