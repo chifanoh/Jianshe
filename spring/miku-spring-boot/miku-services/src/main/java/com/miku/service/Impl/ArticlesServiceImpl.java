@@ -84,7 +84,9 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @return
      */
     @Override
-    public ArticleDetailVO getArticleDetail(Long id) {
+    public ArticleDetailVO getArticleDetail(Long id, Long userId) {
+        // 自定义方法 viewArticle 计算文章浏览量
+        viewArticle(id, userId);
         // 1.获取文章详细页
         Articles articles = articlesMapper.selectOne(new LambdaQueryWrapper<Articles>()
                 .select(Articles::getId, Articles::getUserId,
@@ -97,8 +99,6 @@ public class ArticlesServiceImpl implements ArticlesService {
         if (articles == null){
             return null;
         }
-        // 自定义方法计 viewArticle 算文章浏览量
-        viewArticle(id, articles.getUserId());
         // 2.获取用户信息
         Long uid = articles.getUserId();
         User user = userMapper.selectById(uid);

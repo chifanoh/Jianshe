@@ -40,7 +40,8 @@ public class ArticlesContrller {
     @GetMapping("/{id}")
     public Result<ArticleDetailVO> getArticleDetail(@PathVariable Long id){
         log.info("文章详细页查询结果:{}",id);
-        ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id);
+        Long userId = BaseContext.getCurrentId();
+        ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id, userId);
         //没有该文章
         if (articleDetailVO == null){
             return Result.error("啊哦,没有找到该文章!!!");
