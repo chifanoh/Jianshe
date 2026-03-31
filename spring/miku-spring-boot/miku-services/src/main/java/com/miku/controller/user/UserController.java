@@ -7,6 +7,7 @@ import com.miku.dto.UserRegisterDTO;
 import com.miku.entity.User;
 import com.miku.properties.JwtProperties;
 import com.miku.result.Result;
+import com.miku.service.TurnstileService;
 import com.miku.service.UserService;
 import com.miku.utils.JwtUtil;
 import com.miku.vo.UserLoginVO;
@@ -33,6 +34,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TurnstileService turnstileService;
 
     @Autowired
     private JwtProperties jwtProperties;
@@ -84,42 +88,49 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public Result<UserLoginVO> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response){
-        log.info("用户登录:{}", userLoginDTO);
-        User user = userService.login(userLoginDTO);
+    public Result<UserLoginVO> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response,
+                                     @RequestParam("cf-turnstile-response") String tokens, HttpServletRequest request){
+        // Cloudflare Turnstile人机验证
+        String ip = request.getRemoteAddr();
+        if (turnstileService.verify(tokens, ip)) {
+            log.info("用户登录:{}", userLoginDTO);
+            User user = userService.login(userLoginDTO);
 
-        if (user==null){
-            return Result.error("密码错误");
+            if (user==null){
+                return Result.error("密码错误");
+            }
+
+            //登录成功后，生成jwt令牌
+            Map<String, Object> claims = new HashMap<>();
+            claims.put(JwtClaimsConstant.USER_ID, user.getId());
+            String token = JwtUtil.createJWT(
+                    jwtProperties.getUserSecretKey(),
+                    jwtProperties.getUserTtl(),
+                    claims);
+
+            //使用HttpOnly Cookie
+            Cookie cookie = new Cookie("access_token", token);
+            cookie.setHttpOnly(true);        // 禁止 JS 读取
+            cookie.setSecure(false);         // HTTPS 场景下开启
+            cookie.setAttribute("SameSite","Strict");    // 防 CSRF
+            cookie.setPath("/");             // 整站通用
+            cookie.setMaxAge((int) (jwtProperties.getUserTtl() / 1000)); // 秒
+            response.addCookie(cookie);
+
+
+            //返回给前端的数据
+            UserLoginVO userLoginVO = UserLoginVO.builder()
+                    .id(user.getId())
+                    .avatar(user.getAvatar())
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .token(token)
+                    .build();
+
+            return Result.success(userLoginVO);
+        } else {
+            return Result.error("人机验证失败");
         }
-
-        //登录成功后，生成jwt令牌
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        String token = JwtUtil.createJWT(
-                jwtProperties.getUserSecretKey(),
-                jwtProperties.getUserTtl(),
-                claims);
-
-        //使用HttpOnly Cookie
-        Cookie cookie = new Cookie("access_token", token);
-        cookie.setHttpOnly(true);        // 禁止 JS 读取
-        cookie.setSecure(false);         // HTTPS 场景下开启
-        cookie.setAttribute("SameSite","Strict");    // 防 CSRF
-        cookie.setPath("/");             // 整站通用
-        cookie.setMaxAge((int) (jwtProperties.getUserTtl() / 1000)); // 秒
-        response.addCookie(cookie);
-
-
-        //返回给前端的数据
-        UserLoginVO userLoginVO = UserLoginVO.builder()
-                .id(user.getId())
-                .avatar(user.getAvatar())
-                .name(user.getName())
-                .email(user.getEmail())
-                .token(token)
-                .build();
-
-        return Result.success(userLoginVO);
     }
 
     /**

@@ -175,7 +175,7 @@ const handleSubmit = async () => {
         username: formState.username.trim(),
         email: formState.email.trim(),
         password: CryptoJS.MD5(formState.password).toString().toLowerCase(),
-        turnstileToken: turnstileToken.value,
+        'cf-turnstile-response': turnstileToken.value,
       }
 
       const res = await userRegister(registerParams)
