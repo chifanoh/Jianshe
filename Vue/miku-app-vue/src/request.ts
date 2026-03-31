@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { useLoginUserStore } from '@/store/useLoginUserStore'
+import { clearAllUserData } from '@/utils/indexedDB'
+import router from '@/router'
 
 // 创建 axios 实例
 export const myAxios = axios.create({
@@ -19,6 +22,33 @@ myAxios.interceptors.request.use(
   },
 )
 
+// 处理 401 未授权错误
+async function handleUnauthorized() {
+  try {
+    // 清空 IndexedDB 中的用户数据
+    await clearAllUserData()
+  } catch {
+    // 静默处理
+  }
+
+  try {
+    // 获取 store 并清空登录状态
+    const loginUserStore = useLoginUserStore()
+    loginUserStore.clearUser()
+  } catch {
+    // 如果 store 获取失败，至少清空 localStorage/sessionStorage
+    localStorage.removeItem('loginUser')
+  }
+
+  // 如果当前不在登录页，则跳转到登录页
+  if (router.currentRoute.value.path !== '/user/login') {
+    router.push({
+      path: '/user/login',
+      query: { redirect: router.currentRoute.value.fullPath },
+    })
+  }
+}
+
 // 添加响应拦截器
 myAxios.interceptors.response.use(
   function (response) {
@@ -29,7 +59,12 @@ myAxios.interceptors.response.use(
   function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
-    // 处理认证相关错误
+
+    // 处理 401 未授权错误（JWT 过期或无效）
+    if (error.response?.status === 401) {
+      handleUnauthorized()
+    }
+
     return Promise.reject(error)
   },
 )
