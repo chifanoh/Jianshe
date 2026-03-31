@@ -59,3 +59,8 @@ miku:
 turnstile:
   secret:
     key: ""
+
+# NewsAPI配置
+news:
+  api:
+    key: ""
