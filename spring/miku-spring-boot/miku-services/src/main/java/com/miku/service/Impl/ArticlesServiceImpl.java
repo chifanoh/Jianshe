@@ -2,7 +2,7 @@ package com.miku.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.miku.dto.PageQueryDTO;
+import com.miku.dto.CursorPageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
 import com.miku.entity.ArticleLike;
 import com.miku.entity.Articles;
@@ -12,7 +12,7 @@ import com.miku.mapper.manticore.ArticlesSearchMapper;
 import com.miku.mapper.mysql.ArticleLikeMapper;
 import com.miku.mapper.mysql.ArticlesMapper;
 import com.miku.mapper.mysql.UserMapper;
-import com.miku.result.PageResult;
+import com.miku.result.CursorPageResult;
 import com.miku.service.ArticlesService;
 import com.miku.vo.ArticleDetailVO;
 import com.miku.vo.ArticlesVO;
@@ -48,20 +48,23 @@ public class ArticlesServiceImpl implements ArticlesService {
     private StringRedisTemplate stringRedisTemplate;
 
     /**
-     * 文章列表查询
-     * @param pageQueryDTO
+     * 文章列表查询（游标分页）
+     *
+     * @param cursorPageQueryDTO
      * @return
      */
     @Override
-    public PageResult pageQuery(PageQueryDTO pageQueryDTO) {
-        // 计算偏移量
-        int page = (pageQueryDTO.getPage() - 1) * pageQueryDTO.getPageSize();
-        // 1. 查文章（带 LIMIT，只返回 pageSize 条）
-        List<ArticlesVO> list = articlesMapper.selectArticlesList(page, pageQueryDTO.getPageSize());
+    public CursorPageResult pageQuery(CursorPageQueryDTO cursorPageQueryDTO) {
+        // 查询文章
+        List<ArticlesVO> list = articlesMapper.selectArticlesListByCursor(
+                cursorPageQueryDTO.getCursor(),
+                cursorPageQueryDTO.getPageSize(),
+                cursorPageQueryDTO.getDirection()
+        );
         if (list.isEmpty()) {
-            return new PageResult<>(0, Collections.emptyList());
+            return new CursorPageResult<>(0L, null, Collections.emptyList());
         }
-        // 2. 批量查用户
+        // 批量查用户
         Set<Long> userIds = list.stream()
                 .map(ArticlesVO::getUserId)
                 .collect(Collectors.toSet());
@@ -73,9 +76,15 @@ public class ArticlesServiceImpl implements ArticlesService {
                         .avatar(u.getAvatar())
                         .build())
                 .collect(Collectors.toMap(UserArticlesVO::getId, u -> u));
-        // 3. 组装用户到文章
+        // 组装用户到文章
         list.forEach(vo -> vo.setUser(userMap.get(vo.getUserId())));
-        return new PageResult<>(-1, list);
+        // 计算下一个游标
+        Long nextCursor = null;
+        if (list.size() >= cursorPageQueryDTO.getPageSize()) {
+            ArticlesVO lastArticle = list.get(list.size() - 1);
+            nextCursor = lastArticle.getId();
+        }
+        return new CursorPageResult<>((long) list.size(), nextCursor, list);
     }
 
     /**

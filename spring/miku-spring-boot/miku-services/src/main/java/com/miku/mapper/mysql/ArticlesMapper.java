@@ -1,11 +1,10 @@
 package com.miku.mapper.mysql;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.miku.dto.PageQueryDTO;
 import com.miku.entity.Articles;
 import com.miku.vo.ArticlesVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,9 +12,12 @@ import java.util.List;
 public interface ArticlesMapper extends BaseMapper<Articles> {
     /**
      * 文章列表查询
-     * @param page
-     * @param pageSize
+     * @param cursor 游标
+     * @param pageSize 每页大小
+     * @param direction 排序方向
      * @return
      */
-    List<ArticlesVO> selectArticlesList(int page, int pageSize);
+    List<ArticlesVO> selectArticlesListByCursor(@Param("cursor") Long cursor, 
+                                               @Param("pageSize") int pageSize,
+                                               @Param("direction") String direction);
 }

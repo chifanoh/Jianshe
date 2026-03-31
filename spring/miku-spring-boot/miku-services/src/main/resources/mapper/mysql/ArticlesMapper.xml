@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.mapper.mysql.ArticlesMapper">
-    <select id="selectArticlesList" resultType="com.miku.vo.ArticlesVO">
+    <select id="selectArticlesListByCursor" resultType="com.miku.vo.ArticlesVO">
         SELECT
         id,
         user_id as userId,
@@ -14,7 +14,20 @@
         created_time as createdTime
         FROM articles
         WHERE status = 1
-        ORDER BY created_time DESC
-        LIMIT #{page}, #{pageSize}
+        <if test="cursor != null">
+            <choose>
+                <when test="direction == 'desc'">
+                    AND id &lt; #{cursor}
+                </when>
+                <when test="direction == 'asc'">
+                    AND id &gt; #{cursor}
+                </when>
+                <otherwise>
+                    AND id &lt; #{cursor}
+                </otherwise>
+            </choose>
+        </if>
+        ORDER BY id ${direction}
+        LIMIT #{pageSize}
     </select>
 </mapper>

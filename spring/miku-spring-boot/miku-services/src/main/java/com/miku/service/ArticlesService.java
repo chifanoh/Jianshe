@@ -1,17 +1,19 @@
 package com.miku.service;
 
-import com.miku.dto.PageQueryDTO;
+import com.miku.dto.CursorPageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
+import com.miku.result.CursorPageResult;
 import com.miku.result.PageResult;
 import com.miku.vo.ArticleDetailVO;
 
 public interface ArticlesService {
     /**
      * 文章列表查询
-     * @param pageQueryDTO
+     *
+     * @param cursorPageQueryDTO
      * @return
      */
-    PageResult pageQuery(PageQueryDTO pageQueryDTO);
+    CursorPageResult pageQuery(CursorPageQueryDTO cursorPageQueryDTO);
 
     /**
      * 获取文章详细页

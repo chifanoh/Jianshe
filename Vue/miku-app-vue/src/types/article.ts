@@ -27,20 +27,21 @@ export interface Article {
   updatedTime?: string
 }
 
-// 文章列表响应数据 - 适配后端实际返回格式
+// 文章列表响应数据 - 适配后端实际返回格式（游标分页）
 export interface ArticleListResponse {
   code: number
   msg: string | null
   data: {
     records: Article[]
     total: number
+    cursor: number | null // 游标，用于下一页查询
   }
 }
 
-// 文章查询参数
+// 文章查询参数（游标分页）
 export interface ArticleQueryParams {
-  page?: number
   pageSize?: number
+  cursor?: number | null
   userId?: string | number
   keyword?: string
 }

@@ -1,8 +1,9 @@
 package com.miku.controller;
 
 import com.miku.context.BaseContext;
-import com.miku.dto.PageQueryDTO;
+import com.miku.dto.CursorPageQueryDTO;
 import com.miku.dto.CreateArticlesDTO;
+import com.miku.result.CursorPageResult;
 import com.miku.result.PageResult;
 import com.miku.result.Result;
 import com.miku.service.ArticlesService;
@@ -23,13 +24,14 @@ public class ArticlesContrller {
 
     /**
      * 文章列表查询
-     * @param pageQueryDTO
+     *
+     * @param cursorPageQueryDTO
      * @return
      */
     @GetMapping("/list")
-    public Result<PageResult> getArticlesList(PageQueryDTO pageQueryDTO){
-        log.info("文章分页查询结果:{}", pageQueryDTO);
-        PageResult pageResult = articlesService.pageQuery(pageQueryDTO);
+    public Result<CursorPageResult> getArticlesList(@Valid CursorPageQueryDTO cursorPageQueryDTO){
+        log.info("文章分页查询结果:{}", cursorPageQueryDTO);
+        CursorPageResult pageResult = articlesService.pageQuery(cursorPageQueryDTO);
         return Result.success(pageResult);
     }
 

@@ -32,6 +32,7 @@ export interface ArticleListResponse {
   data: {
     records: Article[]
     total: number
+    cursor: number | null // 游标，用于下一页查询
   }
 }
 
@@ -47,8 +48,8 @@ export interface CreateArticleResponse {
  * @returns 文章列表数据
  */
 export const getArticleList = async (params?: {
-  page?: number
   pageSize?: number
+  cursor?: number | null
   userId?: string | number
 }) => {
   return myAxios.request<ArticleListResponse>({
