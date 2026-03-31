@@ -156,7 +156,9 @@ public class UserController {
 
         // jwt过期时间
         Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
-        long ttl = claims.getExpiration().getTime();
+        long expirationTime = claims.getExpiration().getTime();
+        long currentTime = System.currentTimeMillis();
+        long ttl = Math.max(0, (expirationTime - currentTime) / 1000);  // 时间单位转换
 
         // 存redis
         String jti = claims.getId();// 使用签发时给的JWT ID为key
