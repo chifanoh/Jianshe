@@ -18,7 +18,7 @@ public interface ArticlesService {
      * @param id
      * @return
      */
-    ArticleDetailVO getArticleDetail(Long id, Long userId);
+    ArticleDetailVO getArticleDetail(Long id, String ip);
 
     /**
      * 发布文章

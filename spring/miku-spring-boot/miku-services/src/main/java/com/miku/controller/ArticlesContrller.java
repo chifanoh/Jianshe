@@ -7,6 +7,7 @@ import com.miku.result.PageResult;
 import com.miku.result.Result;
 import com.miku.service.ArticlesService;
 import com.miku.vo.ArticleDetailVO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,10 @@ public class ArticlesContrller {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<ArticleDetailVO> getArticleDetail(@PathVariable Long id){
+    public Result<ArticleDetailVO> getArticleDetail(@PathVariable Long id, HttpServletRequest request){
         log.info("文章详细页查询结果:{}",id);
-        Long userId = BaseContext.getCurrentId();
-        ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id, userId);
+        String ip = request.getRemoteAddr();
+        ArticleDetailVO articleDetailVO = articlesService.getArticleDetail(id, ip);
         //没有该文章
         if (articleDetailVO == null){
             return Result.error("啊哦,没有找到该文章!!!");

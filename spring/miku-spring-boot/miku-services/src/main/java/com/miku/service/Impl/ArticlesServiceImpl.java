@@ -18,6 +18,7 @@ import com.miku.vo.ArticleDetailVO;
 import com.miku.vo.ArticlesVO;
 import com.miku.vo.UserArticleDetailVO;
 import com.miku.vo.UserArticlesVO;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -84,9 +85,9 @@ public class ArticlesServiceImpl implements ArticlesService {
      * @return
      */
     @Override
-    public ArticleDetailVO getArticleDetail(Long id, Long userId) {
+    public ArticleDetailVO getArticleDetail(Long id, String ip) {
         // 自定义方法 viewArticle 计算文章浏览量
-        viewArticle(id, userId);
+        viewArticle(id, ip);
         // 1.获取文章详细页
         Articles articles = articlesMapper.selectOne(new LambdaQueryWrapper<Articles>()
                 .select(Articles::getId, Articles::getUserId,
@@ -115,9 +116,9 @@ public class ArticlesServiceImpl implements ArticlesService {
      * 计算文章浏览量
      *
      * @param id
-     * @param userId
+     * @param ip
      */
-    public void viewArticle(Long id, Long userId) {
+    public void viewArticle(Long id, String ip) {
         String key = "view:articles:" + id;
         UpdateWrapper<Articles> updateWrapper = new UpdateWrapper<>();
         // 判断缓存是否命中
@@ -126,7 +127,7 @@ public class ArticlesServiceImpl implements ArticlesService {
             return;
         }
         // 未访问,浏览量 + 1
-        stringRedisTemplate.opsForValue().setIfAbsent(key, userId.toString(), 24, TimeUnit.HOURS);
+        stringRedisTemplate.opsForValue().setIfAbsent(key, ip, 24, TimeUnit.HOURS);
         updateWrapper.setSql("views = views + 1").eq("id", id);
         articlesMapper.update(null,updateWrapper);
     }
