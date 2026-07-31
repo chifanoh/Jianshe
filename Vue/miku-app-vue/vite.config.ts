@@ -15,6 +15,14 @@ export default defineConfig({
       resolvers: [UndrawUiResolver],
     }),
   ],
+
+//vercel部署配置
+  build: {
+    rollupOptions: {
+      input: 'index.html'
+    }
+  },
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
