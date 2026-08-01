@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd miku-app-vue && npm run vercel-build",
+  "outputDirectory": "miku-app-vue/dist",
+  "installCommand": "cd miku-app-vue && npm install",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
