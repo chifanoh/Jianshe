@@ -1,0 +1,6 @@
+.env
+.idea/
+tmp_pip/
+tmp_filterrepo/
+git_filter_repo.zip
+git-filter-repo.py

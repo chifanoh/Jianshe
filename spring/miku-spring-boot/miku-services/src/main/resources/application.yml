@@ -6,9 +6,9 @@ spring:
     # 多数据源单独配置
     mysql:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://localhost:3306/miku_spring_boot
-      username: root
-      password: "REMOVED"
+      jdbc-url: ${MYSQL_URL:jdbc:mysql://localhost:3306/miku_spring_boot}
+      username: ${MYSQL_USERNAME:root}
+      password: ${MYSQL_PASSWORD:}
       pool-name: MySQLPool
       maximum-pool-size: 20
     # Manticore数据源配置已移至DataSourceConfig.java，不使用连接池
@@ -19,8 +19,8 @@ spring:
       port: 6379
     datasource:
       url: jdbc:mysql://localhost:3306/miku_spring_boot
-      username: root
-      password: REMOVED
+      username: ${MYSQL_USERNAME:root}
+      password: ${MYSQL_PASSWORD:}
     task:
       scheduling:
         enabled: true  # 开启定时任务
@@ -50,7 +50,7 @@ miku:
     # 设置jwt过期时间 (7天)
     user-ttl: 604800000
     # 设置jwt签名加密时使用的秘钥
-    user-secret-key: "="
+    user-secret-key: ${JWT_USER_SECRET:}
     # 设置前端传递过来的令牌名称
     user-token-name: tokename
     # 设置Cookie请求头名称
@@ -58,9 +58,9 @@ miku:
 
 turnstile:
   secret:
-    key: ""
+    key: ${TURNSTILE_SECRET_KEY:}
 
 # NewsAPI配置
 news:
   api:
-    key: ""
+    key: ${NEWS_API_KEY:}
